@@ -54,10 +54,10 @@ function initStockItemDG(){
 		columns:[[
 		          	{field:'materialId', hidden:true},
 					{field:'materialName',title:'物料',width:80},
-					{field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2}}},
 					{field:'unitId', hidden:true},
 					{field:'unitName',title:'单位',width:80},
 					{field:'unitPrice',title:'单价',width:80,editor:{type:'numberbox', options:{precision:2}}},
+					{field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2}}},
 					{field:'remark',title:'备注',width:140,editor:'text'},
 					{field:'action',title:'操作',width:50,align:'center',
 						formatter:function(value,row,index){
@@ -68,6 +68,11 @@ function initStockItemDG(){
 				]],
 	});
 	
+	var stockType = $('#stockType').val();
+	if (stockType == 4 || stockType == 5 || stockType == 6){ // stock out
+		$('#stockItem_dg').edatagrid('hideColumn', 'unitPrice');
+	}
+	
 }
 
 /**
@@ -76,14 +81,26 @@ function initStockItemDG(){
 function addItemRow(){
 	if (!$('#addForm').form('validate'))
 		return;
+	var mId = $('#materialComboBox').combo('getValue');
+	var mName = $('#materialComboBox').combo('getText');
+	if (mId != null && mId == mName){
+		$.messager.alert("错误","'" + mName + "' 物料不存在！","error");
+		return;
+	}
+	var uId = $('#unitComboBox').combo('getValue');
+	var uName = $('#unitComboBox').combo('getText');
+	if (uId != null && uId == uName){
+		$.messager.alert("错误","'" + uName + "' 单位不存在！","error");
+		return;
+	}
 	
 	$('#stockItem_dg').datagrid('appendRow',{
-		materialId: $('#materialComboBox').combo('getValue'),
-		materialName: $('#materialComboBox').combo('getText'),
-		quantity: $('#quantity').val(),
-		unitId: $('#unitComboBox').combo('getValue'),
-		unitName: $('#unitComboBox').combo('getText'),
+		materialId: mId,
+		materialName: mName,
+		unitId: uId,
+		unitName: uName,
 		unitPrice: $('#unitPrice').val(),
+		quantity: $('#quantity').val(),
 		remark: $('#itemRemark').val()
 	});
 }

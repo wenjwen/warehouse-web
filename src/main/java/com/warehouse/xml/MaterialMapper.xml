@@ -28,6 +28,23 @@
     id, update_user, create_user, create_time, update_time, unit_id, total_quantity, 
     balance, size, last_stock_take, avg_unit_price, unit_price, name, code, shelf
   </sql>
+  
+  <sql id="Example_Where_Clause" >
+    <trim prefix="WHERE" prefixOverrides=",|AND|OR">
+    		<if test="unitId != null" >
+     	  	 AND UNIT_ID = #{unitId}
+    	  </if>
+    		<if test="code != null and code != ''" >
+     	  	 AND CODE = #{code}
+    	  </if>
+    		<if test="name != null and name != ''" >
+     	  	 AND NAME = #{name}
+    	  </if>
+    		<if test="size != null and size != ''" >
+     	  	 AND SIZE = #{size}
+    	  </if>
+    </trim>
+   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -216,5 +233,18 @@
   
   <select id="findAllEntry" resultMap="EntryMap">
   	select id, name from material
+  </select>
+  
+  <select id="findAll" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from material
+  </select>
+  
+  <select id="selectSelective" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" /> 
+    from material 
+    <include refid="Example_Where_Clause"></include>
   </select>
 </mapper>

@@ -57,7 +57,7 @@
 	</table>
 	</form>
 </div>
-<div class="easyui-panel" title="入库物料" style="width:100%;height:22%;">
+<div class="easyui-panel" title="出库物料" style="width:100%;height:22%;">
 		<form id="addForm">
 	  	<table cellpadding="5">
 				<tr>
@@ -72,16 +72,16 @@
 		 			<td rowspan="2"><a class="easyui-linkbutton" style="width:40px;height:60px;" href="#" onclick="addItemRow();">添加 ↓</a></td>
 		 		</tr>
 		 		<tr>
-		 			<td>单价:</td>
-		 			<td><input id="unitPrice" style="width:100%;" class="easyui-numberbox" type="text" id="quantity" data-options="min:0,precision:2,required:true"></input></td>
+		 			<!-- <td>单价:</td>
+		 			<td><input id="unitPrice" style="width:100%;" class="easyui-numberbox" type="text" id="quantity" data-options="min:0,precision:2,required:true"></input></td> -->
 		 			<td>备注:</td>
-		 			<td colspan="3"><input id="itemRemark" class="easyui-textbox" style="width:100%" type="text"></input></td>
+		 			<td colspan="5"><input id="itemRemark" class="easyui-textbox" style="width:100%" type="text"></input></td>
 		 		</tr>
 			</table>
 	  </div> 
 <!-- stockitem edatagrid -->
 <div style="width:100%;height:42%;">
-	<table id="stockItem_dg"  style="width:100%;height:100%;"
+	<table id="stockItem_dg"  style="width:100%;height:100%;" hideColumn="unitPrice"
 			idField="materialId" rownumbers="true" fitColumns="true" singleSelect="false">
 	</table>
 	<!-- <div id="toolbar">

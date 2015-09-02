@@ -20,5 +20,9 @@ public interface MaterialMapper {
     int updateByPrimaryKey(Material record);
 
 	List<Entry> findAllEntry();
+
+	List<Material> findAll();
+	
+	List<Material> selectSelective(Material record);
     
 }
