@@ -37,16 +37,21 @@ public class StockController
 	private DictService dictService;
 	
 	@RequestMapping(value="stockin")
-	public String toUnitSettingPage(ModelMap model, @RequestParam(value="type")Integer type){
+	public String toStockinPage(ModelMap model, @RequestParam(value="type")Integer type){
 		// generate stock No.
 		model.addAttribute("stockNo", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-		
-		List<Dict> unitList = dictService.findByType(Constant.DICT_TYPE_UNIT);
-		model.addAttribute("unitList", unitList == null ? new ArrayList(0) : unitList);
-		
 		model.addAttribute("stockType", type);
 
-		return "/stockin/buy";
+		return "/stock/in";
+	}
+	
+	@RequestMapping(value="stockout")
+	public String toStockoutPage(ModelMap model, @RequestParam(value="type")Integer type){
+		// generate stock No.
+		model.addAttribute("stockNo", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+		model.addAttribute("stockType", type);
+
+		return "/stock/out";
 	}
 	
 	

@@ -70,6 +70,9 @@ function initStockItemDG(){
 	
 }
 
+/**
+ * 添加
+ */
 function addItemRow(){
 	if (!$('#addForm').form('validate'))
 		return;
@@ -117,6 +120,7 @@ function submitStockForm(url){
 					driverName:$('#driverName').val(),
 					trunkNo:$('#trunkNo').val(),
 					source:$('#source').val(),
+					target:$('#target').val(),
 					remark:$('#remark').val(),
 					itemsStr:JSON.stringify(itemArr)
 				},
