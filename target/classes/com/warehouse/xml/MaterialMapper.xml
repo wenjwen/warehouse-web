@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.warehouse.mapper.MaterialMapper" >
+  <resultMap id="BaseResultMap" type="com.warehouse.model.Material" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="unit_id" property="unitId" jdbcType="INTEGER" />
+    <result column="total_quantity" property="totalQuantity" jdbcType="FLOAT" />
+    <result column="balance" property="balance" jdbcType="FLOAT" />
+    <result column="size" property="size" jdbcType="VARCHAR" />
+    <result column="last_stock_take" property="lastStockTake" jdbcType="VARCHAR" />
+    <result column="avg_unit_price" property="avgUnitPrice" jdbcType="FLOAT" />
+    <result column="unit_price" property="unitPrice" jdbcType="FLOAT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="shelf" property="shelf" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="EntryMap" type="com.warehouse.util.Entry" >
+  	 <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, update_user, create_user, create_time, update_time, unit_id, total_quantity, 
+    balance, size, last_stock_take, avg_unit_price, unit_price, name, code, shelf
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from material
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from material
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.warehouse.model.Material" >
+    insert into material (id, update_user, create_user, 
+      create_time, update_time, unit_id, 
+      total_quantity, balance, size, 
+      last_stock_take, avg_unit_price, unit_price, 
+      name, code, shelf)
+    values (#{id,jdbcType=INTEGER}, #{updateUser,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, #{unitId,jdbcType=INTEGER}, 
+      #{totalQuantity,jdbcType=FLOAT}, #{balance,jdbcType=FLOAT}, #{size,jdbcType=VARCHAR}, 
+      #{lastStockTake,jdbcType=VARCHAR}, #{avgUnitPrice,jdbcType=FLOAT}, #{unitPrice,jdbcType=FLOAT}, 
+      #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{shelf,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.warehouse.model.Material" >
+    insert into material
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="unitId != null" >
+        unit_id,
+      </if>
+      <if test="totalQuantity != null" >
+        total_quantity,
+      </if>
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="lastStockTake != null" >
+        last_stock_take,
+      </if>
+      <if test="avgUnitPrice != null" >
+        avg_unit_price,
+      </if>
+      <if test="unitPrice != null" >
+        unit_price,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="shelf != null" >
+        shelf,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="unitId != null" >
+        #{unitId,jdbcType=INTEGER},
+      </if>
+      <if test="totalQuantity != null" >
+        #{totalQuantity,jdbcType=FLOAT},
+      </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=FLOAT},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="lastStockTake != null" >
+        #{lastStockTake,jdbcType=VARCHAR},
+      </if>
+      <if test="avgUnitPrice != null" >
+        #{avgUnitPrice,jdbcType=FLOAT},
+      </if>
+      <if test="unitPrice != null" >
+        #{unitPrice,jdbcType=FLOAT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="shelf != null" >
+        #{shelf,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.warehouse.model.Material" >
+    update material
+    <set >
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="unitId != null" >
+        unit_id = #{unitId,jdbcType=INTEGER},
+      </if>
+      <if test="totalQuantity != null" >
+        total_quantity = #{totalQuantity,jdbcType=FLOAT},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=FLOAT},
+      </if>
+      <if test="size != null" >
+        size = #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="lastStockTake != null" >
+        last_stock_take = #{lastStockTake,jdbcType=VARCHAR},
+      </if>
+      <if test="avgUnitPrice != null" >
+        avg_unit_price = #{avgUnitPrice,jdbcType=FLOAT},
+      </if>
+      <if test="unitPrice != null" >
+        unit_price = #{unitPrice,jdbcType=FLOAT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="shelf != null" >
+        shelf = #{shelf,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.warehouse.model.Material" >
+    update material
+    set update_user = #{updateUser,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR},
+      unit_id = #{unitId,jdbcType=INTEGER},
+      total_quantity = #{totalQuantity,jdbcType=FLOAT},
+      balance = #{balance,jdbcType=FLOAT},
+      size = #{size,jdbcType=VARCHAR},
+      last_stock_take = #{lastStockTake,jdbcType=VARCHAR},
+      avg_unit_price = #{avgUnitPrice,jdbcType=FLOAT},
+      unit_price = #{unitPrice,jdbcType=FLOAT},
+      name = #{name,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      shelf = #{shelf,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findAllEntry" resultMap="EntryMap">
+  	select id, name from material
+  </select>
+</mapper>

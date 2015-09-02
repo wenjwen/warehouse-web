@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.warehouse.mapper.StockMapper" >
+  <resultMap id="BaseResultMap" type="com.warehouse.model.Stock" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="stock_no" property="stockNo" jdbcType="VARCHAR" />
+    <result column="stock_type" property="stockType" jdbcType="INTEGER" />
+    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="stock_time" property="stockTime" jdbcType="VARCHAR" />
+    <result column="driver_name" property="driverName" jdbcType="VARCHAR" />
+    <result column="trunk_no" property="trunkNo" jdbcType="VARCHAR" />
+    <result column="target" property="target" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, stock_no, stock_type, type_name, stock_time, driver_name, trunk_no, target, source, 
+    remark, update_time, update_user, create_user, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from stock
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from stock
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <!-- <insert id="insert" parameterType="com.warehouse.model.Stock"> -->
+  <insert id="insert" parameterType="com.warehouse.model.Stock" useGeneratedKeys="true" keyProperty="id">
+    insert into stock (id, stock_no, stock_type, 
+      type_name, stock_time, driver_name, 
+      trunk_no, target, source, 
+      remark, update_time, update_user, 
+      create_user, create_time)
+    values (#{id,jdbcType=INTEGER}, #{stockNo,jdbcType=VARCHAR}, #{stockType,jdbcType=INTEGER}, 
+      #{typeName,jdbcType=VARCHAR}, #{stockTime,jdbcType=VARCHAR}, #{driverName,jdbcType=VARCHAR}, 
+      #{trunkNo,jdbcType=VARCHAR}, #{target,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, 
+      #{createUser,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.warehouse.model.Stock" >
+    insert into stock
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="stockNo != null" >
+        stock_no,
+      </if>
+      <if test="stockType != null" >
+        stock_type,
+      </if>
+      <if test="typeName != null" >
+        type_name,
+      </if>
+      <if test="stockTime != null" >
+        stock_time,
+      </if>
+      <if test="driverName != null" >
+        driver_name,
+      </if>
+      <if test="trunkNo != null" >
+        trunk_no,
+      </if>
+      <if test="target != null" >
+        target,
+      </if>
+      <if test="source != null" >
+        source,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="stockNo != null" >
+        #{stockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=INTEGER},
+      </if>
+      <if test="typeName != null" >
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="stockTime != null" >
+        #{stockTime,jdbcType=VARCHAR},
+      </if>
+      <if test="driverName != null" >
+        #{driverName,jdbcType=VARCHAR},
+      </if>
+      <if test="trunkNo != null" >
+        #{trunkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="target != null" >
+        #{target,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.warehouse.model.Stock" >
+    update stock
+    <set >
+      <if test="stockNo != null" >
+        stock_no = #{stockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        stock_type = #{stockType,jdbcType=INTEGER},
+      </if>
+      <if test="typeName != null" >
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="stockTime != null" >
+        stock_time = #{stockTime,jdbcType=VARCHAR},
+      </if>
+      <if test="driverName != null" >
+        driver_name = #{driverName,jdbcType=VARCHAR},
+      </if>
+      <if test="trunkNo != null" >
+        trunk_no = #{trunkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="target != null" >
+        target = #{target,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.warehouse.model.Stock" >
+    update stock
+    set stock_no = #{stockNo,jdbcType=VARCHAR},
+      stock_type = #{stockType,jdbcType=INTEGER},
+      type_name = #{typeName,jdbcType=VARCHAR},
+      stock_time = #{stockTime,jdbcType=VARCHAR},
+      driver_name = #{driverName,jdbcType=VARCHAR},
+      trunk_no = #{trunkNo,jdbcType=VARCHAR},
+      target = #{target,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

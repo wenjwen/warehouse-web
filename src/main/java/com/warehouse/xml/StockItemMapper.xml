@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.warehouse.mapper.StockItemMapper" >
+  <resultMap id="BaseResultMap" type="com.warehouse.model.StockItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="stock_id" property="stockId" jdbcType="INTEGER" />
+    <result column="material_id" property="materialId" jdbcType="INTEGER" />
+    <result column="unit_id" property="unitId" jdbcType="INTEGER" />
+    <result column="unit_price" property="unitPrice" jdbcType="FLOAT" />
+    <result column="quantity" property="quantity" jdbcType="FLOAT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, stock_id, material_id, unit_id, unit_price, quantity, remark, update_user, create_user, 
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from stock_item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from stock_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.warehouse.model.StockItem" >
+    insert into stock_item (id, stock_id, material_id, 
+      unit_id, unit_price, quantity, 
+      remark, update_user, create_user, 
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{stockId,jdbcType=INTEGER}, #{materialId,jdbcType=INTEGER}, 
+      #{unitId,jdbcType=INTEGER}, #{unitPrice,jdbcType=FLOAT}, #{quantity,jdbcType=FLOAT}, 
+      #{remark,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.warehouse.model.StockItem" >
+    insert into stock_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="stockId != null" >
+        stock_id,
+      </if>
+      <if test="materialId != null" >
+        material_id,
+      </if>
+      <if test="unitId != null" >
+        unit_id,
+      </if>
+      <if test="unitPrice != null" >
+        unit_price,
+      </if>
+      <if test="quantity != null" >
+        quantity,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="stockId != null" >
+        #{stockId,jdbcType=INTEGER},
+      </if>
+      <if test="materialId != null" >
+        #{materialId,jdbcType=INTEGER},
+      </if>
+      <if test="unitId != null" >
+        #{unitId,jdbcType=INTEGER},
+      </if>
+      <if test="unitPrice != null" >
+        #{unitPrice,jdbcType=FLOAT},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=FLOAT},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.warehouse.model.StockItem" >
+    update stock_item
+    <set >
+      <if test="stockId != null" >
+        stock_id = #{stockId,jdbcType=INTEGER},
+      </if>
+      <if test="materialId != null" >
+        material_id = #{materialId,jdbcType=INTEGER},
+      </if>
+      <if test="unitId != null" >
+        unit_id = #{unitId,jdbcType=INTEGER},
+      </if>
+      <if test="unitPrice != null" >
+        unit_price = #{unitPrice,jdbcType=FLOAT},
+      </if>
+      <if test="quantity != null" >
+        quantity = #{quantity,jdbcType=FLOAT},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.warehouse.model.StockItem" >
+    update stock_item
+    set stock_id = #{stockId,jdbcType=INTEGER},
+      material_id = #{materialId,jdbcType=INTEGER},
+      unit_id = #{unitId,jdbcType=INTEGER},
+      unit_price = #{unitPrice,jdbcType=FLOAT},
+      quantity = #{quantity,jdbcType=FLOAT},
+      remark = #{remark,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into stock_item (id, stock_id, material_id, 
+      unit_id, unit_price, quantity, 
+      remark, update_user, create_user, 
+      create_time, update_time)
+    values 
+    <foreach collection ="list" item ="item" index ="index" separator =",">
+    	(#{item.id,jdbcType=INTEGER}, #{item.stockId,jdbcType=INTEGER}, #{item.materialId,jdbcType=INTEGER}, 
+      #{item.unitId,jdbcType=INTEGER}, #{item.unitPrice,jdbcType=FLOAT}, #{item.quantity,jdbcType=FLOAT}, 
+      #{item.remark,jdbcType=VARCHAR}, #{item.updateUser,jdbcType=INTEGER}, #{item.createUser,jdbcType=INTEGER}, 
+      #{item.createTime,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=VARCHAR})
+     </foreach>
+  </insert>
+</mapper>

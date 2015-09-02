@@ -1,0 +1,164 @@
+<beans xmlns="http://www.springframework.org/schema/beans"  
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+ xsi:schemaLocation="http://www.springframework.org/schema/beans  
+ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+ 			
+<!-- quartz定时任务配置文件，不使用注解方式，便于维护修改      集群部署的问题需要解决-->
+ 
+  <!-- 定时装置所要执行的任务所在的类 -->
+  <bean id="forTestTask" class="com.createw.boxcard.schedule.TestTask" />
+  
+  <!-- 定时生成日计划 -->
+ <bean id="generateRunningPlanTask" class="com.createw.boxcard.schedule.GenerateRunningPlanTask" >
+ 	<!-- <property name="runningPlanService" ref="runningPlanService"/>  -->    
+ </bean>  
+ 
+  <!-- 检票大表数据推送作业 -->
+  <bean id="agmTaskDetailPushTask" class="com.createw.boxcard.job.AgmTaskDetailPushTask" >
+  	<!-- （自己WEB服务的IP） -->
+  	<property name="agmTaskDetailLocalIp">
+  		<value><![CDATA[tcp://192.168.100.140:8088]]></value>
+  	</property>
+  	<!-- dcs_ip 服务地址 -->
+  	<property name="agmTaskDetailServerListnenAddr">
+  		<value><![CDATA[tcp://192.168.2.240:8081]]></value>
+  	</property>
+  	<!-- book the msg ip 发布地址   服务端订阅节点  -->
+  	<property name="agmTaskDetailServerSubAddr">
+  		<value><![CDATA[tcp://192.168.2.240:8082]]></value>
+  	</property>
+  	<!-- 本地标识 -->
+  	<property name="clientId">
+  		<value>167</value>
+  	</property>
+  	<constructor-arg>
+  		<value><![CDATA[tcp://192.168.100.140:8088]]></value>
+  	</constructor-arg>
+  	<constructor-arg>
+  		<value><![CDATA[tcp://192.168.2.240:8081]]></value>
+  	</constructor-arg>
+  	<constructor-arg>
+  		<value><![CDATA[tcp://192.168.2.240:8082]]></value>
+  	</constructor-arg>
+  	<constructor-arg>
+  		<value>167</value>
+  	</constructor-arg>
+  </bean>
+ 
+ 
+  
+  <!-- ===================== 日常任务，定义job ========================== --> 
+ <bean id="agmTaskDetailPushJob"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	  <property name="targetObject" ref="agmTaskDetailPushTask" />
+	  <property name="targetMethod" value="pushAgmTaskDetailData" />
+ </bean>  
+ <bean id="firstJob"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	  <property name="targetObject" ref="forTestTask" />
+	  <property name="targetMethod" value="firstMethod" />
+ </bean>  
+  
+  <bean id="secondJob"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	  <property name="targetObject" ref="forTestTask" />
+	  <property name="targetMethod" value="secondMethod" />
+ </bean> 
+ 
+ <bean id="generateRunningPlanJob"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	  <property name="targetObject" ref="generateRunningPlanTask" />
+	  <property name="targetMethod" value="execute" />
+ </bean> 
+  
+ <!-- ======================== 调度触发器 ，定义触发条件======================== --> 
+ <bean id="agmTaskDetailTrigger"   class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">  
+	  <property name="jobDetail" ref="agmTaskDetailPushJob" />  
+	  <property name="repeatInterval" value="60000" />  <!-- 启动10秒钟后开始执行，每隔1分钟触发一次 -->
+	  <property name="startDelay" value="10000" />  
+ </bean>
+ <bean id="firstTrigger"   class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">  
+	  <property name="jobDetail" ref="firstJob" />  
+	  <property name="repeatInterval" value="600000" />  <!-- 启动10秒钟后开始执行，每隔1分钟触发一次 -->
+	  <property name="startDelay" value="10000" />  
+ </bean>
+ 
+  <bean id="secondTrigger"   class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+	  <property name="jobDetail" ref="secondJob" />  
+	  <!-- cron表达式  -->
+      <property name="cronExpression" value="0 15 23 * * ?" /> <!-- 每天晚上11点15分触发 -->      
+ </bean>
+ 
+ <!-- 每天下午5点生成下一天的执行计划 -->
+  <bean id="generateRunningPlanTrigger"   class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+	  <property name="jobDetail" ref="generateRunningPlanJob" />  
+	  <!-- cron表达式  -->
+      <property name="cronExpression" value="0 0 17 * * ?" /> <!-- 每天下午5点触发 -->      
+ </bean>
+  
+  
+ <!-- ======================== 调度工厂，加入执行队列，等待执行 ======================== -->  
+ <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+	  <property name="triggers">
+		   <list>
+		    <!-- <ref bean="firstTrigger" />  -->
+		    <!-- <ref bean="secondTrigger" />  -->		     
+		    <!--<ref bean="agmTaskDetailTrigger" />	 -->	     
+		    <!-- <ref bean="generateRunningPlanTrigger" /> -->		     
+		   </list>
+	  </property>  
+ </bean>  
+  
+</beans> 
+
+
+<!-- cron表达式
+
+Cron表达式是一个由 7个子表达式组成的字
+符串。每个子表达式都描述了一个单独的日程细节。这些子表达式用空格分隔，分别表示： 
+1. Seconds 秒 
+2. Minutes 分钟 
+3. Hours 小时 
+4. Day-of-Month 月中的天 
+5. Month 月 
+6. Day-of-Week 周中的天 
+7. Year (optional field) 年（可选的域）
+
+s m h dom M dow Y
+
+顺序：右至左路，[年]周月日时分秒
+符号：* 任意
+/ 增量 a/b 从a开始每次增加b
+? 没有值
+L 最后一个值
+W 
+# 月中的第几个周几 6#3 第三个周五
+- 连续区间至
+, 多个值
+
+
+表达式意义 
+"0 0 12 * * ?" 每天中午12点触发 
+"0 15 10 ? * *" 每天上午10:15触发 
+"0 15 10 * * ?" 每天上午10:15触发 
+"0 15 10 * * ? *" 每天上午10:15触发 
+"0 15 10 * * ? 2005" 2005年的每天上午10:15触发 
+"0 * 14 * * ?" 在每天下午2点到下午2:59期间的每1分钟触发 
+"0 0/5 14 * * ?" 在每天下午2点到下午2:55期间的每5分钟触发 
+"0 0/5 14,18 * * ?" 在每天下午2点到2:55期间和下午6点到6:55期间的每5分钟触发 
+"0 0-5 14 * * ?" 在每天下午2点到下午2:05期间的每1分钟触发 
+"0 10,44 14 ? 3 WED" 每年三月的星期三的下午2:10和2:44触发 
+"0 15 10 ? * MON-FRI" 周一至周五的上午10:15触发 
+"0 15 10 15 * ?" 每月15日上午10:15触发 
+"0 15 10 L * ?" 每月最后一日的上午10:15触发 
+"0 15 10 ? * 6L" 每月的最后一个星期五上午10:15触发 
+"0 15 10 ? * 6L 2002-2005" 2002年至2005年的每月的最后一个星期五上午10:15触发 
+"0 15 10 ? * 6#3" 每月的第三个星期五上午10:15触发 
+每天早上6点 
+0 6 * * * 
+每两个小时 
+0 */2 * * * 
+晚上11点到早上8点之间每两个小时，早上八点 
+0 23-7/2，8 * * * 
+每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点 
+0 11 4 * 1-3 
+1月1日早上4点 
+0 4 1 1 * 
+
+ -->

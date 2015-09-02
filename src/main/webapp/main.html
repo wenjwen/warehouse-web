@@ -1,0 +1,54 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="resource/css/easyui.css"/>
+<link type="text/css" rel="stylesheet" href="resource/css/icon.css"/>
+<script type="text/javascript" src="resource/js/jquery.min.js"></script>
+<script type="text/javascript" src="resource/js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="resource/js/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+	function loadContentPage(title, url){
+		$('#p').panel('load', 'mian.html');
+	}
+	
+	$(function(){
+		$('#menuTree').treegrid({
+				url:'http://localhost:8080/warehouse/jsp/menuTree.json',    
+		    idField:'id',    
+		    treeField:'name',    
+		    columns:[[    
+		        {title:'导航',field:'name',width:'100%'}  
+		    ]],    
+		    onClickRow:function(row){
+					alert(row.id + ',' + row.url);
+					$('#p').panel('refresh', '/warehouse/jsp/test');
+		}});
+		
+	})
+
+</script>	
+</head>
+<body>
+	<!-- header -->
+	<div style="height:10%;"></div>   
+	
+	<div class="easyui-layout" style="width:auto;height:85%;">
+	<!-- 左边菜单栏 -->
+	<div region="west" split="true" style="width:20%;height:90%;">
+		<table id="menuTree" class="easyui-treegrid" style="width:100%;height:100%;">
+		</table>
+	</div>
+	
+	<!-- 中间内容 -->
+	<div id="content" region="center">
+		<div id="p" class="easyui-panel" title="内容" style="width:100%;height:100%;" >
+		</div>
+	</div>
+	
+</div> <!-- end easyui-layout  -->
+
+<!-- footer -->
+<div style="height:5%;"></div>
+</body>
+</html>
