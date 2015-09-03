@@ -166,6 +166,6 @@
     select 
     <include refid="Base_Column_List" />
     from menu
-    order by id
+    order by code
   </select>
 </mapper>

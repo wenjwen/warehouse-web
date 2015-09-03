@@ -245,6 +245,6 @@
   	select 
     <include refid="Base_Column_List" /> 
     from material 
-    <include refid="Example_Where_Clause"></include>
+    <include refid="Example_Where_Clause"/>
   </select>
 </mapper>

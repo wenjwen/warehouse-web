@@ -35,7 +35,8 @@
 	});
 	// 初始化datagrid
 	function contentPanelOnLoad(){ 
-		initUnitDG(); // 物料单位管理
+		initUnitDG(); // 单位管理
+		initCategoryDG();// 分类管理
 		initStockItemDG(); // 新购入库
 		
 	}

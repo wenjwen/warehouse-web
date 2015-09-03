@@ -2,7 +2,7 @@
  * 
  */
 var rootUri = '/warehouse/';
-
+//单位
 function initUnitDG(){
 	$('#unit_dg').edatagrid({
 		url: rootUri + 'unitList.json',
@@ -38,6 +38,49 @@ function initUnitDG(){
 			if(!row.isError){
 				$.messager.alert("提示","删除成功", "info");
 				$('#unit_dg').edatagrid('reload');
+			} else if(row.isError){
+				$.messager.alert("提示","删除失败！", "info");
+			}
+		}
+	});
+}
+
+// 分类 
+function initCategoryDG(){
+	$('#category_dg').edatagrid({
+		url: rootUri + 'category.json',
+		saveUrl: rootUri + 'saveCategoryt',
+		updateUrl: rootUri + 'updateCategoryt',
+		destroyUrl: rootUri + 'deleteCategoryt',
+		autoSave: false,
+		checkOnSelect: false,
+		onError: function(index,row){
+			alert(index + ', ' + row.msg);
+		},
+		onAdd: function(index,row){  // 添加新行时
+			//alert("add row : index = " + index);				
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				$.messager.alert("提示","保存成功", "info");
+			} else if(row.isError){
+				$.messager.alert("提示","保存失败！", "info");
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'确定要删除?'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#category_dg').edatagrid('reload');
 			} else if(row.isError){
 				$.messager.alert("提示","删除失败！", "info");
 			}
@@ -152,6 +195,7 @@ function submitStockForm(url){
 		});
 	}
 }
+
 
 /**
  * 清除指定form
