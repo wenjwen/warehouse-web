@@ -119,6 +119,7 @@ function initCategoryDG(){
 // 物料管理
 function initMaterialDG(){
 	//字符串转json对象
+	unitEntry = JSON.parse(unitJson);
 	categoryEntry = JSON.parse(categoryJson);
 	$('#material_dg').edatagrid({
 		url: rootUri + 'material.json',
@@ -137,7 +138,7 @@ function initMaterialDG(){
 		onSave: function(index, row){  // 保存后
 			if(!row.isError){
 				$.messager.alert("提示","保存成功", "info");
-				$('#p').panel('refresh');
+				//$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","保存失败！", "info");
 			}
@@ -155,7 +156,7 @@ function initMaterialDG(){
 		onDestroy:function(index, row){  // 删除后
 			if(!row.isError){
 				$.messager.alert("提示","删除成功", "info");
-				$('#p').panel('refresh');
+				//$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","删除失败！", "info");
 			}
@@ -163,6 +164,7 @@ function initMaterialDG(){
 		columns:[[
 		          {field:'ck', checkbox:true},
 		          {field:'name',title:'物料名',width:80, editor:{type:'textbox', required:true}},
+		          {field:'code',title:'编码',width:80, editor:{type:'textbox'}},
 		          {field:'categoryId',title:'所属分类',width:80,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<categoryEntry.length; i++){
@@ -198,77 +200,47 @@ function initMaterialDG(){
 		        	  }
 		          },
 		          {field:'size',title:'规格',width:60, editor:{type:'textbox'}},
-		          {field:'totalQuantity',title:'单价',width:60, editor:{type:'numberbox', options:{precision:2, required:true}}},
-		          {field:'balance',title:'平均单价',width:60, editor:{type:'numberbox',options:{precision:2, required:true}}},
+		          {field:'totalQuantity',title:'单价',width:60, editor:{type:'numberbox', options:{precision:2}}},
+		          {field:'balance',title:'平均单价',width:60, editor:{type:'numberbox',options:{precision:2}}},
 		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
 		          ]],
 	});
 }
-// 分类
-function initCategoryDG(){
+// 物料查询
+function initSearchMaterialDG(){
 	//字符串转json对象
+	unitEntry = JSON.parse(unitJson);
 	categoryEntry = JSON.parse(categoryJson);
-	$('#category_dg').edatagrid({
-		url: rootUri + 'category.json',
-		saveUrl: rootUri + 'saveCategory',
-		updateUrl: rootUri + 'updateCategory',
-		destroyUrl: rootUri + 'deleteCategory',
-		autoSave: false,
-		checkOnSelect: false,
+	$('#search_material_dg').datagrid({
+		url: rootUri + 'material.json',  // 在MaterialController.java中
 		onError: function(index,row){
 			// alert(index + ', ' + row.msg);
-			$.messager.alert("提示","保存失败！请检查分类名是否已存在", "error");
-		},
-		onAdd: function(index,row){  // 添加新行时
-			
-		},
-		onSave: function(index, row){  // 保存后
-			if(!row.isError){
-				$.messager.alert("提示","保存成功", "info");
-				$('#p').panel('refresh');
-			} else if(row.isError){
-				$.messager.alert("提示","保存失败！", "info");
-			}
-		},
-		destroyMsg:{
-			norecord:{	// when no record is selected
-				title:'警告',
-				msg:'未选择任何条目.'
-			},
-			confirm:{	// when select a row
-				title:'确认',
-				msg:'确定要删除?'
-			}
-		},
-		onDestroy:function(index, row){  // 删除后
-			if(!row.isError){
-				$.messager.alert("提示","删除成功", "info");
-				$('#p').panel('refresh');
-			} else if(row.isError){
-				$.messager.alert("提示","删除失败！", "info");
-			}
+			$.messager.alert("提示","操作失败！", "error");
 		},
 		columns:[[
-		          	{field:'ck', checkbox:true},
-					{field:'name',title:'分类名',width:80, editor:{type:'textbox', required:true}},
-					{field:'parentId',title:'上级分类',width:80,
-						formatter:function(value){
-							for(var i=0; i<categoryEntry.length; i++){
-								if (categoryEntry[i].id == value) return categoryEntry[i].name;
-							}
-							return value;
-						},
-						editor:{
-							type:'combobox',
-							options:{
-								valueField:'id',
-								textField:'name',
-								data:categoryEntry
-							}
-						}
-					},
-					{field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
-				]],
+		          {field:'name',title:'物料名',width:80},
+		          {field:'code',title:'编码',width:80},
+		          {field:'categoryId',title:'所属分类',width:80,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<categoryEntry.length; i++){
+		        			  if (categoryEntry[i].id == value) return categoryEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  }
+		          },
+		          {field:'unitId',title:'单位',width:60,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<unitEntry.length; i++){
+		        			  if (unitEntry[i].id == value) return unitEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  }
+		          },
+		          {field:'size',title:'规格',width:60},
+		          {field:'totalQuantity',title:'单价',width:60},
+		          {field:'balance',title:'平均单价',width:60},
+		          {field:'remark',title:'备注',width:100}
+		          ]],
 	});
 }
 
@@ -276,7 +248,7 @@ function initCategoryDG(){
 function doSearchCategory(){
 	var id = $('#id').combo('getValue');
 	var name = $('#id').combo('getText');
-	if (id != null && id==name){
+	if (id != null && id==name){  // 只是手工输入(id将不准确)
 		$('#category_dg').datagrid('load',{
 			name: $('#id').combo('getText'),
 			parentId: $('#parentId').combo('getValue')
@@ -284,10 +256,33 @@ function doSearchCategory(){
 	}else{
 		$('#category_dg').datagrid('load',{
 			id: $('#id').combo('getValue'),
-			name: $('#id').combo('getText'),
+			//name: $('#id').combo('getText'),
 			parentId: $('#parentId').combo('getValue')
 		});
 	}
+}
+
+//提交物料查询
+function doSearchMaterial(){
+		var id = $('#id').combo('getValue');
+		var name = $('#id').combo('getText');
+		if (id != null && id==name){ // 只是手工输入(id将不准确)
+			$('#search_material_dg').datagrid('load',{
+				//id: $('#id').combo('getValue'),
+				name: $('#id').combo('getText'),
+				code: $('#code').val(),
+				size: $('#size').val(),
+				categoryId: $('#categoryId').combo('getValue')
+			});
+		}else{
+			$('#search_material_dg').datagrid('load',{
+				id: $('#id').combo('getValue'),
+				//name: $('#id').combo('getText'),
+				code: $('#code').val(),
+				size: $('#size').val(),
+				categoryId: $('#categoryId').combo('getValue')
+			});
+		}
 }
 
 function initStockItemDG(){

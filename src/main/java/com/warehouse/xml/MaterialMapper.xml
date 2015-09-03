@@ -34,8 +34,8 @@
   
   <sql id="Example_Where_Clause" >
     <trim prefix="WHERE" prefixOverrides=",|AND|OR">
-    		<if test="unitId != null" >
-     	  	 AND UNIT_ID = #{unitId}
+    		<if test="id != null" >
+     	  	 AND ID = #{id}
     	  </if>
     		<if test="code != null and code != ''" >
      	  	 AND CODE = #{code}
@@ -45,6 +45,9 @@
     	  </if>
     		<if test="size != null and size != ''" >
      	  	 AND SIZE = #{size}
+    	  </if>
+    		<if test="categoryId != null" >
+     	  	 AND CATEGORY_ID = #{categoryId}
     	  </if>
     		<if test="disabled != null">
      	  	 AND DISABLED = #{disabled}

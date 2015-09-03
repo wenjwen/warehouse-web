@@ -48,6 +48,9 @@
 		if ($('#stockItem_dg').length > 0 ){ // 新购入库
 			initStockItemDG(); 
 		}
+		if ($('#search_material_dg').length > 0){
+			initSearchMaterialDG(); 
+		}
 	}
 	
 </script>

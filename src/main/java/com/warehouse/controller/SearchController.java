@@ -2,6 +2,8 @@ package com.warehouse.controller;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONArray;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.warehouse.model.Material;
 import com.warehouse.model.Stock;
+import com.warehouse.service.CategoryService;
+import com.warehouse.service.DictService;
 import com.warehouse.service.MaterialService;
 import com.warehouse.service.StockService;
 import com.warehouse.service.StocktakeService;
@@ -22,28 +26,24 @@ public class SearchController
 	private StockService stockService;
 	@Resource
 	private StocktakeService stocktakeService;
+	@Resource
+	private CategoryService categoryService;
+	@Resource
+	private DictService dictService;
 	
-	@RequestMapping(value="inventorySearchPage")
+	@RequestMapping(value="materialSearchPage")
 	public Object toInventorySearchPage(ModelMap model)
 	{
-		return "/search/inventory";
-	}
-	
-	/**
-	 * 库存查询
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value="inventorySearch.json")
-	@ResponseBody
-	public Object InventorySearch(ModelMap model, Material m)
-	{
-		return materialService.findSelective(m);
+		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
+		return "/search/material";
 	}
 	
 	@RequestMapping(value="stockinSearchPage")
 	public Object toStockinSearchPage(ModelMap model)
 	{
+		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		return "/search/stockin";
 	}
 	
@@ -63,6 +63,8 @@ public class SearchController
 	@RequestMapping(value="stockoutSearchPage")
 	public Object toStockoutSearchPage(ModelMap model)
 	{
+		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		return "/search/stockout";
 	}
 	
@@ -82,6 +84,8 @@ public class SearchController
 	@RequestMapping(value="stocktakeSearchPage")
 	public Object toStocktakeSearchPage(ModelMap model)
 	{
+		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		return "/search/stocktake";
 	}
 	
