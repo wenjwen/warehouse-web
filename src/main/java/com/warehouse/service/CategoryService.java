@@ -15,9 +15,29 @@ public class CategoryService
 	@Resource
 	private CategoryMapper categoryMapper;
 	
-	public List<Category> findAll()
+	public List<Category> findSelective(Category category)
 	{
-		return categoryMapper.findAll();
+		return categoryMapper.findSelective(category);
+	}
+
+	public void save(Category category)
+	{
+		categoryMapper.insert(category);
+	}
+
+	public void updateByIdSelective(Category category)
+	{
+		categoryMapper.updateByPrimaryKeySelective(category);
+	}
+
+	public List<Category> findAllEntry()
+	{
+		return categoryMapper.findAllEntry();
+	}
+
+	public void update(Category category)
+	{
+		categoryMapper.updateByPrimaryKey(category);	
 	}
 
 }

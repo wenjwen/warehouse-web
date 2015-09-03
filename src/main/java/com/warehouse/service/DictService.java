@@ -36,4 +36,10 @@ public class DictService
 		return dictMapper.updateByPrimaryKeySelective(unit);
 		
 	}
+
+
+	public Object findAllEntry()
+	{
+		return dictMapper.findAllEntry();
+	}
 }

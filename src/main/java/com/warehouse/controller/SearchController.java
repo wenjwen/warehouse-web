@@ -38,7 +38,7 @@ public class SearchController
 	@ResponseBody
 	public Object InventorySearch(ModelMap model, Material m)
 	{
-		return materialService.selectSelective(m);
+		return materialService.findSelective(m);
 	}
 	
 	@RequestMapping(value="stockinSearchPage")

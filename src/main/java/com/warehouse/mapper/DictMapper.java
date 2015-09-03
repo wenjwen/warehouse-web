@@ -19,4 +19,6 @@ public interface DictMapper {
 
 	List<Dict> findByType(int type);
 
+	List<Dict> findAllEntry();
+
 }

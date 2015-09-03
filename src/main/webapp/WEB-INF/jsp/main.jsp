@@ -33,12 +33,21 @@
 		});
 		
 	});
+	
 	// 初始化datagrid
 	function contentPanelOnLoad(){ 
-		initUnitDG(); // 单位管理
-		initCategoryDG();// 分类管理
-		initStockItemDG(); // 新购入库
-		
+		if ($('#unit_dg').length > 0 ){ // 单位管理
+			initUnitDG(); 
+		}
+		if ($('#category_dg').length > 0 ){ // 分类管理
+			initCategoryDG();
+		}
+		if ($('#material_dg').length > 0 ){ // 物料管理
+			initMaterialDG(); 
+		}
+		if ($('#stockItem_dg').length > 0 ){ // 新购入库
+			initStockItemDG(); 
+		}
 	}
 	
 </script>

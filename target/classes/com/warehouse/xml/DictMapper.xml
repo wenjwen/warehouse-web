@@ -11,6 +11,12 @@
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
   </resultMap>
+  
+  <resultMap id="EntryMap" type="com.warehouse.util.Entry" >
+  	 <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
   <sql id="Base_Column_List" >
     id, name, type, disabled, create_time, update_user, create_user, update_time
   </sql>
@@ -131,5 +137,9 @@
     <include refid="Base_Column_List" />
     from dict
     where type = #{type,jdbcType=INTEGER} and disabled = 0
+  </select>
+  
+  <select id="findAllEntry" resultMap="EntryMap" >
+	  select id, name from dict where disabled = 0
   </select>
 </mapper>

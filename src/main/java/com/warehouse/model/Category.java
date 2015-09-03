@@ -6,8 +6,12 @@ public class Category {
     private String name;
 
     private Integer parentId;
+    
+    private String parentName;
 
     private Integer depth;
+
+    private Integer disabled;
 
     private String remark;
 
@@ -42,13 +46,31 @@ public class Category {
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
+    
+    public String getParentName()
+	{
+		return parentName;
+	}
 
-    public Integer getDepth() {
+	public void setParentName(String parentName)
+	{
+		this.parentName = parentName;
+	}
+
+	public Integer getDepth() {
         return depth;
     }
 
     public void setDepth(Integer depth) {
         this.depth = depth;
+    }
+
+    public Integer getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Integer disabled) {
+        this.disabled = disabled;
     }
 
     public String getRemark() {

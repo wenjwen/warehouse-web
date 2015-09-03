@@ -5,15 +5,24 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="parent_name" property="parentName" jdbcType="VARCHAR" />
     <result column="depth" property="depth" jdbcType="INTEGER" />
+    <result column="disabled" property="disabled" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
     <result column="update_user" property="updateUser" jdbcType="INTEGER" />
   </resultMap>
+  
+  <resultMap id="EntryMap" type="com.warehouse.util.Entry" >
+  	 <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
   <sql id="Base_Column_List" >
-    id, name, parent_id, depth, remark, update_time, create_time, create_user, update_user
+    id, name, parent_id, depth, disabled, remark, update_time, create_time, create_user, 
+    update_user
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -27,13 +36,13 @@
   </delete>
   <insert id="insert" parameterType="com.warehouse.model.Category" >
     insert into category (id, name, parent_id, 
-      depth, remark, update_time, 
-      create_time, create_user, update_user
-      )
+      depth, disabled, remark, 
+      update_time, create_time, create_user, 
+      update_user)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, 
-      #{depth,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=VARCHAR}, #{createUser,jdbcType=INTEGER}, #{updateUser,jdbcType=INTEGER}
-      )
+      #{depth,jdbcType=INTEGER}, #{disabled,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{createUser,jdbcType=INTEGER}, 
+      #{updateUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.warehouse.model.Category" >
     insert into category
@@ -49,6 +58,9 @@
       </if>
       <if test="depth != null" >
         depth,
+      </if>
+      <if test="disabled != null" >
+        disabled,
       </if>
       <if test="remark != null" >
         remark,
@@ -79,6 +91,9 @@
       <if test="depth != null" >
         #{depth,jdbcType=INTEGER},
       </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=INTEGER},
+      </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
@@ -108,6 +123,9 @@
       <if test="depth != null" >
         depth = #{depth,jdbcType=INTEGER},
       </if>
+      <if test="disabled != null" >
+        disabled = #{disabled,jdbcType=INTEGER},
+      </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
@@ -131,6 +149,7 @@
     set name = #{name,jdbcType=VARCHAR},
       parent_id = #{parentId,jdbcType=INTEGER},
       depth = #{depth,jdbcType=INTEGER},
+      disabled = #{disabled,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=VARCHAR},
@@ -139,9 +158,21 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <select id="findAll" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from category
+  <select id="findAllEntry" resultMap="EntryMap">
+    select id, name
+    from category where disabled = 0
+  </select>
+  
+  <select id="findSelective" parameterType="com.warehouse.model.Category" resultMap="BaseResultMap">
+   	select c.*, p.name as parent_name from category c left join category p on(c.parent_id = p.id) where c.disabled = 0 <!-- 只查有效的 -->
+   			<if test="id != null" >
+     	  	 AND c.ID = #{id}
+    	  </if>
+    		<if test="parentId != null" >
+     	  	 AND c.PARENT_ID = #{parentId}
+    	  </if>
+    		<if test="name != null and name != ''" >
+     	  	 AND c.NAME like '%${name}%'
+    	  </if>
   </select>
 </mapper>

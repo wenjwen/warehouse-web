@@ -2,8 +2,11 @@
  * 
  */
 var rootUri = '/warehouse/';
+var unitEntry; // 单位
+var categoryEntry; // 分类
 //单位
 function initUnitDG(){
+	unitEntry = JSON.parse(unitJson);
 	$('#unit_dg').edatagrid({
 		url: rootUri + 'unitList.json',
 		saveUrl: rootUri + 'saveUnit',
@@ -20,6 +23,7 @@ function initUnitDG(){
 		onSave: function(index, row){  // 保存后
 			if(!row.isError){
 				$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","保存失败！", "info");
 			}
@@ -37,7 +41,7 @@ function initUnitDG(){
 		onDestroy:function(index, row){  // 删除后
 			if(!row.isError){
 				$.messager.alert("提示","删除成功", "info");
-				$('#unit_dg').edatagrid('reload');
+				$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","删除失败！", "info");
 			}
@@ -45,24 +49,28 @@ function initUnitDG(){
 	});
 }
 
-// 分类 
+// 分类
 function initCategoryDG(){
+	//字符串转json对象
+	categoryEntry = JSON.parse(categoryJson);
 	$('#category_dg').edatagrid({
 		url: rootUri + 'category.json',
-		saveUrl: rootUri + 'saveCategoryt',
-		updateUrl: rootUri + 'updateCategoryt',
-		destroyUrl: rootUri + 'deleteCategoryt',
+		saveUrl: rootUri + 'saveCategory',
+		updateUrl: rootUri + 'updateCategory',
+		destroyUrl: rootUri + 'deleteCategory',
 		autoSave: false,
 		checkOnSelect: false,
 		onError: function(index,row){
-			alert(index + ', ' + row.msg);
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("提示","保存失败！请检查分类名是否已存在", "error");
 		},
 		onAdd: function(index,row){  // 添加新行时
-			//alert("add row : index = " + index);				
+			
 		},
 		onSave: function(index, row){  // 保存后
 			if(!row.isError){
 				$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","保存失败！", "info");
 			}
@@ -80,12 +88,206 @@ function initCategoryDG(){
 		onDestroy:function(index, row){  // 删除后
 			if(!row.isError){
 				$.messager.alert("提示","删除成功", "info");
-				$('#category_dg').edatagrid('reload');
+				$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","删除失败！", "info");
 			}
-		}
+		},
+		columns:[[
+		          {field:'ck', checkbox:true},
+		          {field:'name',title:'分类名',width:80, editor:{type:'textbox', required:true}},
+		          {field:'parentId',title:'上级分类',width:80,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<categoryEntry.length; i++){
+		        			  if (categoryEntry[i].id == value) return categoryEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:categoryEntry
+		        		  }
+		        	  }
+		          },
+		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
+		          ]],
 	});
+}
+// 物料管理
+function initMaterialDG(){
+	//字符串转json对象
+	categoryEntry = JSON.parse(categoryJson);
+	$('#material_dg').edatagrid({
+		url: rootUri + 'material.json',
+		saveUrl: rootUri + 'saveMaterial',
+		updateUrl: rootUri + 'updateMaterial',
+		destroyUrl: rootUri + 'deleteMaterial',
+		autoSave: false,
+		checkOnSelect: false,
+		onError: function(index,row){
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("提示","操作失败！", "error");
+		},
+		onAdd: function(index,row){  // 添加新行时
+			
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","保存失败！", "info");
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'确定要删除?'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","删除失败！", "info");
+			}
+		},
+		columns:[[
+		          {field:'ck', checkbox:true},
+		          {field:'name',title:'物料名',width:80, editor:{type:'textbox', required:true}},
+		          {field:'categoryId',title:'所属分类',width:80,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<categoryEntry.length; i++){
+		        			  if (categoryEntry[i].id == value) return categoryEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:categoryEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'unitId',title:'单位',width:60,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<unitEntry.length; i++){
+		        			  if (unitEntry[i].id == value) return unitEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:unitEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'size',title:'规格',width:60, editor:{type:'textbox'}},
+		          {field:'totalQuantity',title:'单价',width:60, editor:{type:'numberbox', options:{precision:2, required:true}}},
+		          {field:'balance',title:'平均单价',width:60, editor:{type:'numberbox',options:{precision:2, required:true}}},
+		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
+		          ]],
+	});
+}
+// 分类
+function initCategoryDG(){
+	//字符串转json对象
+	categoryEntry = JSON.parse(categoryJson);
+	$('#category_dg').edatagrid({
+		url: rootUri + 'category.json',
+		saveUrl: rootUri + 'saveCategory',
+		updateUrl: rootUri + 'updateCategory',
+		destroyUrl: rootUri + 'deleteCategory',
+		autoSave: false,
+		checkOnSelect: false,
+		onError: function(index,row){
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("提示","保存失败！请检查分类名是否已存在", "error");
+		},
+		onAdd: function(index,row){  // 添加新行时
+			
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","保存失败！", "info");
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'确定要删除?'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","删除失败！", "info");
+			}
+		},
+		columns:[[
+		          	{field:'ck', checkbox:true},
+					{field:'name',title:'分类名',width:80, editor:{type:'textbox', required:true}},
+					{field:'parentId',title:'上级分类',width:80,
+						formatter:function(value){
+							for(var i=0; i<categoryEntry.length; i++){
+								if (categoryEntry[i].id == value) return categoryEntry[i].name;
+							}
+							return value;
+						},
+						editor:{
+							type:'combobox',
+							options:{
+								valueField:'id',
+								textField:'name',
+								data:categoryEntry
+							}
+						}
+					},
+					{field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
+				]],
+	});
+}
+
+// 分类信息查询
+function doSearchCategory(){
+	var id = $('#id').combo('getValue');
+	var name = $('#id').combo('getText');
+	if (id != null && id==name){
+		$('#category_dg').datagrid('load',{
+			name: $('#id').combo('getText'),
+			parentId: $('#parentId').combo('getValue')
+		});
+	}else{
+		$('#category_dg').datagrid('load',{
+			id: $('#id').combo('getValue'),
+			name: $('#id').combo('getText'),
+			parentId: $('#parentId').combo('getValue')
+		});
+	}
 }
 
 function initStockItemDG(){

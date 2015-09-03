@@ -17,5 +17,7 @@ public interface CategoryMapper {
 
     int updateByPrimaryKey(Category record);
 
-	List<Category> findAll();
+	List<Category> findSelective(Category category);
+
+	List<Category> findAllEntry();
 }

@@ -23,6 +23,6 @@ public interface MaterialMapper {
 
 	List<Material> findAll();
 	
-	List<Material> selectSelective(Material record);
+	List<Material> findSelective(Material material);
     
 }

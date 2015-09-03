@@ -30,10 +30,24 @@ public class MaterialService
 		return materialMapper.findAll();
 	}
 
-	public List<Material> selectSelective(Material m)
+	public List<Material> findSelective(Material m)
 	{
-		return materialMapper.selectSelective(m);
+		return materialMapper.findSelective(m);
 	}
 
-	
+	public void updateByIdSelective(Material material)
+	{
+		materialMapper.updateByPrimaryKeySelective(material);
+	}
+
+	public void update(Material material)
+	{
+		materialMapper.updateByPrimaryKey(material);
+	}
+
+	public void save(Material material)
+	{
+		materialMapper.insert(material);
+	}
+
 }

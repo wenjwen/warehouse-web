@@ -23,5 +23,9 @@
 	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#unit_dg').edatagrid('saveRow')">保存</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#unit_dg').edatagrid('cancelRow')">取消</a>
 </div>
+<script type="text/javascript">
+	var unitJson = '${unitJson}';
+</script>
+</body>
 </body>
 </html>

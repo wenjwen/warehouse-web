@@ -31,6 +31,10 @@ public class Material {
 
     private String shelf;
 
+    private Integer categoryId;
+
+    private Integer disabled;
+
     public Integer getId() {
         return id;
     }
@@ -149,5 +153,21 @@ public class Material {
 
     public void setShelf(String shelf) {
         this.shelf = shelf;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Integer getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Integer disabled) {
+        this.disabled = disabled;
     }
 }

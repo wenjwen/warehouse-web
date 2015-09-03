@@ -17,6 +17,8 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="shelf" property="shelf" jdbcType="VARCHAR" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="disabled" property="disabled" jdbcType="INTEGER" />
   </resultMap>
   
   <resultMap id="EntryMap" type="com.warehouse.util.Entry" >
@@ -26,7 +28,8 @@
   
   <sql id="Base_Column_List" >
     id, update_user, create_user, create_time, update_time, unit_id, total_quantity, 
-    balance, size, last_stock_take, avg_unit_price, unit_price, name, code, shelf
+    balance, size, last_stock_take, avg_unit_price, unit_price, name, code, shelf, category_id, 
+    disabled
   </sql>
   
   <sql id="Example_Where_Clause" >
@@ -38,10 +41,13 @@
      	  	 AND CODE = #{code}
     	  </if>
     		<if test="name != null and name != ''" >
-     	  	 AND NAME = #{name}
+     	  	 AND NAME like '%${name}%'
     	  </if>
     		<if test="size != null and size != ''" >
      	  	 AND SIZE = #{size}
+    	  </if>
+    		<if test="disabled != null">
+     	  	 AND DISABLED = #{disabled}
     	  </if>
     </trim>
    </sql>
@@ -60,12 +66,14 @@
       create_time, update_time, unit_id, 
       total_quantity, balance, size, 
       last_stock_take, avg_unit_price, unit_price, 
-      name, code, shelf)
+      name, code, shelf, 
+      category_id, disabled)
     values (#{id,jdbcType=INTEGER}, #{updateUser,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, 
       #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, #{unitId,jdbcType=INTEGER}, 
       #{totalQuantity,jdbcType=FLOAT}, #{balance,jdbcType=FLOAT}, #{size,jdbcType=VARCHAR}, 
       #{lastStockTake,jdbcType=VARCHAR}, #{avgUnitPrice,jdbcType=FLOAT}, #{unitPrice,jdbcType=FLOAT}, 
-      #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{shelf,jdbcType=VARCHAR})
+      #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{shelf,jdbcType=VARCHAR}, 
+      #{categoryId,jdbcType=INTEGER}, #{disabled,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.warehouse.model.Material" >
     insert into material
@@ -115,6 +123,12 @@
       <if test="shelf != null" >
         shelf,
       </if>
+      <if test="categoryId != null" >
+        category_id,
+      </if>
+      <if test="disabled != null" >
+        disabled,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -161,6 +175,12 @@
       </if>
       <if test="shelf != null" >
         #{shelf,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null" >
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -209,6 +229,12 @@
       <if test="shelf != null" >
         shelf = #{shelf,jdbcType=VARCHAR},
       </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="disabled != null" >
+        disabled = #{disabled,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -227,7 +253,9 @@
       unit_price = #{unitPrice,jdbcType=FLOAT},
       name = #{name,jdbcType=VARCHAR},
       code = #{code,jdbcType=VARCHAR},
-      shelf = #{shelf,jdbcType=VARCHAR}
+      shelf = #{shelf,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      disabled = #{disabled,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
@@ -241,10 +269,11 @@
     from material
   </select>
   
-  <select id="selectSelective" resultMap="BaseResultMap">
+  <select id="findSelective" parameterType="com.warehouse.model.Material" resultMap="BaseResultMap">
   	select 
     <include refid="Base_Column_List" /> 
     from material 
     <include refid="Example_Where_Clause"/>
   </select>
+ 
 </mapper>

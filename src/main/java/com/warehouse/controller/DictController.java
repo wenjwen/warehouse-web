@@ -26,6 +26,7 @@ public class DictController
 	
 	@RequestMapping(value="unitSetting")
 	public String toUnitSettingPage(ModelMap model){
+		model.addAttribute("unitJson", dictService.findAllEntry());
 		return "/baseInfo/unitSetting";
 	}
 	
