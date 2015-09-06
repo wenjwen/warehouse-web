@@ -1,15 +1,17 @@
 package com.warehouse.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import com.warehouse.controller.StockController;
 import com.warehouse.mapper.StockItemMapper;
 import com.warehouse.mapper.StockMapper;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
+import com.warehouse.model.StockSearch;
 
 @Service
 public class StockService
@@ -35,6 +37,12 @@ public class StockService
 		}
 		
 		itemMapper.batchInsert(stock.getItems());
+	}
+
+
+	public List<StockSearch> stockinoutSearch(StockSearch stockSearch)
+	{
+		return stockMapper.stockinoutSearch(stockSearch);
 	}
 	
 }

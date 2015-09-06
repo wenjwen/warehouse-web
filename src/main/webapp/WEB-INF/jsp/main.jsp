@@ -36,6 +36,8 @@
 	
 	// 初始化datagrid
 	function contentPanelOnLoad(){ 
+		parseToJson(); // 转换json对象
+		
 		if ($('#unit_dg').length > 0 ){ // 单位管理
 			initUnitDG(); 
 		}
@@ -48,8 +50,11 @@
 		if ($('#stockItem_dg').length > 0 ){ // 新购入库
 			initStockItemDG(); 
 		}
-		if ($('#search_material_dg').length > 0){
+		if ($('#search_material_dg').length > 0){ //库存查询
 			initSearchMaterialDG(); 
+		}
+		if ($('#search_stockinout_dg').length > 0){ // 出入库查询
+			initSearchStockinoutDG(); 
 		}
 	}
 	

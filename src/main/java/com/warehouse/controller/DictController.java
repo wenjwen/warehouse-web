@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONArray;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,7 +28,7 @@ public class DictController
 	
 	@RequestMapping(value="unitSetting")
 	public String toUnitSettingPage(ModelMap model){
-		model.addAttribute("unitJson", dictService.findAllEntry());
+		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		return "/baseInfo/unitSetting";
 	}
 	

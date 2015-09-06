@@ -9,8 +9,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.warehouse.model.Material;
-import com.warehouse.model.Stock;
+import com.warehouse.model.StockSearch;
 import com.warehouse.service.CategoryService;
 import com.warehouse.service.DictService;
 import com.warehouse.service.MaterialService;
@@ -39,47 +38,28 @@ public class SearchController
 		return "/search/material";
 	}
 	
-	@RequestMapping(value="stockinSearchPage")
+	@RequestMapping(value="stockinoutSearchPage")
 	public Object toStockinSearchPage(ModelMap model)
 	{
 		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		model.addAttribute("materialJson", JSONArray.fromObject(materialService.findAllEntry()));
 		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
-		return "/search/stockin";
+		
+		return "/search/stockinout";
 	}
 	
 	/**
-	 * 入库查询
+	 * 出入库查询
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="stockinSearch")
+	@RequestMapping(value="stockinout.json")
 	@ResponseBody
-	public Object StockinSearch(ModelMap model, Stock stock)
+	public Object StockinoutSearch(ModelMap model, StockSearch stockSearch)
 	{
-		
-		return null;
+		return stockService.stockinoutSearch(stockSearch);
 	}
 	
-	@RequestMapping(value="stockoutSearchPage")
-	public Object toStockoutSearchPage(ModelMap model)
-	{
-		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
-		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
-		return "/search/stockout";
-	}
-	
-	/**
-	 * 出库查询
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value="stockoutSearch")
-	@ResponseBody
-	public Object StockoutSearch(ModelMap model, Stock stock)
-	{
-		
-		return null;
-	}
 	
 	@RequestMapping(value="stocktakeSearchPage")
 	public Object toStocktakeSearchPage(ModelMap model)

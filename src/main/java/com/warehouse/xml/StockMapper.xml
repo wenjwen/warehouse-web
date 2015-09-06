@@ -17,6 +17,22 @@
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
   </resultMap>
+  <resultMap id="StockSearchMap" type="com.warehouse.model.StockSearch" >
+    <result column="stock_no" property="stockNo" jdbcType="VARCHAR" />
+    <result column="stock_type" property="stockType" jdbcType="INTEGER" />
+    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="stock_time" property="stockTime" jdbcType="VARCHAR" />
+    <result column="driver_name" property="driverName" jdbcType="VARCHAR" />
+    <result column="trunk_no" property="trunkNo" jdbcType="VARCHAR" />
+    <result column="target" property="target" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="stock_id" property="stockId" jdbcType="INTEGER" />
+    <result column="material_id" property="materialId" jdbcType="INTEGER" />
+    <result column="unit_id" property="unitId" jdbcType="INTEGER" />
+    <result column="unit_price" property="unitPrice" jdbcType="FLOAT" />
+    <result column="quantity" property="quantity" jdbcType="FLOAT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
   <sql id="Base_Column_List" >
     id, stock_no, stock_type, type_name, stock_time, driver_name, trunk_no, target, source, 
     remark, update_time, update_user, create_user, create_time
@@ -197,4 +213,38 @@
       create_time = #{createTime,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="stockinoutSearch" parameterType="com.warehouse.model.StockSearch" resultMap="StockSearchMap">
+  	select s.stock_no, s.stock_type, s.type_name, s.stock_time, s.driver_name, s.trunk_no, s.target, s.source, i.stock_id, i.material_id, i.unit_id, i.unit_price, i.quantity, i.remark 
+  	from stock_item i left join stock s on(i.stock_id = s.id)
+			where 1=1 
+			<if test="stockNo != null and stockNo != ''">
+				 and s.stock_no = #{stockNo}
+			</if>
+			<if test="stockType != null and stockType != ''">
+				and s.stock_type = #{stockType}
+			</if>
+			<if test="stockTime != null and stockTime != ''">
+				and s.stock_time = #{stockTime}
+			</if>
+			<if test="driverName != null and driverName != ''">
+				and s.driverName like '%${driverName}%'
+			</if>
+			<if test="trunkNo != null and trunkNo != ''">
+				and s.trunk_no like '%${trunkNo}%'
+			</if>
+			<if test="target != null and target != ''">
+				and s.target like '%${target}%'
+			</if>
+			<if test="source != null and source != ''">
+				and s.source = #{source}
+			</if>
+			<if test="materialId != null and materialId != ''">
+				and i.material_id = #{materialId}
+			</if>
+			<!-- <if test="materialName != null and materialName != ''">
+				i.material_name like '%${materialName}%'
+			</if> -->
+			
+  </select>
 </mapper>

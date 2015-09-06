@@ -4,9 +4,30 @@
 var rootUri = '/warehouse/';
 var unitEntry; // 单位
 var categoryEntry; // 分类
+var materilEntry; // 物料
+var stockTypeEntry=[// 出入库类型
+{"id":1,"name":"新购入库"},
+{"id":2,"name":"归还入库"},
+{"id":3,"name":"退货入库"},
+{"id":4,"name":"生产出库"},
+{"id":5,"name":"借用出库"},
+{"id":6,"name":"销售出库"}]; 
+
+// 转成js对象
+function parseToJson(){
+	if (typeof(unitJson) != "undefined" && unitJson != null && unitJson != ''){
+		unitEntry = JSON.parse(unitJson);
+	}
+	if (typeof(categoryJson) != "undefined" && categoryJson != null && categoryJson != ''){
+		categoryEntry = JSON.parse(categoryJson);
+	}
+	if (typeof(materialJson) != "undefined" && materialJson != null && materialJson != ''){
+		materilEntry = JSON.parse(materialJson);
+	}
+}
+
 //单位
 function initUnitDG(){
-	unitEntry = JSON.parse(unitJson);
 	$('#unit_dg').edatagrid({
 		url: rootUri + 'unitList.json',
 		saveUrl: rootUri + 'saveUnit',
@@ -51,8 +72,6 @@ function initUnitDG(){
 
 // 分类
 function initCategoryDG(){
-	//字符串转json对象
-	categoryEntry = JSON.parse(categoryJson);
 	$('#category_dg').edatagrid({
 		url: rootUri + 'category.json',
 		saveUrl: rootUri + 'saveCategory',
@@ -200,8 +219,8 @@ function initMaterialDG(){
 		        	  }
 		          },
 		          {field:'size',title:'规格',width:60, editor:{type:'textbox'}},
-		          {field:'totalQuantity',title:'单价',width:60, editor:{type:'numberbox', options:{precision:2}}},
-		          {field:'balance',title:'平均单价',width:60, editor:{type:'numberbox',options:{precision:2}}},
+		          {field:'totalQuantity',title:'总数量',width:60, editor:{type:'numberbox', options:{precision:2}}},
+		          {field:'balance',title:'库存数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
 		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
 		          ]],
 	});
@@ -237,9 +256,48 @@ function initSearchMaterialDG(){
 		        	  }
 		          },
 		          {field:'size',title:'规格',width:60},
-		          {field:'totalQuantity',title:'单价',width:60},
-		          {field:'balance',title:'平均单价',width:60},
+		          {field:'totalQuantity',title:'总数量',width:60},
+		          {field:'balance',title:'库存数量',width:60},
+		          {field:'unitPrice',title:'单价',width:60},
+		          {field:'avgUnitPrice',title:'平均单价',width:60},
 		          {field:'remark',title:'备注',width:100}
+		          ]],
+	});
+}
+// 出入库查询
+function initSearchStockinoutDG(){
+	$('#search_stockinout_dg').datagrid({
+		url: rootUri + 'stockinout.json',  // 在MaterialController.java中
+		onError: function(index,row){
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("提示","操作失败！", "error");
+		},
+		columns:[[
+		          {field:'typeName',title:'出入库类型',width:40},
+		          {field:'stockNo',title:'单号',width:50},
+		          {field:'materialId',title:'物料',width:70,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<materilEntry.length; i++){
+		        			  if (materilEntry[i].id == value) return materilEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  }
+		          },
+		          {field:'unitId',title:'单位',width:30,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<unitEntry.length; i++){
+		        			  if (unitEntry[i].id == value) return unitEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  }
+		          },
+		          {field:'size',title:'规格',width:50},
+		          {field:'quantity',title:'数量',width:40},
+		          {field:'unitPrice',title:'单价',width:40},
+		          {field:'avgUnitPrice',title:'平均单价',width:40},
+		          {field:'target',title:'目标',width:40},
+		          {field:'source',title:'来源',width:40},
+		          {field:'remark',title:'物料备注',width:100}
 		          ]],
 	});
 }
@@ -283,6 +341,28 @@ function doSearchMaterial(){
 				categoryId: $('#categoryId').combo('getValue')
 			});
 		}
+}
+
+//提交出入库查询
+function doSearchStockinout(){
+	var materialId = $('#id').combo('getValue');
+	var materialName = $('#id').combo('getText');
+	if (materialId != null && materialId==materialName){ // id和name一样说明只是手工输入，而并不是选择的(id将不对)
+		materialId = null;						
+	}else {
+		materialName = null;
+	}
+	$('#search_stockinout_dg').datagrid('load',{
+		materialId: materialId,
+		materialName: materialName,
+		stockNo: $('#stockNo').val(),
+		stockType: $('#stockType').combo('getValue'),
+		stockTime: $('#stockTime').combo('getValue'),
+		driverName: $('#driverName').val(),
+		trunkNo: $('#trunkNo').val(),
+		target: $('#target').val(),
+		source: $('#source').val(),
+	});
 }
 
 function initStockItemDG(){
