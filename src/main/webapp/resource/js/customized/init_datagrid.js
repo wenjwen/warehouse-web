@@ -137,9 +137,6 @@ function initCategoryDG(){
 }
 // 物料管理
 function initMaterialDG(){
-	//字符串转json对象
-	unitEntry = JSON.parse(unitJson);
-	categoryEntry = JSON.parse(categoryJson);
 	$('#material_dg').edatagrid({
 		url: rootUri + 'material.json',
 		saveUrl: rootUri + 'saveMaterial',
@@ -227,9 +224,6 @@ function initMaterialDG(){
 }
 // 物料查询
 function initSearchMaterialDG(){
-	//字符串转json对象
-	unitEntry = JSON.parse(unitJson);
-	categoryEntry = JSON.parse(categoryJson);
 	$('#search_material_dg').datagrid({
 		url: rootUri + 'material.json',  // 在MaterialController.java中
 		onError: function(index,row){

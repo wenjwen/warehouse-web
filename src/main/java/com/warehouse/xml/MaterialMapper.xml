@@ -24,6 +24,8 @@
   <resultMap id="EntryMap" type="com.warehouse.util.Entry" >
   	 <result column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+  	 <result column="extra_value1" property="extraValue1" jdbcType="INTEGER" />
+    <result column="extra_value2" property="extraValue2" jdbcType="VARCHAR" />
   </resultMap>
   
   <sql id="Base_Column_List" >
@@ -263,7 +265,8 @@
   </update>
   
   <select id="findAllEntry" resultMap="EntryMap">
-  	select id, name from material
+  	select m.id, m.name, d.id as extra_value1, d.name as extra_value2 
+  	from material m left join dict d on(m.unit_id = d.id)
   </select>
   
   <select id="findAll" resultMap="BaseResultMap">
@@ -278,5 +281,5 @@
     from material 
     <include refid="Example_Where_Clause"/>
   </select>
- 
+  
 </mapper>

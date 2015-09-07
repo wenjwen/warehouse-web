@@ -83,12 +83,21 @@
 				<tr>
 		 			<td>物料:</td>
 		 			<td><input id="materialComboBox" class="easyui-combobox" name="materialId"  style="width:171px;"
-		 								data-options="required:true,valueField:'id',textField:'name',url:'/warehouse/materialEntry.json'">
-		 			<td>数量:</td>
-		 			<td><input id="quantity" type="text" class="easyui-numberbox" data-options="min:0,precision:2,required:true"></input></td>
+		 								data-options="required:true,
+		 								valueField:'id',
+		 								textField:'name',
+		 								url:'/warehouse/materialEntry.json',
+		 								onSelect: function(rec){
+    									$('#unitComboBox').combobox('setValue', rec.extraValue1);
+    									$('#unitComboBox').combobox('setText', rec.extraValue2);
+    								}"/>
 		 			<td>单位:</td>
 		 			<td><input id="unitComboBox" class="easyui-combobox" name="materialId" style="width:171px;"
-		 								data-options="required:true,valueField:'id',textField:'name',url:'/warehouse/unitList.json'"></input></td>
+		 								data-options="readonly:true, valueField:'id',textField:'name'"/></td>
+<!-- 		 			<td><input id="unitComboBox" class="easyui-combobox" name="materialId" style="width:171px;"
+		 								data-options="required:true,valueField:'id',textField:'name',url:'/warehouse/unitList.json'"/></td> -->
+		 			<td>数量:</td>
+		 			<td><input id="quantity" type="text" class="easyui-numberbox" data-options="min:0,precision:2,required:true"></input></td>
 		 			<td rowspan="2"><a class="easyui-linkbutton" style="width:40px;height:60px;" href="#" onclick="addItemRow();">添加 ↓</a></td>
 		 		</tr>
 		 		<tr>
