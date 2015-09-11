@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.warehouse.mapper.StocktakeMapper" >
+  <resultMap id="BaseResultMap" type="com.warehouse.model.Stocktake" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="stocktake_person" property="stocktakePerson" jdbcType="VARCHAR" />
+    <result column="stocktake_date" property="stocktakeDate" jdbcType="VARCHAR" />
+    <result column="submitted" property="submitted" jdbcType="INTEGER" />
+    <result column="submit_date" property="submitDate" jdbcType="VARCHAR" />
+    <result column="auditor" property="auditor" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, type, stocktake_person, stocktake_date, submitted, submit_date, auditor, 
+    remark, create_time, create_user, update_user, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from stocktake
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from stocktake
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.warehouse.model.Stocktake" >
+    insert into stocktake (id, name, type, 
+      stocktake_person, stocktake_date, submitted, 
+      submit_date, auditor, remark, 
+      create_time, create_user, update_user, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{stocktakePerson,jdbcType=VARCHAR}, #{stocktakeDate,jdbcType=VARCHAR}, #{submitted,jdbcType=INTEGER}, 
+      #{submitDate,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=VARCHAR}, #{createUser,jdbcType=INTEGER}, #{updateUser,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.warehouse.model.Stocktake" >
+    insert into stocktake
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="stocktakePerson != null" >
+        stocktake_person,
+      </if>
+      <if test="stocktakeDate != null" >
+        stocktake_date,
+      </if>
+      <if test="submitted != null" >
+        submitted,
+      </if>
+      <if test="submitDate != null" >
+        submit_date,
+      </if>
+      <if test="auditor != null" >
+        auditor,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="stocktakePerson != null" >
+        #{stocktakePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="stocktakeDate != null" >
+        #{stocktakeDate,jdbcType=VARCHAR},
+      </if>
+      <if test="submitted != null" >
+        #{submitted,jdbcType=INTEGER},
+      </if>
+      <if test="submitDate != null" >
+        #{submitDate,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.warehouse.model.Stocktake" >
+    update stocktake
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="stocktakePerson != null" >
+        stocktake_person = #{stocktakePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="stocktakeDate != null" >
+        stocktake_date = #{stocktakeDate,jdbcType=VARCHAR},
+      </if>
+      <if test="submitted != null" >
+        submitted = #{submitted,jdbcType=INTEGER},
+      </if>
+      <if test="submitDate != null" >
+        submit_date = #{submitDate,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        auditor = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.warehouse.model.Stocktake" >
+    update stocktake
+    set name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      stocktake_person = #{stocktakePerson,jdbcType=VARCHAR},
+      stocktake_date = #{stocktakeDate,jdbcType=VARCHAR},
+      submitted = #{submitted,jdbcType=INTEGER},
+      submit_date = #{submitDate,jdbcType=VARCHAR},
+      auditor = #{auditor,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

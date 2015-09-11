@@ -114,7 +114,7 @@ function initCategoryDG(){
 		},
 		columns:[[
 		          {field:'ck', checkbox:true},
-		          {field:'name',title:'分类名',width:80, editor:{type:'textbox', required:true}},
+		          {field:'name',title:'分类名',width:80, editor:{type:'textbox', options:{required:true}}},
 		          {field:'parentId',title:'上级分类',width:80,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<categoryEntry.length; i++){
@@ -252,8 +252,8 @@ function initSearchMaterialDG(){
 		          {field:'size',title:'规格',width:60},
 		          {field:'totalQuantity',title:'总数量',width:60},
 		          {field:'balance',title:'库存数量',width:60},
-		          {field:'unitPrice',title:'单价',width:60},
-		          {field:'avgUnitPrice',title:'平均单价',width:60},
+		          {field:'unitPrice',title:'单价(元)',width:60},
+		          {field:'avgUnitPrice',title:'平均单价(元)',width:60},
 		          {field:'remark',title:'备注',width:100}
 		          ]],
 	});
@@ -287,8 +287,8 @@ function initSearchStockinoutDG(){
 		          },
 		          {field:'size',title:'规格',width:50},
 		          {field:'quantity',title:'数量',width:40},
-		          {field:'unitPrice',title:'单价',width:40},
-		          {field:'avgUnitPrice',title:'平均单价',width:40},
+		          {field:'unitPrice',title:'单价(元)',width:40},
+		          {field:'avgUnitPrice',title:'平均单价(元)',width:40},
 		          {field:'target',title:'目标',width:40},
 		          {field:'source',title:'来源',width:40},
 		          {field:'remark',title:'物料备注',width:100}
@@ -359,6 +359,70 @@ function doSearchStockinout(){
 	});
 }
 
+//月度盘点
+function initStocktakeDG(){
+	$('#stocktake_dg').edatagrid({
+		url: rootUri + 'stocktake/month.json',
+		saveUrl: rootUri + 'saveStocktake',
+		updateUrl: rootUri + 'updateStocktake',
+		destroyUrl: rootUri + 'deleteStocktake',
+		autoSave: false,
+		checkOnSelect: false,
+		onError: function(index,row){
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("提示","操作失败！", "error");
+		},
+		onAdd: function(index,row){  // 添加新行时
+			
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","保存失败！", "info");
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'确定要删除?'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","删除失败！", "info");
+			}
+		},
+		columns:[[
+		          //{field:'ck', checkbox:true},
+		          {field:'name',title:'盘点标记',width:80, editor:{type:'textbox', options:{required:true}}},
+		          {field:'stocktakeDate',title:'盘点日期',width:80, editor:{type:'datebox', options:{required:true}}},
+		          {field:'stocktakePerson',title:'盘点人',width:80, editor:{type:'textbox', options:{required:true}}},
+		          {field:'parentId',title:'是否已提交',width:60,
+		        	  formatter:function(value){
+		        		  var show = '否';
+		        		  switch(value){
+		        		  	case 0: show= '否';break;
+		        		  	case 1: show= '是';break;
+		        		  };
+		        		  return show;
+		        	  }
+		          },
+		          {field:'submitDate',title:'提交日期',width:80},
+		          {field:'auditot',title:'审核人',width:80},
+		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}}
+		          ]],
+	});
+}
+
 function initStockItemDG(){
 	$('#stockItem_dg').edatagrid({
 		autoSave: false,
@@ -370,7 +434,7 @@ function initStockItemDG(){
 					{field:'materialName',title:'物料',width:80},
 					{field:'unitId', hidden:true},
 					{field:'unitName',title:'单位',width:80},
-					{field:'unitPrice',title:'单价',width:80,editor:{type:'numberbox', options:{precision:2}}},
+					{field:'unitPrice',title:'单价(元)',width:80,editor:{type:'numberbox', options:{precision:2}}},
 					{field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2}}},
 					{field:'remark',title:'备注',width:140,editor:'text'},
 					{field:'action',title:'操作',width:50,align:'center',

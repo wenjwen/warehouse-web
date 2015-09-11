@@ -3,6 +3,7 @@ package com.warehouse.mapper;
 import java.util.List;
 
 import com.warehouse.model.Material;
+import com.warehouse.model.StockItem;
 import com.warehouse.util.Entry;
 
 public interface MaterialMapper {
@@ -24,5 +25,9 @@ public interface MaterialMapper {
 	List<Material> findAll();
 	
 	List<Material> findSelective(Material material);
+
+	List<Material> selectBalanceByIds(List<StockItem> items);
+
+	void updateMaterialBalance(List<Material> mList);
     
 }

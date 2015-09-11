@@ -282,4 +282,24 @@
     <include refid="Example_Where_Clause"/>
   </select>
   
+  <select id="selectBalanceByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+      select id, total_quantity, balance, unit_id, avg_unit_price from material where id in 
+            <foreach item="item" index="index" collection="list"
+            open="(" separator="," close=")">
+              #{item.materialId}
+          </foreach>
+  </select>
+  
+  <update id="updateMaterialBalance" parameterType="java.util.List">
+         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update material  
+                <set>
+                    balance=#{item.balance}, 
+                    total_quantity=#{item.totalQuantity},
+                    avg_unit_price=#{item.avgUnitPrice}
+                </set>
+                where id = #{item.id}
+         </foreach>
+  </update>
+  
 </mapper>

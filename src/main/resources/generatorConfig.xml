@@ -40,17 +40,17 @@
 
 		<!-- <table schema="warehouse" tableName="user"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table> -->
+		</table>
 		<table schema="warehouse" tableName="category"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
-		<!-- <table schema="warehouse" tableName="dict"  enableCountByExample="false" enableUpdateByExample="false"
+		<table schema="warehouse" tableName="dict"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table> -->
+		</table>
 		<table schema="warehouse" tableName="material"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
-		<!-- <table schema="warehouse" tableName="menu"  enableCountByExample="false" enableUpdateByExample="false"
+		<table schema="warehouse" tableName="menu"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 		<table schema="warehouse" tableName="stock"  enableCountByExample="false" enableUpdateByExample="false"
@@ -58,11 +58,14 @@
 		</table>
 		<table schema="warehouse" tableName="stock_item"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table>
-		<table schema="warehouse" tableName="take_stock"  enableCountByExample="false" enableUpdateByExample="false"
+		</table> -->
+		<table schema="warehouse" tableName="stocktake"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
-		<table schema="warehouse" tableName="user_menu_rel"  enableCountByExample="false" enableUpdateByExample="false"
+		<table schema="warehouse" tableName="stocktake_item"  enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		</table>
+		<!-- <table schema="warehouse" tableName="user_menu_rel"  enableCountByExample="false" enableUpdateByExample="false"
 			enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table> -->
 	</context>

@@ -56,6 +56,9 @@
 		if ($('#search_stockinout_dg').length > 0){ // 出入库查询
 			initSearchStockinoutDG(); 
 		}
+		if ($('#stocktake_dg').length > 0){ // 月度盘点
+			initStocktakeDG(); 
+		}
 	}
 	
 </script>

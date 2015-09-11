@@ -1,7 +1,6 @@
 package com.warehouse.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,13 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.warehouse.model.Dict;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
 import com.warehouse.service.DictService;
 import com.warehouse.service.StockService;
 import com.warehouse.util.AjaxResult;
-import com.warehouse.util.Constant;
 
 @Controller
 public class StockController
@@ -73,6 +70,7 @@ public class StockController
 		{
 			result.setIsError(true);
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return result;
