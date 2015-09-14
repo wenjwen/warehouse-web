@@ -28,8 +28,8 @@
 </div>
 <script type="text/javascript">
 	// 获取json字符串
-	var categoryJson ='${categoryJson}';
-	var unitJson = '${unitJson}';
+	// categoryJson ='${categoryJson}';
+	// unitJson = '${unitJson}';
 </script>
 </body>
 </html>

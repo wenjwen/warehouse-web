@@ -1,6 +1,9 @@
 package com.warehouse.mapper;
 
+import java.util.List;
+
 import com.warehouse.model.Stocktake;
+import com.warehouse.util.Entry;
 
 public interface StocktakeMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +17,8 @@ public interface StocktakeMapper {
     int updateByPrimaryKeySelective(Stocktake record);
 
     int updateByPrimaryKey(Stocktake record);
+
+	List<Stocktake> findAll(Stocktake s);
+
+	List<Entry> findAllEntry();
 }

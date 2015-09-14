@@ -23,9 +23,10 @@
   
   <resultMap id="EntryMap" type="com.warehouse.util.Entry" >
   	 <result column="id" property="id" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-  	 <result column="extra_value1" property="extraValue1" jdbcType="INTEGER" />
-    <result column="extra_value2" property="extraValue2" jdbcType="VARCHAR" />
+     <result column="name" property="name" jdbcType="VARCHAR" />
+  	 <result column="unit_id" property="extraValue1" jdbcType="INTEGER" />
+	   <result column="unit_name" property="extraValue2" jdbcType="VARCHAR" />
+	   <result column="balance" property="extraValue3" jdbcType="FLOAT" />
   </resultMap>
   
   <sql id="Base_Column_List" >
@@ -265,7 +266,7 @@
   </update>
   
   <select id="findAllEntry" resultMap="EntryMap">
-  	select m.id, m.name, d.id as extra_value1, d.name as extra_value2 
+  	select m.id, m.name, m.balance, d.id as unit_id, d.name as unit_name 
   	from material m left join dict d on(m.unit_id = d.id)
   </select>
   

@@ -10,7 +10,7 @@ public class Entry
 	
 	private Object extraValue2;
 
-	
+	private Object extraValue3;
 
 	public Object getExtraValue1()
 	{
@@ -30,6 +30,16 @@ public class Entry
 	public void setExtraValue2(Object extraValue2)
 	{
 		this.extraValue2 = extraValue2;
+	}
+
+	public Object getExtraValue3()
+	{
+		return extraValue3;
+	}
+
+	public void setExtraValue3(Object extraValue3)
+	{
+		this.extraValue3 = extraValue3;
 	}
 
 	public Integer getId()

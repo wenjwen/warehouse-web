@@ -30,7 +30,7 @@
 </div>
 <script type="text/javascript">
 	// 获取分类json字符串
-	var categoryJson ='${categoryJson}';
+	categoryJson ='${categoryJson}';
 </script>
 </body>
 </html>

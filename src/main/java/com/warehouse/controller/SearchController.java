@@ -33,17 +33,17 @@ public class SearchController
 	@RequestMapping(value="materialSearchPage")
 	public Object toInventorySearchPage(ModelMap model)
 	{
-		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
-		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
+		//model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		//model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		return "/search/material";
 	}
 	
 	@RequestMapping(value="stockinoutSearchPage")
 	public Object toStockinSearchPage(ModelMap model)
 	{
-		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
-		model.addAttribute("materialJson", JSONArray.fromObject(materialService.findAllEntry()));
-		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
+		//model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		//model.addAttribute("materialJson", JSONArray.fromObject(materialService.findAllEntry()));
+		//model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		
 		return "/search/stockinout";
 	}
@@ -64,8 +64,8 @@ public class SearchController
 	@RequestMapping(value="stocktakeSearchPage")
 	public Object toStocktakeSearchPage(ModelMap model)
 	{
-		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
-		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
+		//model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
+		//model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		return "/search/stocktake";
 	}
 	

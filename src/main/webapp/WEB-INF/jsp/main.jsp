@@ -14,6 +14,9 @@
 <script type="text/javascript" src="resource/js/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="resource/js/customized/init_datagrid.js"></script>
 <script type="text/javascript">
+	var unitJson = '${unitJson}';
+	var categoryJson = '${categoryJson}';
+	var materialJson = '${materialJson}';
 	
 	$(function(){
 		// 初始化导航菜单

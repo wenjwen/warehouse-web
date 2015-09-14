@@ -106,4 +106,8 @@
       </if>
     </trim>
   </insert>
+  
+  <delete id="deleteByStocktakeId" parameterType="java.lang.Integer">
+  	delete from stocktake_item where stocktake_id = #{id}
+  </delete>
 </mapper>

@@ -40,8 +40,7 @@ public class MaterialController
 	@RequestMapping(value="materialSetting")
 	public Object materialSetting(ModelMap model){
 		
-		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
-		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
+		model.addAttribute("materialJson", JSONArray.fromObject(materialService.findAllEntry()));
 		return "/baseInfo/materialSetting";
 	}
 	

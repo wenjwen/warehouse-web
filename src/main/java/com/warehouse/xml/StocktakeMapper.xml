@@ -20,6 +20,17 @@
     id, name, type, stocktake_person, stocktake_date, submitted, submit_date, auditor, 
     remark, create_time, create_user, update_user, update_time
   </sql>
+  <sql id="sql_where">
+	  <if test="id != null and id > 0">
+	       and ID = #{id,jdbcType=DECIMAL}
+	  </if>
+	  <if test="name != null">
+        and NAME like '%${name}%'
+     </if>
+	  <if test="submitted != null and submitted != -1">
+        and SUBMITTED = #{submitted,jdbcType=INTEGER}
+	  </if>
+	</sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -185,4 +196,16 @@
       update_time = #{updateTime,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="findAll" parameterType="com.warehouse.model.Stocktake" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> 
+  	from stocktake
+  	<where>
+			<include refid="sql_where" />
+		</where>
+  </select>
+  
+  <select id="findAllEntry" resultMap="BaseResultMap">
+  	select id, name from stocktake
+  </select>
 </mapper>
