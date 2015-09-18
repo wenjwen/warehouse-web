@@ -10,6 +10,8 @@ public class StocktakeItem {
     private Integer unitId;
 
     private Double quantity;
+    
+    private Double balance;
 
     private String result;
 
@@ -65,7 +67,17 @@ public class StocktakeItem {
         this.quantity = quantity;
     }
 
-    public String getResult() {
+    public Double getBalance()
+	{
+		return balance;
+	}
+
+	public void setBalance(Double balance)
+	{
+		this.balance = balance;
+	}
+
+	public String getResult() {
         return result;
     }
 

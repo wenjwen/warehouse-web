@@ -9,11 +9,11 @@ public class Stocktake {
 
     private String stocktakePerson;
 
-    private String stocktakeDate;
+    private String stocktakeTime;
 
     private Integer submitted;
 
-    private String submitDate;
+    private String submitTime;
 
     private String auditor;
 
@@ -59,12 +59,12 @@ public class Stocktake {
         this.stocktakePerson = stocktakePerson;
     }
 
-    public String getStocktakeDate() {
-        return stocktakeDate;
+    public String getStocktakeTime() {
+        return stocktakeTime;
     }
 
-    public void setStocktakeDate(String stocktakeDate) {
-        this.stocktakeDate = stocktakeDate;
+    public void setStocktakeTime(String stocktakeTime) {
+        this.stocktakeTime = stocktakeTime;
     }
 
     public Integer getSubmitted() {
@@ -75,12 +75,12 @@ public class Stocktake {
         this.submitted = submitted;
     }
 
-    public String getSubmitDate() {
-        return submitDate;
+    public String getSubmitTime() {
+        return submitTime;
     }
 
-    public void setSubmitDate(String submitDate) {
-        this.submitDate = submitDate;
+    public void setSubmitTime(String submitTime) {
+        this.submitTime = submitTime;
     }
 
     public String getAuditor() {

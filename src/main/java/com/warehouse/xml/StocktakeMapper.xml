@@ -6,9 +6,9 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="stocktake_person" property="stocktakePerson" jdbcType="VARCHAR" />
-    <result column="stocktake_date" property="stocktakeDate" jdbcType="VARCHAR" />
+    <result column="stocktake_time" property="stocktakeTime" jdbcType="VARCHAR" />
     <result column="submitted" property="submitted" jdbcType="INTEGER" />
-    <result column="submit_date" property="submitDate" jdbcType="VARCHAR" />
+    <result column="submit_time" property="submitTime" jdbcType="VARCHAR" />
     <result column="auditor" property="auditor" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
@@ -17,7 +17,7 @@
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, type, stocktake_person, stocktake_date, submitted, submit_date, auditor, 
+    id, name, type, stocktake_person, stocktake_time, submitted, submit_time, auditor, 
     remark, create_time, create_user, update_user, update_time
   </sql>
   <sql id="sql_where">
@@ -43,13 +43,13 @@
   </delete>
   <insert id="insert" parameterType="com.warehouse.model.Stocktake" >
     insert into stocktake (id, name, type, 
-      stocktake_person, stocktake_date, submitted, 
-      submit_date, auditor, remark, 
+      stocktake_person, stocktake_time, submitted, 
+      submit_time, auditor, remark, 
       create_time, create_user, update_user, 
       update_time)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{stocktakePerson,jdbcType=VARCHAR}, #{stocktakeDate,jdbcType=VARCHAR}, #{submitted,jdbcType=INTEGER}, 
-      #{submitDate,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{stocktakePerson,jdbcType=VARCHAR}, #{stocktakeTime,jdbcType=VARCHAR}, #{submitted,jdbcType=INTEGER}, 
+      #{submitTime,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=VARCHAR}, #{createUser,jdbcType=INTEGER}, #{updateUser,jdbcType=INTEGER}, 
       #{updateTime,jdbcType=VARCHAR})
   </insert>
@@ -68,14 +68,14 @@
       <if test="stocktakePerson != null" >
         stocktake_person,
       </if>
-      <if test="stocktakeDate != null" >
-        stocktake_date,
+      <if test="stocktakeTime != null" >
+        stocktake_time,
       </if>
       <if test="submitted != null" >
         submitted,
       </if>
-      <if test="submitDate != null" >
-        submit_date,
+      <if test="submitTime != null" >
+        submit_time,
       </if>
       <if test="auditor != null" >
         auditor,
@@ -109,14 +109,14 @@
       <if test="stocktakePerson != null" >
         #{stocktakePerson,jdbcType=VARCHAR},
       </if>
-      <if test="stocktakeDate != null" >
-        #{stocktakeDate,jdbcType=VARCHAR},
+      <if test="stocktakeTime != null" >
+        #{stocktakeTime,jdbcType=VARCHAR},
       </if>
       <if test="submitted != null" >
         #{submitted,jdbcType=INTEGER},
       </if>
-      <if test="submitDate != null" >
-        #{submitDate,jdbcType=VARCHAR},
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=VARCHAR},
       </if>
       <if test="auditor != null" >
         #{auditor,jdbcType=VARCHAR},
@@ -150,14 +150,14 @@
       <if test="stocktakePerson != null" >
         stocktake_person = #{stocktakePerson,jdbcType=VARCHAR},
       </if>
-      <if test="stocktakeDate != null" >
-        stocktake_date = #{stocktakeDate,jdbcType=VARCHAR},
+      <if test="stocktakeTime != null" >
+        stocktake_time = #{stocktakeTime,jdbcType=VARCHAR},
       </if>
       <if test="submitted != null" >
         submitted = #{submitted,jdbcType=INTEGER},
       </if>
-      <if test="submitDate != null" >
-        submit_date = #{submitDate,jdbcType=VARCHAR},
+      <if test="submitTime != null" >
+        submit_time = #{submitTime,jdbcType=VARCHAR},
       </if>
       <if test="auditor != null" >
         auditor = #{auditor,jdbcType=VARCHAR},
@@ -185,9 +185,9 @@
     set name = #{name,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       stocktake_person = #{stocktakePerson,jdbcType=VARCHAR},
-      stocktake_date = #{stocktakeDate,jdbcType=VARCHAR},
+      stocktake_time = #{stocktakeTime,jdbcType=VARCHAR},
       submitted = #{submitted,jdbcType=INTEGER},
-      submit_date = #{submitDate,jdbcType=VARCHAR},
+      submit_time = #{submitTime,jdbcType=VARCHAR},
       auditor = #{auditor,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=VARCHAR},

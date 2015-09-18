@@ -1,5 +1,7 @@
 package com.warehouse.mapper;
 
+import java.util.List;
+
 import com.warehouse.model.StocktakeItem;
 
 public interface StocktakeItemMapper {
@@ -9,4 +11,6 @@ public interface StocktakeItemMapper {
     int insertSelective(StocktakeItem record);
 
 	void deleteByStocktakeId(Integer id);
+
+	void batchInsert(List<StocktakeItem> list);
 }

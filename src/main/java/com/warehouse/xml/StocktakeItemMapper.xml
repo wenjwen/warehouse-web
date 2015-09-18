@@ -7,6 +7,7 @@
     <result column="material_id" property="materialId" jdbcType="INTEGER" />
     <result column="unit_id" property="unitId" jdbcType="INTEGER" />
     <result column="quantity" property="quantity" jdbcType="FLOAT" />
+    <result column="balance" property="balance" jdbcType="FLOAT" />
     <result column="result" property="result" jdbcType="VARCHAR" />
     <result column="differ_quantity" property="differQuantity" jdbcType="FLOAT" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -17,12 +18,12 @@
   </resultMap>
   <insert id="insert" parameterType="com.warehouse.model.StocktakeItem" >
     insert into stocktake_item (id, stocktake_id, material_id, 
-      unit_id, quantity, result, 
+      unit_id, quantity, balance, result, 
       differ_quantity, remark, update_user, 
       create_user, create_time, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{stocktakeId,jdbcType=INTEGER}, #{materialId,jdbcType=INTEGER}, 
-      #{unitId,jdbcType=INTEGER}, #{quantity,jdbcType=FLOAT}, #{result,jdbcType=VARCHAR}, 
+      #{unitId,jdbcType=INTEGER}, #{quantity,jdbcType=FLOAT}, #{balance,jdbcType=FLOAT}, #{result,jdbcType=VARCHAR}, 
       #{differQuantity,jdbcType=FLOAT}, #{remark,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, 
       #{createUser,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}
       )
@@ -44,6 +45,9 @@
       </if>
       <if test="quantity != null" >
         quantity,
+      </if>
+      <if test="balance != null" >
+        balance ,
       </if>
       <if test="result != null" >
         result,
@@ -83,6 +87,9 @@
       <if test="quantity != null" >
         #{quantity,jdbcType=FLOAT},
       </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=FLOAT},
+      </if>
       <if test="result != null" >
         #{result,jdbcType=VARCHAR},
       </if>
@@ -110,4 +117,14 @@
   <delete id="deleteByStocktakeId" parameterType="java.lang.Integer">
   	delete from stocktake_item where stocktake_id = #{id}
   </delete>
+  
+  <insert id="batchInsert" parameterType="java.util.List">
+  	insert into stocktake_item (id, stocktake_id, material_id, unit_id, balance, create_time, update_time)
+    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+    	(#{item.id,jdbcType=INTEGER}, #{item.stocktakeId,jdbcType=INTEGER}, #{item.materialId,jdbcType=INTEGER}, 
+       #{item.unitId,jdbcType=INTEGER}, #{item.balance,jdbcType=FLOAT}, #{item.createTime,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=VARCHAR}
+      )
+    </foreach>  
+  </insert>
 </mapper>

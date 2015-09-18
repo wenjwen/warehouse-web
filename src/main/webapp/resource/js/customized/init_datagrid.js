@@ -222,6 +222,93 @@ function initMaterialDG(){
 		          ]],
 	});
 }
+// TODO 物料盘点
+function initMaterialDG(){
+	$('#stocktakeItem_dg').edatagrid({
+		url: rootUri + 'material.json',
+		saveUrl: rootUri + 'saveMaterial',
+		updateUrl: rootUri + 'updateMaterial',
+		destroyUrl: rootUri + 'deleteMaterial',
+		autoSave: false,
+		checkOnSelect: false,
+		onError: function(index,row){
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("提示","操作失败！", "error");
+		},
+		onAdd: function(index,row){  // 添加新行时
+			
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				$.messager.alert("提示","保存成功", "info");
+				//$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","保存失败！", "info");
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'确定要删除?'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				//$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","删除失败！", "info");
+			}
+		},
+		columns:[[
+		          {field:'ck', checkbox:true},
+		          {field:'name',title:'物料名',width:80, editor:{type:'textbox', required:true}},
+		          {field:'code',title:'编码',width:80, editor:{type:'textbox'}},
+		          {field:'categoryId',title:'所属分类',width:80,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<categoryEntry.length; i++){
+		        			  if (categoryEntry[i].id == value) return categoryEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:categoryEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'unitId',title:'单位',width:60,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<unitEntry.length; i++){
+		        			  if (unitEntry[i].id == value) return unitEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:unitEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'size',title:'规格',width:60, editor:{type:'textbox'}},
+		          {field:'totalQuantity',title:'总数量',width:60, editor:{type:'numberbox', options:{precision:2}}},
+		          {field:'balance',title:'库存数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
+		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
+		          ]],
+	});
+}
 // 物料查询
 function initSearchMaterialDG(){
 	$('#search_material_dg').datagrid({
@@ -422,7 +509,7 @@ function initStocktakeDG(){
 		        		  return show;
 		        	  }
 		          },
-		          {field:'submitDate',title:'提交日期',width:80},
+		          {field:'submitDate',title:'提交时间',width:80},
 		          //{field:'auditot',title:'审核人',width:80},
 		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}},
 		          {field:'action',title:'操作',width:50,align:'center',
@@ -592,7 +679,7 @@ function addTakingItemRow(){
 /**
  * 提交stock form
  */
-function submitStockForm(url){
+function submitStockForm(){
 	if ($('#stockInfo').form('validate') && $('#stockItem_dg').datagrid('getRows').length > 0){
 		// 取数据
 		var item;
@@ -610,7 +697,7 @@ function submitStockForm(url){
 		}
 		
 		$.ajax({
-			url:url,
+			url:'/warehouse/stockin/save',
 			dataType:'json',
 			type:'POST',
 			data : {
@@ -625,6 +712,54 @@ function submitStockForm(url){
 					remark:$('#remark').val(),
 					itemsStr:JSON.stringify(itemArr)
 				},
+			success:function(data){
+				if(!data.isError){
+					$.messager.alert('提示','保存成功','info');
+				} 
+				else {
+					$.messager.alert('错误','保存失败！','error');
+				}
+			}
+		});
+	}
+}
+
+/**
+ * 提交stock taking form, 盘点数据
+ */
+function submitStockForm(){
+	if ($('#stockInfo').form('validate') && $('#stockItem_dg').datagrid('getRows').length > 0){
+		// 取数据
+		var item;
+		var itemArr = [];
+		var rows = $('#stockItem_dg').datagrid('getRows');
+		for(var i=0; i<rows.length;i++){
+			console.log('material id =' + rows[i].materialId);
+			item = new Object();
+			item.materialId = rows[i].materialId;
+			item.unitId = rows[i].unitId;
+			item.quantity = rows[i].quantity;
+			item.unitPrice = rows[i].unitPrice;
+			item.remark = rows[i].remark;
+			itemArr.push(item);
+		}
+		
+		$.ajax({
+			url:'/warehouse/stockin/save',
+			dataType:'json',
+			type:'POST',
+			data : {
+				stockNo:$('#stockNo').val(), 
+				typeName:$('#typeName').val(),
+				stockType:$('#stockType').val(),
+				stockTime:$('#stockTime').combo('getValue'),
+				driverName:$('#driverName').val(),
+				trunkNo:$('#trunkNo').val(),
+				source:$('#source').val(),
+				target:$('#target').val(),
+				remark:$('#remark').val(),
+				itemsStr:JSON.stringify(itemArr)
+			},
 			success:function(data){
 				if(!data.isError){
 					$.messager.alert('提示','保存成功','info');
