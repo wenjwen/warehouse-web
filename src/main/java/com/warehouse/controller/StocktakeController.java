@@ -96,9 +96,26 @@ public class StocktakeController
 	}
 	
 	@RequestMapping(value="stocktake/taking")
-	public String taking(){
+	public String taking(ModelMap model, Integer stocktakeId){
+		model.addAttribute("stocktake", stocktakeService.findById(stocktakeId));
+		
 		return "/stocktake/taking";
 	}
 	
+	
+	@RequestMapping(value="stocktakeItem.json")
+	@ResponseBody
+	public Object findItems(Integer stocktakeId){
+		try
+		{
+			return stocktakeService.findItemsByStocktakeId(stocktakeId);
+		}
+		catch (Exception e)
+		{
+			logger.error("---findItems(Integer stocktakeId)出错！ Msg:" + e.getMessage());
+		}
+		
+		return null;
+	}
 	
 }

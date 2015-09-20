@@ -24,7 +24,7 @@
 	</td><td>
 	<span>物料名</span>
 	</td><td>
-	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name',url:'/warehouse/materialEntry.json'" style="width:171px;line-height:26px;border:1px solid #ccc"/>
+	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="width:171px;line-height:26px;border:1px solid #ccc"/>
 	</td>
 	<td>
 	<span>日期</span>

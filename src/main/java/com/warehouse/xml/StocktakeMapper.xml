@@ -41,7 +41,7 @@
     delete from stocktake
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.warehouse.model.Stocktake" >
+  <insert id="insert" parameterType="com.warehouse.model.Stocktake" useGeneratedKeys="true" keyProperty="id">
     insert into stocktake (id, name, type, 
       stocktake_person, stocktake_time, submitted, 
       submit_time, auditor, remark, 
@@ -141,31 +141,31 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.warehouse.model.Stocktake" >
     update stocktake
     <set >
-      <if test="name != null" >
+      <if test="name != null and name != ''" >
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
         type = #{type,jdbcType=INTEGER},
       </if>
-      <if test="stocktakePerson != null" >
+      <if test="stocktakePerson != null  and stocktakePerson != ''" >
         stocktake_person = #{stocktakePerson,jdbcType=VARCHAR},
       </if>
-      <if test="stocktakeTime != null" >
+      <if test="stocktakeTime != null and stocktakeTime != ''" >
         stocktake_time = #{stocktakeTime,jdbcType=VARCHAR},
       </if>
       <if test="submitted != null" >
         submitted = #{submitted,jdbcType=INTEGER},
       </if>
-      <if test="submitTime != null" >
+      <if test="submitTime != null and submitTime != ''" >
         submit_time = #{submitTime,jdbcType=VARCHAR},
       </if>
-      <if test="auditor != null" >
+      <if test="auditor != null and auditor != ''" >
         auditor = #{auditor,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null" >
+      <if test="remark != null and remark != ''" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null and createTime != ''" >
         create_time = #{createTime,jdbcType=VARCHAR},
       </if>
       <if test="createUser != null" >
@@ -174,7 +174,7 @@
       <if test="updateUser != null" >
         update_user = #{updateUser,jdbcType=INTEGER},
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null and updateTime != ''" >
         update_time = #{updateTime,jdbcType=VARCHAR},
       </if>
     </set>

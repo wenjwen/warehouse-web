@@ -11,13 +11,13 @@
 </table>
 <div id="toolbar">
 	<span>物料名</span>
-	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name',url:'/warehouse/materialEntry.json'" style="line-height:26px;border:1px solid #ccc"/>
+	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="line-height:26px;border:1px solid #ccc"/>
 	<span>编号</span>
 	<input id="code" class="easyui-textbox"  style="line-height:26px;border:1px solid #ccc"/>
 	<span>规格</span>
 	<input id="size" class="easyui-textbox"  style="line-height:26px;border:1px solid #ccc"/>
 	<span>分类</span>
-	<input id="categoryId" class="easyui-combobox" data-options="valueField:'id',textField:'name',url:'/warehouse/categoryEntry.json'" style="line-height:26px;border:1px solid #ccc"/>
+	<input id="categoryId" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="line-height:26px;border:1px solid #ccc"/>
 	<a href="#" class="easyui-linkbutton" plain="true" onclick="doSearchMaterial()">搜索</a>
 	<!-- 
 	<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#material_dg').edatagrid('addRow')">新增</a>

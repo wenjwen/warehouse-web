@@ -86,7 +86,6 @@
 		 								data-options="required:true,
 		 								valueField:'id',
 		 								textField:'name',
-		 								url:'/warehouse/materialEntry.json',
 		 								onSelect: function(rec){
     									$('#unitComboBox').combobox('setValue', rec.extraValue1);
     									$('#unitComboBox').combobox('setText', rec.extraValue2);

@@ -35,8 +35,6 @@
 				}
 		});
 		
-		$('#p').panel('refresh', rootUri + 'capture'); // 配置url
-		
 	});
 	
 	// 初始化datagrid
@@ -64,6 +62,10 @@
 		if ($('#stocktake_dg').length > 0){ // 月度盘点
 			initStocktakeDG(); 
 		}
+		if ($('#stocktakeItem_dg').length > 0){ // 盘点单
+			initStocktakeItem_DG(); 
+		}
+		
 	}
 	
 </script>

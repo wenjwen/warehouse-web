@@ -70,5 +70,15 @@ public class StocktakeService
 		stocktakeMapper.deleteByPrimaryKey(id);
 	}
 
+	public Stocktake findById(Integer stocktakeId)
+	{
+		return stocktakeMapper.selectByPrimaryKey(stocktakeId);
+	}
+
+	public List<StocktakeItem> findItemsByStocktakeId(Integer stocktakeId)
+	{
+		return stocktakeItemMapper.findByStocktakeId(stocktakeId);
+	}
+
 	
 }

@@ -23,9 +23,9 @@
 	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#category_dg').edatagrid('saveRow')">保存</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#category_dg').edatagrid('cancelRow')">取消</a> | 
 	<span>上级分类</span>
-	<input id="parentId" class="easyui-combobox" data-options="valueField:'id',textField:'name',url:'/warehouse/categoryEntry.json'" style="line-height:26px;border:1px solid #ccc">
+	<input id="parentId" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="line-height:26px;border:1px solid #ccc">
 	<span>分类名</span>
-	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name',url:'/warehouse/categoryEntry.json'" style="line-height:26px;border:1px solid #ccc">
+	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="line-height:26px;border:1px solid #ccc">
 	<a href="#" class="easyui-linkbutton" plain="true" onclick="doSearchCategory()">搜索</a>
 </div>
 <script type="text/javascript">

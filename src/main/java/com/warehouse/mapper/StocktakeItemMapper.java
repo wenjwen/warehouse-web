@@ -13,4 +13,6 @@ public interface StocktakeItemMapper {
 	void deleteByStocktakeId(Integer id);
 
 	void batchInsert(List<StocktakeItem> list);
+
+	List<StocktakeItem> findByStocktakeId(Integer stocktakeId);
 }

@@ -134,6 +134,10 @@ function initCategoryDG(){
 		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
 		          ]],
 	});
+	
+	$('#id').combobox('loadData', categoryEntry);
+	$('#parentId').combobox('loadData', categoryEntry);
+	
 }
 // 物料管理
 function initMaterialDG(){
@@ -223,14 +227,17 @@ function initMaterialDG(){
 	});
 }
 // TODO 物料盘点
-function initMaterialDG(){
+function initStocktakeItem_DG(){
 	$('#stocktakeItem_dg').edatagrid({
-		url: rootUri + 'material.json',
-		saveUrl: rootUri + 'saveMaterial',
-		updateUrl: rootUri + 'updateMaterial',
-		destroyUrl: rootUri + 'deleteMaterial',
+		url: rootUri + 'stocktakeItem.json',
+		saveUrl: rootUri + 'saveItem',
+		updateUrl: rootUri + 'updateItem',
+		destroyUrl: rootUri + 'deleteItem',
 		autoSave: false,
 		checkOnSelect: false,
+		queryParams: {  // 请求时的参数
+			stocktakeId: $('stocktakeId').val(),
+		},
 		onError: function(index,row){
 			// alert(index + ', ' + row.msg);
 			$.messager.alert("提示","操作失败！", "error");
@@ -267,24 +274,6 @@ function initMaterialDG(){
 		columns:[[
 		          {field:'ck', checkbox:true},
 		          {field:'name',title:'物料名',width:80, editor:{type:'textbox', required:true}},
-		          {field:'code',title:'编码',width:80, editor:{type:'textbox'}},
-		          {field:'categoryId',title:'所属分类',width:80,
-		        	  formatter:function(value){
-		        		  for(var i=0; i<categoryEntry.length; i++){
-		        			  if (categoryEntry[i].id == value) return categoryEntry[i].name;
-		        		  }
-		        		  return value;
-		        	  },
-		        	  editor:{
-		        		  type:'combobox',
-		        		  options:{
-		        			  valueField:'id',
-		        			  textField:'name',
-		        			  data:categoryEntry,
-		        			  required:true
-		        		  }
-		        	  }
-		          },
 		          {field:'unitId',title:'单位',width:60,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<unitEntry.length; i++){
@@ -302,13 +291,18 @@ function initMaterialDG(){
 		        		  }
 		        	  }
 		          },
-		          {field:'size',title:'规格',width:60, editor:{type:'textbox'}},
-		          {field:'totalQuantity',title:'总数量',width:60, editor:{type:'numberbox', options:{precision:2}}},
-		          {field:'balance',title:'库存数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
+		          {field:'balance',title:'账面数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
+		          {field:'quantity',title:'盘点数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
+		          //{field:'differQuantity',title:'相差数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
+		          //{field:'result',title:'盘点结果',width:60, editor:{type:'numberbox',options:{precision:2}}},
 		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
 		          ]],
 	});
+	
+	$('#materialId').combobox('loadData', materialEntry);
+	
 }
+
 // 物料查询
 function initSearchMaterialDG(){
 	$('#search_material_dg').datagrid({
@@ -344,7 +338,11 @@ function initSearchMaterialDG(){
 		          {field:'remark',title:'备注',width:100}
 		          ]],
 	});
+	
+	$('#id').combobox('loadData', materialEntry);
+	$('#categoryId').combobox('loadData', categoryEntry);
 }
+
 // 出入库查询
 function initSearchStockinoutDG(){
 	$('#search_stockinout_dg').datagrid({
@@ -381,6 +379,8 @@ function initSearchStockinoutDG(){
 		          {field:'remark',title:'物料备注',width:100}
 		          ]],
 	});
+	
+	$('#id').combobox('loadData', materialEntry);
 }
 
 // 分类信息查询
@@ -497,7 +497,7 @@ function initStocktakeDG(){
 		columns:[[
 		          //{field:'ck', checkbox:true},
 		          {field:'name',title:'盘点标记',width:80, editor:{type:'textbox', options:{required:true}}},
-		          {field:'stocktakeDate',title:'盘点日期',width:80, editor:{type:'datebox', options:{required:true}}},
+		          {field:'stocktakeTime',title:'盘点日期',width:80, editor:{type:'datebox', options:{required:true}}},
 		          {field:'stocktakePerson',title:'盘点人',width:80, editor:{type:'textbox', options:{required:true}}},
 		          {field:'submitted',title:'是否已提交',width:60,
 		        	  formatter:function(value){
@@ -509,13 +509,13 @@ function initStocktakeDG(){
 		        		  return show;
 		        	  }
 		          },
-		          {field:'submitDate',title:'提交时间',width:80},
+		          {field:'submitTime',title:'提交时间',width:80},
 		          //{field:'auditot',title:'审核人',width:80},
 		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}},
 		          {field:'action',title:'操作',width:50,align:'center',
 						formatter:function(value,row,index){
 							var content = '';
-							if (row.submitted == 0){  // 未提交的
+							if (row.submitted == null || row.submitted == 0){  // 未提交的
 								content = '<a href="#" onclick="goStocktake('+row.id+','+row.submitted+',\''+row.name+'\');">盘点</a>&nbsp;';
 								content += '<a href="#" onclick="submit('+row.id+');">提交</a>';
 							} else if (row.submitted == 1){  //已提交的
@@ -530,14 +530,15 @@ function initStocktakeDG(){
 
 function goStocktake(id, submitted, name){
 	//$('#win').window('open');
-	$('#win').window({
+	/*$('#win').window({
 		title:'仓库盘点 - - '+ name,
 	    width:900,
 	    height:'100%',
 	    modal:true,
 	    href: rootUri + 'stocktake/taking',
 	    onLoad:initStockTakingItemDG
-	});
+	});*/
+	$('#p').panel('refresh', 'stocktake/taking?stocktakeId=' + id); // 配置url
 }
 
 
@@ -588,6 +589,7 @@ function initStockItemDG(){
 		$('#stockItem_dg').edatagrid('hideColumn', 'unitPrice');
 	}
 	
+	$('#materialComboBox').combobox('loadData', materialEntry);
 }
 
 function initStockTakingItemDG(){
