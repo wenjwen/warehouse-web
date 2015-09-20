@@ -35,6 +35,8 @@
 				}
 		});
 		
+		$('#p').panel('refresh', rootUri + 'capture'); // 配置url
+		
 	});
 	
 	// 初始化datagrid
