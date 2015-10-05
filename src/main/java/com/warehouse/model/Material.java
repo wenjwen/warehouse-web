@@ -1,5 +1,7 @@
 package com.warehouse.model;
 
+import java.math.BigDecimal;
+
 public class Material {
     private Integer id;
 
@@ -13,17 +15,17 @@ public class Material {
 
     private Integer unitId;
 
-    private Double totalQuantity;
+    private BigDecimal totalQuantity;
 
-    private Double balance;
+    private BigDecimal balance;
 
     private String size;
 
     private String lastStockTake;
 
-    private Double avgUnitPrice;
+    private BigDecimal avgUnitPrice;
 
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 
     private String name;
 
@@ -83,22 +85,6 @@ public class Material {
         this.unitId = unitId;
     }
 
-    public Double getTotalQuantity() {
-        return totalQuantity;
-    }
-
-    public void setTotalQuantity(Double totalQuantity) {
-        this.totalQuantity = totalQuantity;
-    }
-
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
-
     public String getSize() {
         return size;
     }
@@ -113,22 +99,6 @@ public class Material {
 
     public void setLastStockTake(String lastStockTake) {
         this.lastStockTake = lastStockTake;
-    }
-
-    public Double getAvgUnitPrice() {
-        return avgUnitPrice;
-    }
-
-    public void setAvgUnitPrice(Double avgUnitPrice) {
-        this.avgUnitPrice = avgUnitPrice;
-    }
-
-    public Double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(Double unitPrice) {
-        this.unitPrice = unitPrice;
     }
 
     public String getName() {
@@ -170,4 +140,46 @@ public class Material {
     public void setDisabled(Integer disabled) {
         this.disabled = disabled;
     }
+
+	public BigDecimal getTotalQuantity()
+	{
+		return totalQuantity;
+	}
+
+	public void setTotalQuantity(BigDecimal totalQuantity)
+	{
+		this.totalQuantity = totalQuantity;
+	}
+
+	public BigDecimal getBalance()
+	{
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance)
+	{
+		this.balance = balance;
+	}
+
+	public BigDecimal getAvgUnitPrice()
+	{
+		return avgUnitPrice;
+	}
+
+	public void setAvgUnitPrice(BigDecimal avgUnitPrice)
+	{
+		this.avgUnitPrice = avgUnitPrice;
+	}
+
+	public BigDecimal getUnitPrice()
+	{
+		return unitPrice;
+	}
+
+	public void setUnitPrice(BigDecimal unitPrice)
+	{
+		this.unitPrice = unitPrice;
+	}
+    
+    
 }

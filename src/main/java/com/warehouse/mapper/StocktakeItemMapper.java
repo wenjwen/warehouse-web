@@ -15,4 +15,8 @@ public interface StocktakeItemMapper {
 	void batchInsert(List<StocktakeItem> list);
 
 	List<StocktakeItem> findByStocktakeId(Integer stocktakeId);
+
+	void update(StocktakeItem item);
+
+	List<StocktakeItem> findItemsByParam(StocktakeItem item);
 }

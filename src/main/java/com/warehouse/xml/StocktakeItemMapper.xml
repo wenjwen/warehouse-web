@@ -6,16 +6,29 @@
     <result column="stocktake_id" property="stocktakeId" jdbcType="INTEGER" />
     <result column="material_id" property="materialId" jdbcType="INTEGER" />
     <result column="unit_id" property="unitId" jdbcType="INTEGER" />
-    <result column="quantity" property="quantity" jdbcType="FLOAT" />
-    <result column="balance" property="balance" jdbcType="FLOAT" />
+    <result column="quantity" property="quantity" jdbcType="DECIMAL" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
     <result column="result" property="result" jdbcType="VARCHAR" />
-    <result column="differ_quantity" property="differQuantity" jdbcType="FLOAT" />
+    <result column="differ_quantity" property="differQuantity" jdbcType="DECIMAL" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="update_user" property="updateUser" jdbcType="INTEGER" />
     <result column="create_user" property="createUser" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
   </resultMap>
+  
+  <sql id="sql_where">
+  		<if test="id != null" >
+        and id = #{id,jdbcType=INTEGER}
+      </if>
+      <if test="stocktakeId != null" >
+        and stocktake_id = #{stocktakeId,jdbcType=INTEGER}
+      </if>
+      <if test="materialId != null" >
+        and material_id = #{materialId,jdbcType=INTEGER}
+      </if>
+  </sql>
+  
   <insert id="insert" parameterType="com.warehouse.model.StocktakeItem" >
     insert into stocktake_item (id, stocktake_id, material_id, 
       unit_id, quantity, balance, result, 
@@ -23,8 +36,8 @@
       create_user, create_time, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{stocktakeId,jdbcType=INTEGER}, #{materialId,jdbcType=INTEGER}, 
-      #{unitId,jdbcType=INTEGER}, #{quantity,jdbcType=FLOAT}, #{balance,jdbcType=FLOAT}, #{result,jdbcType=VARCHAR}, 
-      #{differQuantity,jdbcType=FLOAT}, #{remark,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, 
+      #{unitId,jdbcType=INTEGER}, #{quantity,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{result,jdbcType=VARCHAR}, 
+      #{differQuantity,jdbcType=DECIMAL}, #{remark,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, 
       #{createUser,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}
       )
   </insert>
@@ -85,16 +98,16 @@
         #{unitId,jdbcType=INTEGER},
       </if>
       <if test="quantity != null" >
-        #{quantity,jdbcType=FLOAT},
+        #{quantity,jdbcType=DECIMAL},
       </if>
       <if test="balance != null" >
-        #{balance,jdbcType=FLOAT},
+        #{balance,jdbcType=DECIMAL},
       </if>
       <if test="result != null" >
         #{result,jdbcType=VARCHAR},
       </if>
       <if test="differQuantity != null" >
-        #{differQuantity,jdbcType=FLOAT},
+        #{differQuantity,jdbcType=DECIMAL},
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
@@ -123,12 +136,53 @@
     values 
     <foreach collection="list" item="item" index="index" separator="," >  
     	(#{item.id,jdbcType=INTEGER}, #{item.stocktakeId,jdbcType=INTEGER}, #{item.materialId,jdbcType=INTEGER}, 
-       #{item.unitId,jdbcType=INTEGER}, #{item.balance,jdbcType=FLOAT}, #{item.createTime,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=VARCHAR}
+       #{item.unitId,jdbcType=INTEGER}, #{item.balance,jdbcType=DECIMAL}, #{item.createTime,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=VARCHAR}
       )
     </foreach>  
   </insert>
   
   <select id="findByStocktakeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
   	select * from stocktake_item where stocktake_id = #{stocktakeId}
+  </select>
+  
+  <update id="update" parameterType="com.warehouse.model.StocktakeItem">
+  	update stocktake_item 
+  	<set>
+      <if test="quantity != null" >
+       quantity = #{quantity,jdbcType=DECIMAL},
+      </if>
+      <if test="balance != null" >
+       balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="result != null" >
+       result = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="differQuantity != null" >
+       differ_quantity = #{differQuantity,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+       remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+       update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="createUser != null" >
+       create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+       create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+       update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+  	</set>
+  	where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findItemsByParam" parameterType="com.warehouse.model.StocktakeItem" resultMap="BaseResultMap">
+  	select * from stocktake_item
+  	<where>
+			<include refid="sql_where" />
+		</where>
   </select>
 </mapper>

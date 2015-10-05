@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.warehouse.model.Stocktake;
+import com.warehouse.model.StocktakeItem;
 import com.warehouse.service.StocktakeService;
 import com.warehouse.util.AjaxResult;
 
@@ -105,10 +106,10 @@ public class StocktakeController
 	
 	@RequestMapping(value="stocktakeItem.json")
 	@ResponseBody
-	public Object findItems(Integer stocktakeId){
+	public Object findItems(StocktakeItem item){
 		try
 		{
-			return stocktakeService.findItemsByStocktakeId(stocktakeId);
+			return stocktakeService.findItemsByParam(item);
 		}
 		catch (Exception e)
 		{
@@ -116,6 +117,44 @@ public class StocktakeController
 		}
 		
 		return null;
+	}
+	
+	
+	@RequestMapping(value="stocktake/updateItem")
+	@ResponseBody
+	public Object updateItem(StocktakeItem item){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			stocktakeService.updateItem(item);
+			result.setIsError(false);
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			result.setMsg(e.getMessage());
+			logger.error(e.getMessage());
+		}
+		return result;
+	}
+	
+	@RequestMapping(value="stocktake/submmit")
+	@ResponseBody
+	public Object submmit(Integer stocktakeId){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			stocktakeService.submmit(stocktakeId);
+			result.setIsError(false);
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			result.setMsg(e.getMessage());
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return result;
 	}
 	
 }

@@ -8,12 +8,12 @@
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
     <result column="unit_id" property="unitId" jdbcType="INTEGER" />
-    <result column="total_quantity" property="totalQuantity" jdbcType="FLOAT" />
-    <result column="balance" property="balance" jdbcType="FLOAT" />
+    <result column="total_quantity" property="totalQuantity" jdbcType="DECIMAL" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
     <result column="size" property="size" jdbcType="VARCHAR" />
     <result column="last_stock_take" property="lastStockTake" jdbcType="VARCHAR" />
-    <result column="avg_unit_price" property="avgUnitPrice" jdbcType="FLOAT" />
-    <result column="unit_price" property="unitPrice" jdbcType="FLOAT" />
+    <result column="avg_unit_price" property="avgUnitPrice" jdbcType="DECIMAL" />
+    <result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="shelf" property="shelf" jdbcType="VARCHAR" />
@@ -26,7 +26,7 @@
      <result column="name" property="name" jdbcType="VARCHAR" />
   	 <result column="unit_id" property="extraValue1" jdbcType="INTEGER" />
 	   <result column="unit_name" property="extraValue2" jdbcType="VARCHAR" />
-	   <result column="balance" property="extraValue3" jdbcType="FLOAT" />
+	   <result column="balance" property="extraValue3" jdbcType="DECIMAL" />
   </resultMap>
   
   <sql id="Base_Column_List" >
@@ -76,8 +76,8 @@
       category_id, disabled)
     values (#{id,jdbcType=INTEGER}, #{updateUser,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, 
       #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, #{unitId,jdbcType=INTEGER}, 
-      #{totalQuantity,jdbcType=FLOAT}, #{balance,jdbcType=FLOAT}, #{size,jdbcType=VARCHAR}, 
-      #{lastStockTake,jdbcType=VARCHAR}, #{avgUnitPrice,jdbcType=FLOAT}, #{unitPrice,jdbcType=FLOAT}, 
+      #{totalQuantity,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{size,jdbcType=VARCHAR}, 
+      #{lastStockTake,jdbcType=VARCHAR}, #{avgUnitPrice,jdbcType=DECIMAL}, #{unitPrice,jdbcType=DECIMAL}, 
       #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{shelf,jdbcType=VARCHAR}, 
       #{categoryId,jdbcType=INTEGER}, #{disabled,jdbcType=INTEGER})
   </insert>
@@ -156,10 +156,10 @@
         #{unitId,jdbcType=INTEGER},
       </if>
       <if test="totalQuantity != null" >
-        #{totalQuantity,jdbcType=FLOAT},
+        #{totalQuantity,jdbcType=DECIMAL},
       </if>
       <if test="balance != null" >
-        #{balance,jdbcType=FLOAT},
+        #{balance,jdbcType=DECIMAL},
       </if>
       <if test="size != null" >
         #{size,jdbcType=VARCHAR},
@@ -168,10 +168,10 @@
         #{lastStockTake,jdbcType=VARCHAR},
       </if>
       <if test="avgUnitPrice != null" >
-        #{avgUnitPrice,jdbcType=FLOAT},
+        #{avgUnitPrice,jdbcType=DECIMAL},
       </if>
       <if test="unitPrice != null" >
-        #{unitPrice,jdbcType=FLOAT},
+        #{unitPrice,jdbcType=DECIMAL},
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
@@ -209,10 +209,10 @@
         unit_id = #{unitId,jdbcType=INTEGER},
       </if>
       <if test="totalQuantity != null" >
-        total_quantity = #{totalQuantity,jdbcType=FLOAT},
+        total_quantity = #{totalQuantity,jdbcType=DECIMAL},
       </if>
       <if test="balance != null" >
-        balance = #{balance,jdbcType=FLOAT},
+        balance = #{balance,jdbcType=DECIMAL},
       </if>
       <if test="size != null" >
         size = #{size,jdbcType=VARCHAR},
@@ -221,10 +221,10 @@
         last_stock_take = #{lastStockTake,jdbcType=VARCHAR},
       </if>
       <if test="avgUnitPrice != null" >
-        avg_unit_price = #{avgUnitPrice,jdbcType=FLOAT},
+        avg_unit_price = #{avgUnitPrice,jdbcType=DECIMAL},
       </if>
       <if test="unitPrice != null" >
-        unit_price = #{unitPrice,jdbcType=FLOAT},
+        unit_price = #{unitPrice,jdbcType=DECIMAL},
       </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -251,12 +251,12 @@
       create_time = #{createTime,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=VARCHAR},
       unit_id = #{unitId,jdbcType=INTEGER},
-      total_quantity = #{totalQuantity,jdbcType=FLOAT},
-      balance = #{balance,jdbcType=FLOAT},
+      total_quantity = #{totalQuantity,jdbcType=DECIMAL},
+      balance = #{balance,jdbcType=DECIMAL},
       size = #{size,jdbcType=VARCHAR},
       last_stock_take = #{lastStockTake,jdbcType=VARCHAR},
-      avg_unit_price = #{avgUnitPrice,jdbcType=FLOAT},
-      unit_price = #{unitPrice,jdbcType=FLOAT},
+      avg_unit_price = #{avgUnitPrice,jdbcType=DECIMAL},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
       name = #{name,jdbcType=VARCHAR},
       code = #{code,jdbcType=VARCHAR},
       shelf = #{shelf,jdbcType=VARCHAR},
@@ -285,22 +285,16 @@
   
   <select id="selectBalanceByIds" parameterType="java.util.List" resultMap="BaseResultMap">
       select id, total_quantity, balance, unit_id, avg_unit_price from material where id in 
-            <foreach item="item" index="index" collection="list"
-            open="(" separator="," close=")">
-              #{item.materialId}
-          </foreach>
+         <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+           #{item.materialId}
+         </foreach>
   </select>
   
-  <update id="updateMaterialBalance" parameterType="java.util.List">
-         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-                update material  
-                <set>
-                    balance=#{item.balance}, 
-                    total_quantity=#{item.totalQuantity},
-                    avg_unit_price=#{item.avgUnitPrice}
-                </set>
-                where id = #{item.id}
-         </foreach>
+  <update id="updateForStocktake">
+  	update material set 
+  		balance=#{quantity,jdbcType=DECIMAL}, 
+  		last_stock_take=#{createTime,jdbcType=VARCHAR}
+  	where id = #{materialId}
   </update>
   
 </mapper>

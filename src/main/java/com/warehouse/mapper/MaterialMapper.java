@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.warehouse.model.Material;
 import com.warehouse.model.StockItem;
+import com.warehouse.model.StocktakeItem;
 import com.warehouse.util.Entry;
 
 public interface MaterialMapper {
@@ -28,6 +29,6 @@ public interface MaterialMapper {
 
 	List<Material> selectBalanceByIds(List<StockItem> items);
 
-	void updateMaterialBalance(List<Material> mList);
+	void updateForStocktake(StocktakeItem item);
     
 }

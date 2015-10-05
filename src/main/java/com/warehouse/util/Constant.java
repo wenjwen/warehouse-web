@@ -1,7 +1,11 @@
 package com.warehouse.util;
 
+import java.text.SimpleDateFormat;
+
 public class Constant
 {
+	public static SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	public static int DICT_TYPE_UNIT = 1;
 	public static int DISABLED_FALSE = 0;
 	public static int DISABLED_TRUE = 1;

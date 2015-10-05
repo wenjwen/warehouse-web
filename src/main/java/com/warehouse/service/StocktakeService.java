@@ -1,5 +1,6 @@
 package com.warehouse.service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,7 @@ import com.warehouse.mapper.StocktakeItemMapper;
 import com.warehouse.mapper.StocktakeMapper;
 import com.warehouse.model.Stocktake;
 import com.warehouse.model.StocktakeItem;
+import com.warehouse.util.Constant;
 import com.warehouse.util.Entry;
 
 @Service
@@ -40,7 +42,7 @@ public class StocktakeService
 				item.setStocktakeId(s.getId());
 				item.setMaterialId(m.getId());
 				item.setUnitId(new Integer(m.getExtraValue1().toString()));
-				item.setBalance(new Double(m.getExtraValue3().toString()));
+				item.setBalance(new BigDecimal(m.getExtraValue3().toString()));
 				item.setCreateTime(df.format(now));
 				item.setUpdateTime(df.format(now));
 				itemList.add(item);
@@ -78,6 +80,36 @@ public class StocktakeService
 	public List<StocktakeItem> findItemsByStocktakeId(Integer stocktakeId)
 	{
 		return stocktakeItemMapper.findByStocktakeId(stocktakeId);
+	}
+
+	public void updateItem(StocktakeItem item)
+	{
+		if (item.getBalance() != null && item.getQuantity() != null){
+			item.setDifferQuantity(item.getQuantity().subtract(item.getBalance()));
+			item.setResult(item.getDifferQuantity().doubleValue() < 0 ? "-1" : (item.getDifferQuantity().doubleValue() == 0 ? "0" : "1"));  // -1:盘亏 0:正常 1:盘盈
+		}
+		item.setUpdateTime(Constant.dateTimeFormatter.format(new Date()));
+		stocktakeItemMapper.update(item);
+	}
+
+	public List<StocktakeItem> findItemsByParam(StocktakeItem item)
+	{
+		return stocktakeItemMapper.findItemsByParam(item);
+	}
+
+	public void submmit(Integer stocktakeId) throws Exception
+	{
+		// 更新库存；更改盘点提交标志
+		List<StocktakeItem> items = stocktakeItemMapper.findByStocktakeId(stocktakeId);
+		//materialMapper.batchUpdateForStocktake(items);
+		for(StocktakeItem item : items){
+			materialMapper.updateForStocktake(item);
+		}
+		Stocktake st = new Stocktake();
+		st.setId(stocktakeId);
+		st.setSubmitted(1); // 已提交
+		st.setSubmitTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+		stocktakeMapper.updateByPrimaryKeySelective(st);
 	}
 
 	

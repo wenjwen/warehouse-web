@@ -1,5 +1,7 @@
 package com.warehouse.model;
 
+import java.math.BigDecimal;
+
 public class StockItem {
     private Integer id;
 
@@ -9,9 +11,9 @@ public class StockItem {
 
     private Integer unitId;
 
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 
-    private Double quantity;
+    private BigDecimal quantity;
 
     private String remark;
 
@@ -55,23 +57,27 @@ public class StockItem {
         this.unitId = unitId;
     }
 
-    public Double getUnitPrice() {
-        return unitPrice;
-    }
+    public BigDecimal getUnitPrice()
+	{
+		return unitPrice;
+	}
 
-    public void setUnitPrice(Double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
+	public void setUnitPrice(BigDecimal unitPrice)
+	{
+		this.unitPrice = unitPrice;
+	}
 
-    public Double getQuantity() {
-        return quantity;
-    }
+	public BigDecimal getQuantity()
+	{
+		return quantity;
+	}
 
-    public void setQuantity(Double quantity) {
-        this.quantity = quantity;
-    }
+	public void setQuantity(BigDecimal quantity)
+	{
+		this.quantity = quantity;
+	}
 
-    public String getRemark() {
+	public String getRemark() {
         return remark;
     }
 
