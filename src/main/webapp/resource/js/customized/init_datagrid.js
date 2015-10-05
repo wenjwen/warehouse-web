@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 var rootUri = '/warehouse/';
 var unitEntry; // 单位
 var categoryEntry; // 分类
