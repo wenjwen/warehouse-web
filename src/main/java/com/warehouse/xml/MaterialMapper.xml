@@ -269,6 +269,7 @@
   <select id="findAllEntry" resultMap="EntryMap">
   	select m.id, m.name, m.balance, m.unit_id, d.name as unit_name 
   	from material m left join dict d on(m.unit_id = d.id)
+  	where m.disabled != 1
   </select>
   
   <select id="findAll" resultMap="BaseResultMap">
