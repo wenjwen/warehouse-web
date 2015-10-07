@@ -8,6 +8,7 @@
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
     <result column="unit_id" property="unitId" jdbcType="INTEGER" />
+    <result column="unit_name" property="unitName" jdbcType="VARCHAR" />
     <result column="total_quantity" property="totalQuantity" jdbcType="DECIMAL" />
     <result column="balance" property="balance" jdbcType="DECIMAL" />
     <result column="size" property="size" jdbcType="VARCHAR" />
@@ -277,10 +278,28 @@
   </select>
   
   <select id="findSelective" parameterType="com.warehouse.model.Material" resultMap="BaseResultMap">
-  	select 
-    <include refid="Base_Column_List" /> 
-    from material 
-    <include refid="Example_Where_Clause"/>
+  	select m.*, d.name as unit_name 
+    from material m left join dict d on(m.unit_id = d.id) 
+    <where>
+    	<if test="id != null" >
+     	  	 AND m.ID = #{id}
+    	  </if>
+    		<if test="code != null and code != ''" >
+     	  	 AND m.CODE = #{code}
+    	  </if>
+    		<if test="name != null and name != ''" >
+     	  	 AND m.NAME like '%${name}%'
+    	  </if>
+    		<if test="size != null and size != ''" >
+     	  	 AND m.SIZE = #{size}
+    	  </if>
+    		<if test="categoryId != null" >
+     	  	 AND m.CATEGORY_ID = #{categoryId}
+    	  </if>
+    		<if test="disabled != null">
+     	  	 AND m.DISABLED = #{disabled}
+    	  </if>
+    </where>
   </select>
   
   <select id="selectBalanceByIds" parameterType="java.util.List" resultMap="BaseResultMap">

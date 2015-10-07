@@ -34,7 +34,9 @@ function initUnitDG(){
 		autoSave: false,
 		checkOnSelect: false,
 		onError: function(index,row){
-			alert(index + ', ' + row.msg);
+			if (row.code == '19'){
+				$.messager.alert("提示","此单位正在使用，不能删除！", "error");
+			}
 		},
 		onAdd: function(index,row){  // 添加新行时
 			//alert("add row : index = " + index);				
@@ -243,11 +245,17 @@ function initStocktakeItem_DG(){
 		onAdd: function(index,row){  // 添加新行时
 			
 		},
-		onSave: function(index, row){  // 保存后
-			if(!row.isError){
+		onSave: function(index, rowdata){  // 保存后
+			if(!rowdata.isError){
 				// $.messager.alert("提示","保存成功", "info");
-				$('#p').panel('refresh');
-			} else if(row.isError){
+				//$('#p').panel('refresh');
+				/*if(rowdata.quantity!=null && rowdata.balance!=null){
+					rowdata.differQuantity = accSub(rowdata.quantity,rowdata.balance);
+					rowdata.result = (rowdata.differQuantity < 0 ? '-1' : (rowdata.differQuantity == 0 ? '0':'1'));
+					rowdata.ck = 0;
+					$('#stocktakeItem_dg').edatagrid('updateRow',{index: rowdata.index, row:rowdata});
+				}*/
+			} else if(rowdata.isError){
 				$.messager.alert("提示","保存失败！", "info");
 				$('#stocktakeItem_dg').edatagrid('cancelRow');
 			}
@@ -271,7 +279,7 @@ function initStocktakeItem_DG(){
 			}
 		},
 		columns:[[
-		          {field:'ck', checkbox:true},
+		          //{field:'ck', checkbox:true},
 		          {field:'materialId',title:'物料名',width:80,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<materialEntry.length; i++){
@@ -304,9 +312,9 @@ function initStocktakeItem_DG(){
 		          {field:'result',title:'盘点结果',width:60, 
 		        	  formatter:function(value){
 		        		  switch(value){  // -1-盘亏 0-正常 1-盘盈
-		        		  	case '-1': return '盘亏';
-		        		  	case '0': return '正常';
-		        		  	case '1': return '盘盈';
+		        		  	case '-1': return '<span style="color:red;">盘亏</span>';
+		        		  	case '0': return '<span style="color:blue;">正常</span>';
+		        		  	case '1': return '<span style="color:green;">盘盈</span>';
 		        		  }
 		        		  return '';
 		        	  }
@@ -321,7 +329,7 @@ function initStocktakeItem_DG(){
 	var submitted = $('#submitted').val();  
 	if (submitted == '1'){ // 已提交
 		$('#stocktakeItem_dg').edatagrid('disableEditing');
-		$('#stocktakeItem_dg').edatagrid('hideColumn','ck');
+		//$('#stocktakeItem_dg').edatagrid('hideColumn','ck');
 	}
 }
 
@@ -344,14 +352,7 @@ function initSearchMaterialDG(){
 		        		  return value;
 		        	  }
 		          },
-		          {field:'unitId',title:'单位',width:60,
-		        	  formatter:function(value){
-		        		  for(var i=0; i<unitEntry.length; i++){
-		        			  if (unitEntry[i].id == value) return unitEntry[i].name;
-		        		  }
-		        		  return value;
-		        	  }
-		          },
+		          {field:'unitName',title:'单位',width:60},
 		          {field:'size',title:'规格',width:60},
 		          {field:'totalQuantity',title:'总数量',width:60},
 		          {field:'balance',title:'库存数量',width:60},
@@ -539,14 +540,53 @@ function initStocktakeDG(){
 						formatter:function(value,row,index){
 							var content = '';
 							if (row.submitted == null || row.submitted == 0){  // 未提交的
-								content = '<a href="#" onclick="goStocktake('+row.id+');">盘点</a>&nbsp;';
-								content += '<a href="#" onclick="submitStocktake('+row.id+');">提交</a>';
+								content = '<a style="color:blue;" href="#" onclick="goStocktake('+row.id+');">盘点</a>&nbsp;';
+								content += '<a style="color:blue;" href="#" onclick="submitStocktake('+row.id+');">提交</a>';
 							} else if (row.submitted == 1){  //已提交的
-								content = '<a href="#" onclick="goStocktake('+row.id+');">查看盘点记录</a>';
+								content = '<a style="color:blue;" href="#" onclick="goStocktake('+row.id+');">查看盘点记录</a>';
 							}
 							return content;
 						}
 					}
+		          ]],
+	});
+}
+
+//盘点查询
+function initSearchStocktakeDG(){
+	$('#search_stocktake_dg').edatagrid({
+		url: rootUri + 'stocktake/month.json',
+		autoSave: false,
+		checkOnSelect: false,
+		columns:[[
+		          //{field:'ck', checkbox:true},
+		          {field:'name',title:'盘点标记',width:80/*, editor:{type:'textbox', options:{required:true}}*/},
+		          {field:'stocktakeTime',title:'盘点日期',width:80/*, editor:{type:'datebox', options:{required:true}}*/},
+		          {field:'stocktakePerson',title:'盘点人',width:80/*, editor:{type:'textbox', options:{required:true}}*/},
+		          {field:'submitted',title:'是否已提交',width:60,
+		        	  formatter:function(value){
+		        		  var show = '否';
+		        		  switch(value){
+		        		  case 0: show= '否';break;
+		        		  case 1: show= '是';break;
+		        		  };
+		        		  return show;
+		        	  }
+		          },
+		          {field:'submitTime',title:'提交时间',width:80},
+		          //{field:'auditot',title:'审核人',width:80},
+		          {field:'remark',title:'备注',width:120/*, editor:{type:'textbox'}*/},
+		          {field:'action',title:'操作',width:50,align:'center',
+		        	  formatter:function(value,row,index){
+		        		  var content = '';
+		        		  if (row.submitted == null || row.submitted == 0){  // 未提交的
+		        			  content = '<span>盘点中...</span>';
+		        		  } else if (row.submitted == 1){  //已提交的
+		        			  content = '<a style="color:blue;" href="#" onclick="goStocktake('+row.id+');">查看盘点记录</a>';
+		        		  }
+		        		  return content;
+		        	  }
+		          }
 		          ]],
 	});
 }
@@ -622,7 +662,7 @@ function initStockItemDG(){
 					{field:'remark',title:'备注',width:140,editor:'text'},
 					{field:'action',title:'操作',width:50,align:'center',
 						formatter:function(value,row,index){
-								var d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg').edatagrid('deleteRow','"+index+"')\">Delete</a>";
+								var d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg').edatagrid('deleteRow','"+index+"')\">删除</a>";
 								return d;
 						}
 					}
@@ -652,7 +692,7 @@ function initStockTakingItemDG(){
 		          {field:'remark',title:'备注',width:140,editor:'text'},
 		          {field:'action',title:'操作',width:50,align:'center',
 		        	  formatter:function(value,row,index){
-		        		  var d = "<a href=\"#\" onclick=\"javascript:$('#stockTakingItem_dg').edatagrid('deleteRow','"+index+"')\">Delete</a>";
+		        		  var d = "<a href=\"#\" onclick=\"javascript:$('#stockTakingItem_dg').edatagrid('deleteRow','"+index+"')\">删除</a>";
 		        		  return d;
 		        	  }
 		          }

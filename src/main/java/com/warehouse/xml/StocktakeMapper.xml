@@ -24,7 +24,7 @@
 	  <if test="id != null and id > 0">
 	       and ID = #{id,jdbcType=DECIMAL}
 	  </if>
-	  <if test="name != null">
+	  <if test="name != null and name != ''">
         and NAME like '%${name}%'
      </if>
 	  <if test="submitted != null and submitted != -1">

@@ -4,8 +4,9 @@ import java.text.SimpleDateFormat;
 
 public class Constant
 {
-	public static SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	public static SimpleDateFormat DATETIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+	public static String USER = "user";
 	public static int DICT_TYPE_UNIT = 1;
 	public static int DISABLED_FALSE = 0;
 	public static int DISABLED_TRUE = 1;

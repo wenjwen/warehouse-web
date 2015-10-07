@@ -1,5 +1,6 @@
 package com.warehouse.controller;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -94,16 +95,20 @@ public class DictController
 		AjaxResult result = new AjaxResult();
 		try
 		{
-			unit.setDisabled(1); // disable
-			dictService.updateByIdSelective(unit);
+			//unit.setDisabled(1); // disable
+			//dictService.updateByIdSelective(unit);
+			dictService.deleteById(unit.getId());
 			result.setIsError(false);
 		}
 		catch (Exception e)
-		{
+		{	
 			result.setIsError(true);
-			result.setMsg(e.getMessage());
 			logger.error(e.getMessage());
+			if (e.getCause() instanceof SQLException){
+				result.setCode(((SQLException)e.getCause()).getErrorCode()+"");
+			}
 		}
+		
 		return result;
 	}
 }

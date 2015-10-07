@@ -52,4 +52,32 @@ public class MenuService
 		
 		return list;
 	}
+
+	public List<Menu> getLimitedMenuTree()
+	{
+		List<Menu> list = menuMapper.findByCode("05");
+		if (list != null && list.size() > 0){
+			Map<String, Menu> map = new TreeMap<String, Menu>();
+			
+			// 此处逻辑只适合两级菜单
+			for (Menu m : list){
+				logger.info("---m.id = " + m.getId());
+				if (m.getIsTop() == 1 || m.getParentId() == null){ // 是顶级节点
+					map.put(m.getId().toString(), m);
+				}
+			}
+			
+			for (Menu m : list){
+				if (m.getIsTop() == 0 && m.getParentId() != null){ // 不是顶级，0否1是
+					Menu parent = map.get(m.getParentId().toString());
+					parent.addChildren(m);  // 添加到父菜单中
+				}
+			}
+			
+			list = new ArrayList<Menu>(map.size());
+			list.addAll(map.values());
+		}
+		return list;
+	}
+
 }

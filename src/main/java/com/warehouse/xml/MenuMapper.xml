@@ -168,4 +168,11 @@
     from menu
     order by code
   </select>
+  
+  <select id="findByCode" parameterType="java.lang.String" resultMap="BaseResultMap" >
+  	select 
+    <include refid="Base_Column_List" /> 
+    from menu where code like '${value}%' 
+    order by code
+  </select>
 </mapper>

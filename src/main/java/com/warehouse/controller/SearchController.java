@@ -64,8 +64,6 @@ public class SearchController
 	@RequestMapping(value="stocktakeSearchPage")
 	public Object toStocktakeSearchPage(ModelMap model)
 	{
-		//model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
-		//model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
 		return "/search/stocktake";
 	}
 	

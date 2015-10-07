@@ -62,7 +62,7 @@ public class PwdUtil {
         return result;
     }
 	public static void main(String args[]){
-		PwdUtil.md5Encryption("12345");
+		PwdUtil.md5Encryption("admin");
 	}
 	
 	public static String  trimNull(String str){

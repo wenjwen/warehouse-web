@@ -2,7 +2,6 @@ package com.warehouse.service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class StocktakeService
 		// 生成盘点条目
 		List<Entry> mEntry = materialMapper.findAllEntry();
 		if (mEntry != null && mEntry.size() > 0){
-			List<StocktakeItem> itemList = new ArrayList<StocktakeItem>(mEntry.size());
+			//List<StocktakeItem> itemList = new ArrayList<StocktakeItem>(mEntry.size());
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date now = new Date();
 			for(Entry m : mEntry){
@@ -45,10 +44,11 @@ public class StocktakeService
 				item.setBalance(new BigDecimal(m.getExtraValue3().toString()));
 				item.setCreateTime(df.format(now));
 				item.setUpdateTime(df.format(now));
-				itemList.add(item);
+				//itemList.add(item);
+				stocktakeItemMapper.insert(item);
 			}
 			// batch insert
-			stocktakeItemMapper.batchInsert(itemList);
+			// stocktakeItemMapper.batchInsert(itemList);
 		}
 	}
 
@@ -84,11 +84,11 @@ public class StocktakeService
 
 	public void updateItem(StocktakeItem item)
 	{
-		if (item.getBalance() != null && item.getQuantity() != null){
+		/*if (item.getBalance() != null && item.getQuantity() != null){
 			item.setDifferQuantity(item.getQuantity().subtract(item.getBalance()));
 			item.setResult(item.getDifferQuantity().doubleValue() < 0 ? "-1" : (item.getDifferQuantity().doubleValue() == 0 ? "0" : "1"));  // -1:盘亏 0:正常 1:盘盈
-		}
-		item.setUpdateTime(Constant.dateTimeFormatter.format(new Date()));
+		}*/
+		item.setUpdateTime(Constant.DATETIME_FORMATTER.format(new Date()));
 		stocktakeItemMapper.update(item);
 	}
 
@@ -99,16 +99,24 @@ public class StocktakeService
 
 	public void submmit(Integer stocktakeId) throws Exception
 	{
+		Date now = new Date();
 		// 更新库存；更改盘点提交标志
 		List<StocktakeItem> items = stocktakeItemMapper.findByStocktakeId(stocktakeId);
 		//materialMapper.batchUpdateForStocktake(items);
-		for(StocktakeItem item : items){
-			materialMapper.updateForStocktake(item);
+		for(StocktakeItem item : items){  // 计算盘点结果
+			if (item.getBalance() != null && item.getQuantity() != null){
+				item.setDifferQuantity(item.getQuantity().subtract(item.getBalance()));
+				item.setResult(item.getDifferQuantity().doubleValue() < 0 ? "-1" : (item.getDifferQuantity().doubleValue() == 0 ? "0" : "1"));  // -1:盘亏 0:正常 1:盘盈
+				item.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+				stocktakeItemMapper.update(item);
+				
+				materialMapper.updateForStocktake(item);
+			}
 		}
 		Stocktake st = new Stocktake();
 		st.setId(stocktakeId);
 		st.setSubmitted(1); // 已提交
-		st.setSubmitTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+		st.setSubmitTime(Constant.DATETIME_FORMATTER.format(now));
 		stocktakeMapper.updateByPrimaryKeySelective(st);
 	}
 

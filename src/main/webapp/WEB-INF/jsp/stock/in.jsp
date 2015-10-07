@@ -68,7 +68,7 @@
  			<c:if test="${stockType==3 }">
  			<td>退货客户:</td>
  			</c:if>
- 			<td><input class="easyui-textbox" type="text" id="source" style="width:100%;"></input></td>
+ 			<td><input class="easyui-textbox" type="text" id="source" style="width:100%;" data-options="required:true"></input></td>
  		</tr>
  		<tr>
  			<td>备注:</td>

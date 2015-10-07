@@ -14,6 +14,8 @@ public class Material {
     private String updateTime;
 
     private Integer unitId;
+    
+    private String unitName;
 
     private BigDecimal totalQuantity;
 
@@ -85,7 +87,17 @@ public class Material {
         this.unitId = unitId;
     }
 
-    public String getSize() {
+    public String getUnitName()
+	{
+		return unitName;
+	}
+
+	public void setUnitName(String unitName)
+	{
+		this.unitName = unitName;
+	}
+
+	public String getSize() {
         return size;
     }
 

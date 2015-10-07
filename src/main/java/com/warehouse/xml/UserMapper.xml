@@ -196,4 +196,8 @@
       update_time = #{updateTime,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="findByName" parameterType="com.warehouse.model.User" resultMap="BaseResultMap" >
+  	select * from user where login_name = #{loginName,jdbcType=VARCHAR}
+  </select>
 </mapper>

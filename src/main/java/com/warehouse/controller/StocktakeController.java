@@ -67,6 +67,7 @@ public class StocktakeController
 			}else{  // insert
 				s.setCreateTime(df.format(now));
 				s.setUpdateTime(df.format(now));
+				s.setSubmitted(0); // 未提交的
 				stocktakeService.insert(s);
 			}
 			result.setIsError(false);
@@ -74,7 +75,8 @@ public class StocktakeController
 		catch (Exception e)
 		{
 			result.setIsError(true);
-			logger.error("---stocktake保存出错！ Msg:" + e.getMessage());
+			logger.error("---saveStocktake()保存出错！ Msg:" + e.getMessage());
+			e.printStackTrace();
 		}
 		return result;
 	}

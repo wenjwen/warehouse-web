@@ -1,5 +1,6 @@
 package com.warehouse.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -41,5 +42,11 @@ public class DictService
 	public Object findAllEntry()
 	{
 		return dictMapper.findAllEntry();
+	}
+
+
+	public void deleteById(Integer id) throws SQLException
+	{
+		dictMapper.deleteByPrimaryKey(id);
 	}
 }

@@ -12,6 +12,7 @@
 <script type="text/javascript" src="resource/js/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="resource/js/jquery.edatagrid.js"></script>
 <script type="text/javascript" src="resource/js/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="resource/js/customized/common.js"></script>
 <script type="text/javascript" src="resource/js/customized/init_datagrid.js"></script>
 <script type="text/javascript">
 	var unitJson = '${unitJson}';
@@ -25,11 +26,12 @@
 		    idField:'id',    
 		    treeField:'name',    
 		    columns:[[    
-		        {title:'导航',field:'name',width:'100%'}  
+		        {title:'导航菜单',field:'name',width:'100%'}  
 		    ]],    
 		    onClickRow:function(row){
 					// alert(row.id + ','+ row.name +',' + row.url);
-					if (row.url != null && row.url != ''){
+					//if (row.url != null && row.url != ''){
+					if (row.isTop != 1 && row.url != null && row.url != ''){
 						$('#p').panel('refresh', rootUri + row.url); // 配置url
 					}
 				}
@@ -59,6 +61,9 @@
 		if ($('#search_stockinout_dg').length > 0){ // 出入库查询
 			initSearchStockinoutDG(); 
 		}
+		if ($('#search_stocktake_dg').length > 0){ // 盘点查询
+			initSearchStocktakeDG(); 
+		}
 		if ($('#stocktake_dg').length > 0){ // 月度盘点
 			initStocktakeDG(); 
 		}
@@ -72,11 +77,14 @@
 </head>
 <body id="body">
 	<!-- header -->
-	<div style="height:8%;">
-		<p align="left">仓库管理</p>
+	<div style="height:5%;">
+		<strong>
+			<span>仓库物料管理</span>
+			<span style="float:right; padding-right:50px;">当前登录用户：${user == null ? '无':user.loginName }&nbsp;&nbsp;<a href="/warehouse" style="color: red;">退出</a></span>
+		</strong>
 	</div>   
 	
-	<div class="easyui-layout" style="width:100%;height:85%;">
+	<div class="easyui-layout" style="width:100%;height:88%;">
 			<!-- 左边菜单栏 -->
 			<div region="west" split="true" style="width:20%;height:90%;">
 				<table id="menuTree" class="easyui-treegrid" style="width:100%;height:100%;">

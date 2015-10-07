@@ -18,5 +18,7 @@ public interface MenuMapper {
     int updateByPrimaryKey(Menu record);
 
 	List<Menu> findAll();
+	
+	List<Menu> findByCode(String value);
 
 }
