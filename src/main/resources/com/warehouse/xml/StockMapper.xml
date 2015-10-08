@@ -240,8 +240,9 @@
 				and s.source = #{source}
 			</if>
 			<if test="materialId != null and materialId != ''">
-				and i.material_id = #{materialId}
+				and i.material_id = #{materialId} 
 			</if>
+			 order by s.stock_time desc			
 			<!-- <if test="materialName != null and materialName != ''">
 				i.material_name like '%${materialName}%'
 			</if> -->

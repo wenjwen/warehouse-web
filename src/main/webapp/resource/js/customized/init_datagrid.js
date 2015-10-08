@@ -399,7 +399,8 @@ function initSearchStockinoutDG(){
 		          //{field:'avgUnitPrice',title:'平均单价(元)',width:40},
 		          {field:'target',title:'目标',width:40},
 		          {field:'source',title:'来源',width:40},
-		          {field:'remark',title:'物料备注',width:100}
+		          {field:'stockTime',title:'日期时间',width:60},
+		          {field:'remark',title:'物料备注',width:80}
 		          ]],
 	});
 	
