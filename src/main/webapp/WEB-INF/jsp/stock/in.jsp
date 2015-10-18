@@ -122,7 +122,7 @@
 </div>
 <!-- 提交 -->
 		<div style="width:100%;height:8%;text-align:center;">
-	    	<a  class="easyui-linkbutton" style="margin-top:10px;width:50px;" href="javascript:void(0)" onclick="submitStockForm('/warehouse/stockin/save')">保存</a>
+	    	<a  class="easyui-linkbutton" style="margin-top:10px;width:50px;" href="javascript:void(0)" onclick="submitStockForm()">保存</a>
 	    	<a  class="easyui-linkbutton" style="margin-top:10px;width:50px;" href="javascript:void(0)" onclick="clearForm('stockInfo')">取消</a>
 	  </div>
 </form>

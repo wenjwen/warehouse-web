@@ -226,7 +226,7 @@ function initMaterialDG(){
 		          ]],
 	});
 }
-// TODO 物料盘点
+// 物料盘点
 function initStocktakeItem_DG(){
 	$('#stocktakeItem_dg').edatagrid({
 		url: rootUri + 'stocktakeItem.json',
@@ -470,6 +470,99 @@ function doSearchStockinout(){
 	});
 }
 
+// TODO 出入库管理
+function initStockDG(){
+	$('#stock_dg').edatagrid({
+		url: rootUri + 'stock/list.json',
+		saveUrl: rootUri + 'saveStock',
+		updateUrl: rootUri + 'saveStock',
+		destroyUrl: rootUri + 'deleteStock',
+		autoSave: false,
+		checkOnSelect: false,
+		pagination:true,//分页控件
+		pageSize:20,
+		pageList:[20,30,40,50],
+		onError: function(index,row){
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("提示","操作失败！", "error");
+		},
+		onAdd: function(index,row){  // 添加新行时
+			
+		},
+		onEdit: function(index,row){  // 编辑行时
+			
+		},
+		onBeforeSave: function(index){  // 添加新行时
+			
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				//$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","保存失败！", "info");
+				$('#stock_dg').edatagrid('cancelRow');
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'删除后无法恢复，请三思！'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","删除失败！", "info");
+			}
+		},
+		columns:[[
+		          //{field:'ck', checkbox:true},
+		          {field:'stockNo',title:'单号',width:75, editor:{type:'textbox'}},
+		          {field:'stockType',title:'出入库类型',width:65, 
+		        	  formatter:function(value,row,index){
+		        		  for(var i=0; i<stockTypeEntry.length;i++){
+		        			  if (stockTypeEntry[i].id == value)
+		        				  return stockTypeEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox', 
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:stockTypeEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'stockTime',title:'日期时间',width:100, editor:{type:'datetimebox', options:{required:true}}},
+		          {field:'driverName',title:'司机',width:70, editor:{type:'textbox'}},
+		          {field:'trunkNo',title:'车牌',width:70, editor:{type:'textbox'}},
+		          {field:'source',title:'供货商/来源',width:80, editor:{type:'textbox', options:{required:true}}},
+		          {field:'target',title:'客户/目的地',width:80, editor:{type:'textbox', options:{required:true}}},
+		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}},
+		          {field:'action',title:'操作',width:70,align:'center',
+						formatter:function(value,row,index){
+							var content = '';
+							if (typeof(row.id) != 'undefined' && row.id != null && row.id != '' && row.id > 0){
+								content = '<a style="color:blue;" href="#" onclick="goStock('+row.id +',\'' + row.typeName +'\');">详细记录</a>&nbsp;';
+										/*+ '<a style="color:blue;" href="#" onclick="deleteStock('+row.id+');">删除</a>';*/
+							}
+							return content;
+						}
+					}
+		          ]],
+	});
+}
+
 //月度盘点
 function initStocktakeDG(){
 	$('#stocktake_dg').edatagrid({
@@ -592,17 +685,23 @@ function initSearchStocktakeDG(){
 	});
 }
 
+// 打开盘点页面
 function goStocktake(id){
+	$('#p').panel('refresh', 'stocktake/taking?stocktakeId=' + id); // 配置url
+}
+
+// 打开出入库页面
+function goStock(id, typeName){
 	//$('#win').window('open');
-	/*$('#win').window({
-		title:'仓库盘点 - - '+ name,
-	    width:900,
+	$('#win').window({
+		title:typeName,
+	    width:1000,
 	    height:'100%',
 	    modal:true,
-	    href: rootUri + 'stocktake/taking',
-	    onLoad:initStockTakingItemDG
-	});*/
-	$('#p').panel('refresh', 'stocktake/taking?stocktakeId=' + id); // 配置url
+	    href: rootUri + 'stock/items?stockId=' + id,
+	    onLoad:initStockItemDG_win
+	});
+	// $('#p').panel('refresh', 'stocktake/taking?stocktakeId=' + id); // 配置url
 }
 
 function submitStocktake(id){
@@ -676,6 +775,61 @@ function initStockItemDG(){
 	}
 	
 	$('#materialComboBox').combobox('loadData', materialEntry);
+}
+
+function initStockItemDG_win(){
+	$('#stockItem_dg_win').edatagrid({
+		url: rootUri + 'stock/items.json',
+		saveUrl: rootUri + 'saveStockItem',
+		updateUrl: rootUri + 'saveStockItem',
+		destroyUrl: rootUri + 'deleteStockItem',
+		autoSave: false,
+		onError: function(index,row){
+			alert(index + ', ' + row.msg);
+		},
+		columns:[[
+		          {field:'materialId', hidden:true},
+		          {field:'materialName',title:'物料名(单位)',width:100,
+		        	  formatter:function(value){
+		        		  for(var i=0; i<materialEntry.length; i++){
+		        			  if (materialEntry[i].id == value) 
+		        				  return materialEntry[i].name + '('+ materialEntry[i].extraValue2 + ')';  // 物料名(单位)
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:materialEntry,
+		        			  required:true
+		        		  }
+		        	  }},
+		          {field:'unitPrice',title:'单价(元)',width:60,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          {field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          {field:'remark',title:'备注',width:140,editor:'text'},
+		          {field:'action',title:'操作',width:50,align:'center',
+		        	  formatter:function(value,row,index){
+		        		  var d = '';
+		        		  if (typeof(row.id) != 'undefined' && row.id != null && row.id != ''){
+		        			  d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg').edatagrid('destroyRow','"+index+"')\">删除</a>";
+		        		  } else {
+		        			  d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg').edatagrid('deleteRow','"+index+"')\">删除</a>";
+		        		  }
+		        		  
+		        		  return d;
+		        	  }
+		          }
+		          ]],
+	});
+	
+	var stockType = $('#stockType').val();
+	if (stockType == 4 || stockType == 5 || stockType == 6){ // stock out
+		$('#stockItem_dg_win').edatagrid('hideColumn', 'unitPrice');
+	}
+	
+	//$('#materialComboBox').combobox('loadData', materialEntry);
 }
 
 function initStockTakingItemDG(){
@@ -785,7 +939,7 @@ function submitStockForm(){
 		}
 		
 		$.ajax({
-			url:'/warehouse/stockin/save',
+			url:'/warehouse/stock/save',
 			dataType:'json',
 			type:'POST',
 			data : {
@@ -800,54 +954,6 @@ function submitStockForm(){
 					remark:$('#remark').val(),
 					itemsStr:JSON.stringify(itemArr)
 				},
-			success:function(data){
-				if(!data.isError){
-					$.messager.alert('提示','保存成功','info');
-				} 
-				else {
-					$.messager.alert('错误','保存失败！','error');
-				}
-			}
-		});
-	}
-}
-
-/**
- * 提交stock taking form, 盘点数据
- */
-function submitStockForm(){
-	if ($('#stockInfo').form('validate') && $('#stockItem_dg').datagrid('getRows').length > 0){
-		// 取数据
-		var item;
-		var itemArr = [];
-		var rows = $('#stockItem_dg').datagrid('getRows');
-		for(var i=0; i<rows.length;i++){
-			console.log('material id =' + rows[i].materialId);
-			item = new Object();
-			item.materialId = rows[i].materialId;
-			item.unitId = rows[i].unitId;
-			item.quantity = rows[i].quantity;
-			item.unitPrice = rows[i].unitPrice;
-			item.remark = rows[i].remark;
-			itemArr.push(item);
-		}
-		
-		$.ajax({
-			url:'/warehouse/stockin/save',
-			dataType:'json',
-			type:'POST',
-			data : {
-				stockNo:$('#stockNo').val(), 
-				typeName:$('#typeName').val(),
-				stockType:$('#stockType').val(),
-				stockTime:$('#stockTime').combo('getValue'),
-				driverName:$('#driverName').val(),
-				trunkNo:$('#trunkNo').val(),
-				source:$('#source').val(),
-				target:$('#target').val(),
-				remark:$('#remark').val(),
-				itemsStr:JSON.stringify(itemArr)
-			},
 			success:function(data){
 				if(!data.isError){
 					$.messager.alert('提示','保存成功','info');

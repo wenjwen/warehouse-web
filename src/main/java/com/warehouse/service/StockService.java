@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.warehouse.common.BaseMapper;
+import com.warehouse.common.BaseService;
 import com.warehouse.mapper.MaterialMapper;
 import com.warehouse.mapper.StockItemMapper;
 import com.warehouse.mapper.StockMapper;
@@ -19,7 +21,7 @@ import com.warehouse.model.StockItem;
 import com.warehouse.model.StockSearch;
 
 @Service
-public class StockService
+public class StockService extends BaseService<Stock>
 {
 	private Logger logger = Logger.getLogger(StockService.class);
 	
@@ -31,13 +33,18 @@ public class StockService
 	@Resource
 	private MaterialMapper materialMapper;
 	
+	@Override
+	public BaseMapper<Stock> getMapper()
+	{
+		return stockMapper;
+	}
 
 	public void save(Stock stock) throws Exception
 	{
 		stockMapper.insert(stock);
 		logger.debug("---stock id=" + stock.getId());
 		// 设置item的stock id
-		if (stock.getItems() != null){
+		if (stock.getItems() != null && stock.getItems().size() > 0){
 			for(StockItem item : stock.getItems()){
 				item.setStockId(stock.getId());
 			}
@@ -87,6 +94,36 @@ public class StockService
 	public List<StockSearch> stockinoutSearch(StockSearch stockSearch)
 	{
 		return stockMapper.stockinoutSearch(stockSearch);
+	}
+
+	@Override
+	public int deleteById(Object id)
+	{
+		itemMapper.deleteByStockId(id);
+		return super.deleteById(id);
+	}
+
+	public List<StockItem> findItemsByStockId(Integer stockId)
+	{
+		return itemMapper.findItemsByStockId(stockId);
+	}
+
+	public void deleteItemById(Integer id)
+	{
+		// TODO 删除stock item, 更新库存数量
+		
+	}
+
+	public void insertItem(StockItem item)
+	{
+		// TODO 添加stock item, 根据stock type更新库存数量
+		
+	}
+
+	public void updateItem(StockItem item)
+	{
+		// TODO 更新stock item, 根据stock type和修改前后相差数量更新库存数量
+		
 	}
 	
 }

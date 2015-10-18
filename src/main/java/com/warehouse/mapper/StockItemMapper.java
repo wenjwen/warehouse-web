@@ -18,4 +18,8 @@ public interface StockItemMapper {
     int updateByPrimaryKey(StockItem record);
     
     void batchInsert(List<StockItem> list);
+
+	void deleteByStockId(Object stockId);
+
+	List<StockItem> findItemsByStockId(Integer stockId);
 }

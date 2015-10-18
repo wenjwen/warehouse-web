@@ -33,6 +33,15 @@
     <result column="quantity" property="quantity" jdbcType="FLOAT" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
   </resultMap>
+  <sql id="sql_where">
+  	<if test="t.stockNo != null and t.stockNo != ''">
+  		and stock_no like '%${t.stockNo}%'
+  	</if>
+  	<if test="t.stockType != null and t.stockType > 0">
+  		and stock_type = #{t.stockType}
+  	</if>
+  </sql>
+  
   <sql id="Base_Column_List" >
     id, stock_no, stock_type, type_name, stock_time, driver_name, trunk_no, target, source, 
     remark, update_time, update_user, create_user, create_time
@@ -248,4 +257,21 @@
 			</if> -->
 			
   </select>
+  
+  <select id="count" parameterType="com.warehouse.model.Stock" resultType="_int">
+  	select count(1) from stock
+		<where>
+			<include refid="sql_where" />
+		</where>
+  </select>
+  
+  <select id="queryForPage" resultMap="BaseResultMap">
+  	select * from stock
+		<where>
+			<include refid="sql_where" />
+		</where>
+		order by stock_time DESC 
+		limit #{size} offset #{start}
+  </select>
+  
 </mapper>

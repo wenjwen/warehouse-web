@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.warehouse.common.PageParamModel;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
 import com.warehouse.service.DictService;
 import com.warehouse.service.StockService;
 import com.warehouse.util.AjaxResult;
+import com.warehouse.util.Constant;
 
 @Controller
 public class StockController
@@ -33,6 +35,150 @@ public class StockController
 	@Resource
 	private DictService dictService;
 	
+	/**
+	 * 打开出入库管理页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="stockList")
+	public Object toStockListPage(ModelMap model){
+		return "/stock/list";
+	}
+	
+	/**
+	 * 打开出入库详细页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="stock/items")
+	public Object toStockItemsPage(ModelMap model){
+		return "/stock/items";
+	}
+	
+	@RequestMapping(value="stock/list.json")
+	@ResponseBody
+	public Object findStock(PageParamModel<Stock> ppm, Stock s){
+		// 分页查询
+		return stockService.paginQuery(s, ppm.getPage(), ppm.getRows());
+	}
+	
+	@RequestMapping(value="stock/items.json")
+	@ResponseBody
+	public Object findStockItems(PageParamModel<Stock> ppm, Stock s){
+		return stockService.findItemsByStockId(s.getId());
+	}
+	
+	/**
+	 * 直接在datagrid中添加的stock
+	 * @param s
+	 * @return
+	 */
+	@RequestMapping(value="saveStock")
+	@ResponseBody
+	public Object saveStock(Stock s){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			if (s.getId() != null && s.getId() > 0){ // update
+				s.setUpdateTime(Constant.DATETIME_FORMATTER.format(new Date()));
+				stockService.update(s);
+			} else {  // insert
+				if (s.getTypeName() == null || "".equals(s.getTypeName())){ 
+					s.setTypeName(this.getStockTypeName(s.getStockType()));
+				}
+				// 生成单号
+				if (s.getStockNo() == null || "".equals(s.getStockNo())){
+					s.setStockNo(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+				}
+				stockService.insert(s);
+			}
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	private String getStockTypeName(Integer stockType)
+	{
+		switch(stockType){
+		case 1: return "新购入库";
+		case 2: return "归还入库";
+		case 3: return "退货入库";
+		case 4: return "生产出库";
+		case 5: return "借用出库";
+		case 6: return "销售出库";
+		default: return null ;
+		}
+	}
+
+	/**
+	 * 直接在datagrid中添加的stock item
+	 * @param s
+	 * @return
+	 */
+	@RequestMapping(value="saveStockItem")
+	@ResponseBody
+	public Object saveStockItem(StockItem item){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			if (item.getId() != null && item.getId() > 0){ // update
+				item.setUpdateTime(Constant.DATETIME_FORMATTER.format(new Date()));
+				stockService.updateItem(item);
+			} else {  // insert
+				item.setCreateTime(Constant.DATETIME_FORMATTER.format(new Date()));
+				stockService.insertItem(item);
+			}
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	
+	@RequestMapping(value="deleteStock")
+	@ResponseBody
+	public Object deleteStock(Stock s){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			stockService.deleteById(s.getId());
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping(value="deleteStockItem")
+	@ResponseBody
+	public Object deleteStockItem(StockItem item){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			stockService.deleteItemById(item.getId());
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+
 	@RequestMapping(value="stockin")
 	public String toStockinPage(ModelMap model, @RequestParam(value="type")Integer type){
 		// generate stock No.
@@ -51,8 +197,14 @@ public class StockController
 		return "/stock/out";
 	}
 	
-	
-	@RequestMapping(value="stockin/save")
+	/**
+	 * 旧的保存入口
+	 * @param model
+	 * @param request
+	 * @param stock
+	 * @return
+	 */
+	@RequestMapping(value="stock/save")
 	@ResponseBody
 	public Object stockinBuySave(ModelMap model, HttpServletRequest request, Stock stock){
 		AjaxResult result = new AjaxResult();

@@ -175,4 +175,16 @@
       #{item.createTime,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=VARCHAR})
      </foreach>
   </insert>
+  
+  <delete id="deleteByStockId" parameterType="java.lang.Integer" >
+    delete from stock_item
+    where stock_id = #{stockId,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="findItemsByStockId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	 select 
+    <include refid="Base_Column_List" />
+    from stock_item
+    where stock_id = #{stockId,jdbcType=INTEGER}
+  </select>
 </mapper>

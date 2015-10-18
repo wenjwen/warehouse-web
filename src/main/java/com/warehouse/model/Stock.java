@@ -1,5 +1,6 @@
 package com.warehouse.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Stock {
@@ -31,7 +32,7 @@ public class Stock {
 
     private String createTime;
     
-    private List<StockItem> items;
+    private List<StockItem> items = new ArrayList<StockItem>(0);
 
     public Integer getId() {
         return id;

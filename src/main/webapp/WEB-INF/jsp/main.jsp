@@ -70,6 +70,9 @@
 		if ($('#stocktakeItem_dg').length > 0){ // 盘点单
 			initStocktakeItem_DG(); 
 		}
+		if ($('#stock_dg').length > 0){ // 出入库
+			initStockDG(); 
+		}
 		
 	}
 	

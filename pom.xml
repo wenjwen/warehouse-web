@@ -126,6 +126,12 @@
 			<artifactId>poi</artifactId>
 			<version>3.12</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+		</dependency>
 
 		<!-- <dependency>
 			<groupId>org.xerial</groupId>
@@ -163,11 +169,12 @@
 			<version>1.2.6</version>
 		</dependency>
 		
-		<dependency>
+		<!-- 连接SQLite时，分页查询报错，无法识别limit关键字 -->
+		<!-- <dependency>
 	     <groupId>com.alibaba</groupId>
 	     <artifactId>druid</artifactId>
 	     <version>1.0.14</version>
-		</dependency>
+		</dependency> -->
 		
 		<!-- <dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
