@@ -519,7 +519,7 @@ function initStockDG(){
 				$.messager.alert("提示","删除成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","删除失败！", "info");
+				$.messager.alert("错误","删除失败！", "error");
 			}
 		},
 		columns:[[
@@ -553,8 +553,7 @@ function initStockDG(){
 						formatter:function(value,row,index){
 							var content = '';
 							if (typeof(row.id) != 'undefined' && row.id != null && row.id != '' && row.id > 0){
-								content = '<a style="color:blue;" href="#" onclick="goStock('+row.id +',\'' + row.typeName +'\');">详细记录</a>&nbsp;';
-										/*+ '<a style="color:blue;" href="#" onclick="deleteStock('+row.id+');">删除</a>';*/
+								content = '<a style="color:blue;" href="#" onclick="goStock('+row.id +',\'' + row.typeName +'\',' + row.stockType + ');">详细记录</a>&nbsp;';
 							}
 							return content;
 						}
@@ -691,14 +690,14 @@ function goStocktake(id){
 }
 
 // 打开出入库页面
-function goStock(id, typeName){
+function goStock(id, typeName, stockType){
 	//$('#win').window('open');
 	$('#win').window({
 		title:typeName,
 	    width:1000,
 	    height:'100%',
 	    modal:true,
-	    href: rootUri + 'stock/items?stockId=' + id,
+	    href: rootUri + 'stock/items?stockId=' + id + '&stockType=' + stockType,
 	    onLoad:initStockItemDG_win
 	});
 	// $('#p').panel('refresh', 'stocktake/taking?stocktakeId=' + id); // 配置url
@@ -778,22 +777,33 @@ function initStockItemDG(){
 }
 
 function initStockItemDG_win(){
+	var stockId = $('#stockIdForItems').val();
+	var stockType = $('#stockTypeForItems').val();
+	
+	var isHidden = false;
+	var unitPriceOptions = {precision:2,required:true};
+	if (stockType == 4 || stockType == 5 || stockType == 6){ // stock out
+		isHidden = true;   //隐藏单价
+		unitPriceOptions = {precision:2,required:false};//设置为非必填
+	}
+	
 	$('#stockItem_dg_win').edatagrid({
-		url: rootUri + 'stock/items.json',
-		saveUrl: rootUri + 'saveStockItem',
-		updateUrl: rootUri + 'saveStockItem',
-		destroyUrl: rootUri + 'deleteStockItem',
+		url: rootUri + 'stock/items.json?stockId=' + stockId,
+		saveUrl: rootUri + 'saveStockItem?stockId=' + stockId + '&stockType=' + stockType,
+		updateUrl: rootUri + 'saveStockItem?stockId=' + stockId + '&stockType=' + stockType,
+		destroyUrl: rootUri + 'deleteStockItem?stockType=' + stockType,
 		autoSave: false,
 		onError: function(index,row){
 			alert(index + ', ' + row.msg);
 		},
 		columns:[[
-		          {field:'materialId', hidden:true},
-		          {field:'materialName',title:'物料名(单位)',width:100,
+		          {field:'materialId',title:'物料名(单位)',width:100,
 		        	  formatter:function(value){
-		        		  for(var i=0; i<materialEntry.length; i++){
-		        			  if (materialEntry[i].id == value) 
-		        				  return materialEntry[i].name + '('+ materialEntry[i].extraValue2 + ')';  // 物料名(单位)
+		        		  if(typeof(value) != 'undefined'){
+		        			  for(var i=0; i<materialEntry.length; i++){
+		        				  if (materialEntry[i].id == value) 
+		        					  return materialEntry[i].name + '('+ materialEntry[i].extraValue2 + ')';  // 物料名(单位)
+		        			  }
 		        		  }
 		        		  return value;
 		        	  },
@@ -805,17 +815,18 @@ function initStockItemDG_win(){
 		        			  data:materialEntry,
 		        			  required:true
 		        		  }
-		        	  }},
-		          {field:'unitPrice',title:'单价(元)',width:60,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		        	  }
+		          },
+		          {field:'unitPrice',title:'单价(元)',width:60,hidden:isHidden, editor:{type:'numberbox', options:unitPriceOptions}},
 		          {field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2,required:true}}},
 		          {field:'remark',title:'备注',width:140,editor:'text'},
 		          {field:'action',title:'操作',width:50,align:'center',
 		        	  formatter:function(value,row,index){
 		        		  var d = '';
 		        		  if (typeof(row.id) != 'undefined' && row.id != null && row.id != ''){
-		        			  d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg').edatagrid('destroyRow','"+index+"')\">删除</a>";
+		        			  d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg_win').edatagrid('destroyRow','"+index+"')\">删除</a>";
 		        		  } else {
-		        			  d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg').edatagrid('deleteRow','"+index+"')\">删除</a>";
+		        			  d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg_win').edatagrid('deleteRow','"+index+"')\">删除</a>";
 		        		  }
 		        		  
 		        		  return d;
@@ -824,12 +835,62 @@ function initStockItemDG_win(){
 		          ]],
 	});
 	
-	var stockType = $('#stockType').val();
+	//$('#materialComboBox').combobox('loadData', materialEntry);
+}
+
+function initStockItemImportDG_win(data){
+	//var stockId = $('#stockIdForImport').val();
+	//var stockType = $('#stockTypeForImport').val();
+	
+	var isHidden = false;
+	var unitPriceOptions = {precision:2,required:true};
 	if (stockType == 4 || stockType == 5 || stockType == 6){ // stock out
-		$('#stockItem_dg_win').edatagrid('hideColumn', 'unitPrice');
+		isHidden = true;   //隐藏单价
+		unitPriceOptions = {precision:2,required:false};//设置为非必填
 	}
 	
-	//$('#materialComboBox').combobox('loadData', materialEntry);
+	$('#stockItem_import_dg_win').edatagrid({
+		/*url: rootUri + 'stock/items.json?stockId=' + stockId,
+		saveUrl: rootUri + 'saveStockItem?stockId=' + stockId + '&stockType=' + stockType,
+		updateUrl: rootUri + 'saveStockItem?stockId=' + stockId + '&stockType=' + stockType,
+		destroyUrl: rootUri + 'deleteStockItem?stockType=' + stockType,*/
+		autoSave: false,
+		onError: function(index,row){
+			alert(index + ', ' + row.msg);
+		},
+		columns:[[
+		          {field:'materialId',title:'物料名(单位)',width:100,
+		        	  formatter:function(value){
+		        		  if(typeof(value) != 'undefined'){
+		        			  for(var i=0; i<materialEntry.length; i++){
+		        				  if (materialEntry[i].id == value) 
+		        					  return materialEntry[i].name + '('+ materialEntry[i].extraValue2 + ')';  // 物料名(单位)
+		        			  }
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:materialEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'unitPrice',title:'单价(元)',width:60,hidden:isHidden, editor:{type:'numberbox', options:unitPriceOptions}},
+		          {field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          {field:'remark',title:'备注',width:140,editor:'text'},
+		          {field:'action',title:'操作',width:50,align:'center',
+		        	  formatter:function(value,row,index){
+		        		  return '<a href=\"#\" onclick=\"javascript:$("#stockItem_import_dg_win").edatagrid("deleteRow",' +index+ ')\">删除</a>';
+		        	  }
+		          }
+		          ]],
+	});
+	// 加载从excel读取出来的数据
+	$('#stockItem_import_dg_win').edatagrid('load', dataFromExcel);
 }
 
 function initStockTakingItemDG(){
@@ -988,4 +1049,62 @@ function doSearchStocktakeItem(){
 		}else{
 			$('#stocktakeItem_dg').datagrid('load', {stocktakeId: stId});
 		}
+}
+
+// 异步上传Excel文件到后台处理
+var dataFromExcel;
+function excelUpload(){
+	var options = {
+			title:'',  //显示在头部面板上的标题文本
+			msg:'', //消息框的主体文本
+			text:'读取数据中，请稍候', //显示在进度条里的文本
+			interval: 300   //每次进度更新之间以毫秒为单位的时间长度
+	};
+	// 打开进度条
+	$.messager.progress(options); 
+    $.ajaxFileUpload
+    (
+        {
+            url: 'stock/uploadExcel', //用于文件上传的服务器端请求地址
+            fileElementId: 'excel', //文件上传域的ID
+            secureuri: false, //是否需要安全协议，一般设置为false
+            dataType: 'json', //返回值类型 一般设置为json
+			// data:param,  // 表单数据,或者：data:{id: xxx, name: yyyy}
+            success: function (data, status)  //服务器成功响应处理函数
+            {
+            	if (!data.isError){
+            		dataFromExcel = data.obj;
+            		importExcel("销售出库-" + data.msg);
+            	}
+            	else{
+            		if (data.msg){
+            			$.messager.alert("错误", data.msg , "error");
+            		}
+            		else{
+            			$.messager.alert("错误", "读取数据时出错，请检查文件格式及内容是否正确！", "error");
+            		}
+            	}
+            	// 关闭进度条
+            	$.messager.progress('close');
+            },
+            error: function (data, status, e) //服务器响应失败处理函数
+            {
+            	$.messager.progress('close');
+            	$.messager.alert("错误", e , "error");
+            }
+        }
+    );
+    
+    return false;
+}
+
+function importExcel(title){
+	$('#win').window({
+		title:title,
+	    width:1000,
+	    height:'100%',
+	    modal:true,
+	    href: rootUri + 'stock/itemsImport',
+	    onLoad:initStockItemImportDG_win
+	});
 }

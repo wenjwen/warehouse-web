@@ -13,6 +13,7 @@
 <script type="text/javascript" src="resource/js/jquery.edatagrid.js"></script>
 <script type="text/javascript" src="resource/js/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="resource/js/customized/common.js"></script>
+<script type="text/javascript" src="resource/js/ajaxfileupload.js"></script>
 <script type="text/javascript" src="resource/js/customized/init_datagrid.js"></script>
 <script type="text/javascript">
 	var unitJson = '${unitJson}';

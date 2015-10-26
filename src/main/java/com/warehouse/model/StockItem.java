@@ -6,14 +6,20 @@ public class StockItem {
     private Integer id;
 
     private Integer stockId;
-
+    
     private Integer materialId;
+    
+    private BigDecimal balance;
 
     private Integer unitId;
 
     private BigDecimal unitPrice;
 
+    // 对应的物料库存数量
     private BigDecimal quantity;
+    
+    // 对应的物料的总数量
+    private BigDecimal totalQuantity;
 
     private String remark;
 
@@ -41,7 +47,7 @@ public class StockItem {
         this.stockId = stockId;
     }
 
-    public Integer getMaterialId() {
+	public Integer getMaterialId() {
         return materialId;
     }
 
@@ -49,7 +55,27 @@ public class StockItem {
         this.materialId = materialId;
     }
 
-    public Integer getUnitId() {
+    public BigDecimal getBalance()
+	{
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance)
+	{
+		this.balance = balance;
+	}
+	
+	public BigDecimal getTotalQuantity()
+	{
+		return totalQuantity;
+	}
+
+	public void setTotalQuantity(BigDecimal totalQuantity)
+	{
+		this.totalQuantity = totalQuantity;
+	}
+
+	public Integer getUnitId() {
         return unitId;
     }
 

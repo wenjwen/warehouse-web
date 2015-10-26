@@ -109,4 +109,11 @@
 	
 	<mvc:resources mapping="/resource/**" location="/resource/"/>
 	
+	<!-- p:maxUploadSize="5400000" -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		p:defaultEncoding="UTF-8"
+		p:uploadTempDir="fileUpload/temp"
+	 />
+	
 </beans>

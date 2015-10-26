@@ -5,6 +5,8 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="stock_id" property="stockId" jdbcType="INTEGER" />
     <result column="material_id" property="materialId" jdbcType="INTEGER" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="total_quantity" property="totalQuantity" jdbcType="DECIMAL" />
     <result column="unit_id" property="unitId" jdbcType="INTEGER" />
     <result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
     <result column="quantity" property="quantity" jdbcType="DECIMAL" />
@@ -185,6 +187,18 @@
   	 select 
     <include refid="Base_Column_List" />
     from stock_item
+    where stock_id = #{stockId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectQuantityAndBalance" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select i.*, m.balance as balance, m.total_quantity as total_quantity
+    from stock_item i left join material m on(i.material_id = m.id)
+    where i.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <select id="findItemsByStockIdForDeleteStock" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select i.id id, i.quantity quantity,i.material_id material_id, m.balance as balance, m.total_quantity as tatal_quantity
+    from stock_item i left join material on(i.material_id = m.id)
     where stock_id = #{stockId,jdbcType=INTEGER}
   </select>
 </mapper>

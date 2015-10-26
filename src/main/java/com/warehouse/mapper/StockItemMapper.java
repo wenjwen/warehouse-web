@@ -22,4 +22,8 @@ public interface StockItemMapper {
 	void deleteByStockId(Object stockId);
 
 	List<StockItem> findItemsByStockId(Integer stockId);
+	
+	List<StockItem> findItemsByStockIdForDeleteStock(Integer stockId);
+	
+	StockItem selectQuantityAndBalance(Integer id);
 }

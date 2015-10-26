@@ -1,6 +1,7 @@
 package com.warehouse.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.warehouse.model.Material;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
 import com.warehouse.model.StockSearch;
+import com.warehouse.util.Constant;
 
 @Service
 public class StockService extends BaseService<Stock>
@@ -99,7 +101,14 @@ public class StockService extends BaseService<Stock>
 	@Override
 	public int deleteById(Object id)
 	{
-		itemMapper.deleteByStockId(id);
+		// TODO 更新数量
+		Stock s = stockMapper.queryById(id);
+		List<StockItem> items = itemMapper.findItemsByStockIdForDeleteStock((Integer)id);
+		if (items != null && !items.isEmpty()){
+			for(StockItem i : items){
+				this.updateMaterialForDeleteItem(s.getStockType(), i);
+			}
+		}
 		return super.deleteById(id);
 	}
 
@@ -108,22 +117,97 @@ public class StockService extends BaseService<Stock>
 		return itemMapper.findItemsByStockId(stockId);
 	}
 
-	public void deleteItemById(Integer id)
+	public void deleteItem(StockItem si, Integer stockType)
 	{
-		// TODO 删除stock item, 更新库存数量
-		
+		// 删除stock item, 要根据stock type更新库存数量
+		StockItem item = itemMapper.selectQuantityAndBalance(si.getId());
+		this.updateMaterialForDeleteItem(stockType, item);
+		itemMapper.deleteByPrimaryKey(si.getId());
+	}
+	
+	/**
+	 * 删除stock item前，重新计算物料数量
+	 * @param stockType
+	 * @param stock item
+	 */
+	private void updateMaterialForDeleteItem(Integer stockType, StockItem item){
+		if (item.getTotalQuantity() != null && item.getBalance() != null && item.getQuantity() != null){
+			Material m = new Material();
+			m.setId(item.getMaterialId());
+			switch(stockType){  // 1,2,3 入库: 删除已入库的物料，要减去入库数量，恢复到入库前的状态
+			case 1: case 2: case 3:
+				m.setTotalQuantity(item.getTotalQuantity().subtract(item.getQuantity())); // 恢复物料总数量
+				m.setBalance(item.getBalance().subtract(item.getQuantity()));// 恢复物料库存数量
+				break;
+			case 4: case 5: case 6: //  4,5,6 出库: 删除已出库的物料，要加上出库数量，恢复到出库前的状态
+				m.setTotalQuantity(item.getTotalQuantity().add(item.getQuantity())); // 恢复物料总数量
+				m.setBalance(item.getBalance().add(item.getQuantity()));// 恢复物料库存数量
+				break;
+			}
+			materialMapper.updateByPrimaryKeySelective(m);
+		}
 	}
 
-	public void insertItem(StockItem item)
+	public void insertItem(StockItem item, Integer stockType)
 	{
-		// TODO 添加stock item, 根据stock type更新库存数量
-		
+		// 添加stock item, 根据stock type更新库存数量
+		Material m = materialMapper.selectByPrimaryKey(item.getMaterialId());
+		Date now = new Date();
+		if (m.getTotalQuantity() != null && m.getBalance() != null && item.getQuantity() != null){
+			switch(stockType){  // 1,2,3 入库: 删除已入库的物料，要减去入库数量，恢复到入库前的状态
+			case 1: case 2: case 3:
+				m.setTotalQuantity(m.getTotalQuantity().subtract(item.getQuantity())); // 恢复物料总数量
+				m.setBalance(m.getBalance().subtract(item.getQuantity()));// 恢复物料库存数量
+				break;
+			case 4: case 5: case 6: //  4,5,6 出库: 删除已出库的物料，要加上出库数量，恢复到出库前的状态
+				m.setTotalQuantity(m.getTotalQuantity().add(item.getQuantity())); // 恢复物料总数量
+				m.setBalance(m.getBalance().add(item.getQuantity()));// 恢复物料库存数量
+				break;
+			}
+			Material newM = new Material();
+			newM.setId(m.getId());
+			newM.setBalance(m.getBalance());
+			newM.setTotalQuantity(m.getTotalQuantity());
+			newM.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+			materialMapper.updateByPrimaryKeySelective(newM);
+		}
+		item.setUnitId(m.getUnitId());
+		item.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+		item.setUpdateTime(item.getCreateTime());
+		itemMapper.insert(item);
 	}
 
-	public void updateItem(StockItem item)
+	public void updateItem(StockItem si, Integer stockType)
 	{
-		// TODO 更新stock item, 根据stock type和修改前后相差数量更新库存数量
-		
+		// 更新stock item, 根据stock type和修改前后相差数量更新库存数量
+		// Material m = materialMapper.selectByPrimaryKey(item.getMaterialId());
+		StockItem item = itemMapper.selectQuantityAndBalance(si.getId());
+		Date now = new Date();
+		if (item.getTotalQuantity() != null && item.getBalance() != null && si.getQuantity() != null){
+			Material m = new Material();
+			m.setId(item.getMaterialId());
+			
+			BigDecimal diffQuantity = si.getQuantity().subtract(item.getQuantity()); // 修改前后相关数量
+			
+			switch(stockType){  // 1,2,3 入库
+			case 1: case 2: case 3:
+				m.setTotalQuantity(m.getTotalQuantity().add(diffQuantity)); // 物料总数量=原总数+相关数量
+				m.setBalance(m.getBalance().add(diffQuantity));// 物料库存数量=原库存+相关数量
+				break;
+			case 4: case 5: case 6: //  4,5,6 出库
+				m.setTotalQuantity(m.getTotalQuantity().subtract(diffQuantity)); // 重算物料总数量
+				m.setBalance(m.getBalance().subtract(diffQuantity));// 重算物料库存数量
+				break;
+			}
+			Material newM = new Material();
+			newM.setId(m.getId());
+			newM.setBalance(m.getBalance());
+			newM.setTotalQuantity(m.getTotalQuantity());
+			newM.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+			materialMapper.updateByPrimaryKeySelective(newM);
+		}
+		item.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+		itemMapper.updateByPrimaryKeySelective(si);
 	}
 	
 }

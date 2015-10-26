@@ -10,11 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONArray;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.warehouse.common.PageParamModel;
 import com.warehouse.model.Stock;
@@ -51,8 +54,22 @@ public class StockController
 	 * @return
 	 */
 	@RequestMapping(value="stock/items")
-	public Object toStockItemsPage(ModelMap model){
+	public Object toStockItemsPage(ModelMap model, Integer stockId, Integer stockType){
+		model.addAttribute("stockId", stockId);
+		model.addAttribute("stockType", stockType);
 		return "/stock/items";
+	}
+	
+	/**
+	 * 打开导入stock item页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="stock/itemsImport")
+	public Object toStockItemsImportPage(ModelMap model, Integer stockId, Integer stockType){
+		model.addAttribute("stockId", stockId);
+		model.addAttribute("stockType", stockType);
+		return "/stock/itemsImport";
 	}
 	
 	@RequestMapping(value="stock/list.json")
@@ -64,8 +81,8 @@ public class StockController
 	
 	@RequestMapping(value="stock/items.json")
 	@ResponseBody
-	public Object findStockItems(PageParamModel<Stock> ppm, Stock s){
-		return stockService.findItemsByStockId(s.getId());
+	public Object findStockItems(PageParamModel<Stock> ppm, Integer stockId){
+		return stockService.findItemsByStockId(stockId);
 	}
 	
 	/**
@@ -122,16 +139,18 @@ public class StockController
 	 */
 	@RequestMapping(value="saveStockItem")
 	@ResponseBody
-	public Object saveStockItem(StockItem item){
+	public Object saveStockItem(HttpServletRequest request, StockItem item){
 		AjaxResult result = new AjaxResult();
 		try
 		{
+			item.setStockId(Integer.parseInt(request.getParameter("stockId")));
+			
 			if (item.getId() != null && item.getId() > 0){ // update
 				item.setUpdateTime(Constant.DATETIME_FORMATTER.format(new Date()));
-				stockService.updateItem(item);
+				stockService.updateItem(item, Integer.parseInt(request.getParameter("stockType")));
 			} else {  // insert
 				item.setCreateTime(Constant.DATETIME_FORMATTER.format(new Date()));
-				stockService.insertItem(item);
+				stockService.insertItem(item, Integer.parseInt(request.getParameter("stockType")));
 			}
 		}
 		catch (Exception e)
@@ -163,11 +182,11 @@ public class StockController
 	
 	@RequestMapping(value="deleteStockItem")
 	@ResponseBody
-	public Object deleteStockItem(StockItem item){
+	public Object deleteStockItem(HttpServletRequest request, StockItem item){
 		AjaxResult result = new AjaxResult();
 		try
 		{
-			stockService.deleteItemById(item.getId());
+			stockService.deleteItem(item, Integer.parseInt(request.getParameter("stockType")));
 		}
 		catch (Exception e)
 		{
@@ -228,5 +247,33 @@ public class StockController
 		return result;
 	}
 	
+	
+	@RequestMapping(value="stock/uploadExcel")
+	@ResponseBody
+	public Object uploadExcel(Integer stockType, @RequestParam MultipartFile excel){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			if (excel.getOriginalFilename().endsWith(".xls")){
+				result.setMsg(excel.getOriginalFilename());
+				// 开始读取excel数据
+				HSSFWorkbook wb = new HSSFWorkbook(excel.getInputStream());
+				HSSFSheet sheet = wb.getSheetAt(0);
+				
+			}else{
+				result.setIsError(true);
+				result.setMsg("请选择xls文件！");
+			}
+		    
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
 	
 }
