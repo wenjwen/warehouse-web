@@ -838,7 +838,7 @@ function initStockItemDG_win(){
 	//$('#materialComboBox').combobox('loadData', materialEntry);
 }
 
-function initStockItemImportDG_win(data){
+function initStockItemImportDG_win(){
 	//var stockId = $('#stockIdForImport').val();
 	//var stockType = $('#stockTypeForImport').val();
 	
@@ -858,30 +858,62 @@ function initStockItemImportDG_win(data){
 		onError: function(index,row){
 			alert(index + ', ' + row.msg);
 		},
-		columns:[[
-		          {field:'materialId',title:'物料名(单位)',width:100,
-		        	  formatter:function(value){
+		columns:[[{field: 'stockDate', title:'日期', width:80, editor:{type:'dateBox',options:{required:true}}},
+		          {field: 'stockNo', title:'单号', width:80, editor:{type:'text',options:{required:true}}},
+		          {field:'materialId',hidden:true,editor:{type:'text',options:{required:true}}},
+		          {field:'materialName',title:'物料名',width:140,
+		        	  formatter:function(value, row, rowIndex){
 		        		  if(typeof(value) != 'undefined'){
 		        			  for(var i=0; i<materialEntry.length; i++){
-		        				  if (materialEntry[i].id == value) 
-		        					  return materialEntry[i].name + '('+ materialEntry[i].extraValue2 + ')';  // 物料名(单位)
+		        				  if (materialEntry[i].name == value){
+		        					  // 设置materialId
+		        					  var ed = $('#stockItem_import_dg_win').datagrid('getEditor', {index:rowIndex,field:'materialId'});
+		        					  $(ed).textbox('setValue', materialEntry[i].id);
+		        					  return value;  // 物料名
+		        				  } 
 		        			  }
 		        		  }
-		        		  return value;
+		        		  return '<span style="color:red;">未知物料:' + value + '</span>';
 		        	  },
 		        	  editor:{
 		        		  type:'combobox',
 		        		  options:{
-		        			  valueField:'id',
+		        			  valueField:'name',
 		        			  textField:'name',
 		        			  data:materialEntry,
 		        			  required:true
 		        		  }
 		        	  }
 		          },
-		          {field:'unitPrice',title:'单价(元)',width:60,hidden:isHidden, editor:{type:'numberbox', options:unitPriceOptions}},
-		          {field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2,required:true}}},
-		          {field:'remark',title:'备注',width:140,editor:'text'},
+		          {field:'remark',title:'物料说明',width:120,editor:'text'}, //跟物料写在同一个单元格、用空格隔开的备注
+		          {field:'unitId',hidden:true,editor:{type:'text',options:{required:true}}},
+		          {field:'unitName',title:'单位',width:80,
+		        	  formatter:function(value,row, rowIndex){
+		        		  if(typeof(value) != 'undefined'){
+		        			  for(var i=0; i<unitEntry.length; i++){
+		        				  if (unitEntry[i].name == value) {
+		        					  // 设置unitId
+		        					  var ed = $('#stockItem_import_dg_win').datagrid('getEditor', {index:rowIndex,field:'unitId'});
+		        					  $(ed).textbox('setValue', unitEntry[i].id);
+		        					  return value;  // 物料名
+		        				  }
+		        			  }
+		        		  }
+		        		  return '<span style="color:red;">未知单位:' + value + '</span>';
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:unitEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'quantity',title:'数量',width:40,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          {field:'unitPrice',title:'单价',width:60,hidden:isHidden, editor:{type:'numberbox', options:unitPriceOptions}},
+		          {field:'stockRemark',title:'备注',width:140,editor:'text'},
 		          {field:'action',title:'操作',width:50,align:'center',
 		        	  formatter:function(value,row,index){
 		        		  return '<a href=\"#\" onclick=\"javascript:$("#stockItem_import_dg_win").edatagrid("deleteRow",' +index+ ')\">删除</a>';
@@ -890,7 +922,7 @@ function initStockItemImportDG_win(data){
 		          ]],
 	});
 	// 加载从excel读取出来的数据
-	$('#stockItem_import_dg_win').edatagrid('load', dataFromExcel);
+	$('#stockItem_import_dg_win').edatagrid('loadData', dataFromExcel);
 }
 
 function initStockTakingItemDG(){
@@ -1090,7 +1122,7 @@ function excelUpload(){
             error: function (data, status, e) //服务器响应失败处理函数
             {
             	$.messager.progress('close');
-            	$.messager.alert("错误", e , "error");
+            	$.messager.alert("错误", "服务器响应" , "error");
             }
         }
     );
@@ -1105,6 +1137,45 @@ function importExcel(title){
 	    height:'100%',
 	    modal:true,
 	    href: rootUri + 'stock/itemsImport',
-	    onLoad:initStockItemImportDG_win
+	    onLoad:initStockItemImportDG_win    // 页面加载完后执行的函数
 	});
+}
+	
+// TODO 提交从excel导入的stock item
+function submitImportStockItem(){
+	// $('#stockItem_import_dg_win').edatagrid();
+	if ($('#stockItem_import_dg_win').datagrid('getRows').length > 0){
+		// 取数据
+		var item;
+		var itemArr = [];
+		var rows = $('#stockItem_import_dg_win').datagrid('getRows');
+		for(var i=0; i<rows.length;i++){
+			//console.log('material id =' + rows[i].materialId);
+			item = new Object();
+			item.stockDate = rows[i].stockDate;
+			item.stockNo = rows[i].stockNo;
+			item.stockRemark = rows[i].stockRemark;
+			item.materialId = rows[i].materialId;
+			item.unitId = rows[i].unitId;
+			item.quantity = rows[i].quantity;
+			item.unitPrice = rows[i].unitPrice;
+			item.remark = rows[i].remark;
+			itemArr.push(item);
+		}
+		
+		$.ajax({
+			url:'/warehouse/stock/saveImportItems',
+			dataType:'json',
+			type:'POST',
+			data : {itemsStr:JSON.stringify(itemArr)},
+			success:function(data){
+				if(!data.isError){
+					$.messager.alert('提示','保存成功','info');
+				} 
+				else {
+					$.messager.alert('错误','保存失败！','error');
+				}
+			}
+		});
+	}
 }

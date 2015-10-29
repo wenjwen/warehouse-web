@@ -9,9 +9,13 @@ public class StockItem {
     
     private Integer materialId;
     
+    private String materialName;
+    
     private BigDecimal balance;
 
     private Integer unitId;
+    
+    private String unitName;
 
     private BigDecimal unitPrice;
 
@@ -30,6 +34,12 @@ public class StockItem {
     private String createTime;
 
     private String updateTime;
+    
+    private String stockNo;
+    
+    private String stockDate;
+    
+    private String stockRemark;
 
     public Integer getId() {
         return id;
@@ -142,4 +152,56 @@ public class StockItem {
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
+
+	public String getStockNo()
+	{
+		return stockNo;
+	}
+
+	public void setStockNo(String stockNo)
+	{
+		this.stockNo = stockNo;
+	}
+
+	public String getStockDate()
+	{
+		return stockDate;
+	}
+
+	public void setStockDate(String stockDate)
+	{
+		this.stockDate = stockDate;
+	}
+
+	public String getStockRemark()
+	{
+		return stockRemark;
+	}
+
+	public void setStockRemark(String stockRemark)
+	{
+		this.stockRemark = stockRemark;
+	}
+
+	public String getMaterialName()
+	{
+		return materialName;
+	}
+
+	public void setMaterialName(String materialName)
+	{
+		this.materialName = materialName;
+	}
+
+	public String getUnitName()
+	{
+		return unitName;
+	}
+
+	public void setUnitName(String unitName)
+	{
+		this.unitName = unitName;
+	}
+	
+    
 }

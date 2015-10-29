@@ -1,6 +1,7 @@
 package com.warehouse.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONArray;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -247,6 +247,36 @@ public class StockController
 		return result;
 	}
 	
+	/**
+	 * 导入excel保存入口
+	 * @param model
+	 * @param request
+	 * @param stock
+	 * @return
+	 */
+	@RequestMapping(value="stock/saveImportItems")
+	@ResponseBody
+	public Object saveImportItems(ModelMap model, HttpServletRequest request){
+		AjaxResult result = new AjaxResult();
+		try
+		{
+			// json字符串转为JAVA对象
+			String items = request.getParameter("itemsStr");
+			List<StockItem> list = (List<StockItem>)JSONArray.toCollection(
+					JSONArray.fromObject(items), StockItem.class);
+			
+			stockService.saveImportItems(list);
+		}
+		catch (Exception e)
+		{
+			result.setIsError(true);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
 	
 	@RequestMapping(value="stock/uploadExcel")
 	@ResponseBody
@@ -258,7 +288,18 @@ public class StockController
 				result.setMsg(excel.getOriginalFilename());
 				// 开始读取excel数据
 				HSSFWorkbook wb = new HSSFWorkbook(excel.getInputStream());
-				HSSFSheet sheet = wb.getSheetAt(0);
+				int sheetNum = wb.getNumberOfSheets();
+				if (sheetNum > 0){
+					List<StockItem> items = new ArrayList<StockItem>(0);
+					for (int i = 0; i < sheetNum-1; i++){
+						items.addAll(stockService.readItemFromSheet(wb.getSheetAt(i)));
+					}
+					result.setObj(items);
+				}
+				else {
+					result.setIsError(true);
+					result.setMsg("无法读取xls文件中表单(sheet)！");
+				}
 				
 			}else{
 				result.setIsError(true);
@@ -269,6 +310,7 @@ public class StockController
 		catch (Exception e)
 		{
 			result.setIsError(true);
+			result.setMsg("处理文件时出错，请检查文件格式是否正确！" + e.getMessage());
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

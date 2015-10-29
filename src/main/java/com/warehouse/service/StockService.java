@@ -1,6 +1,7 @@
 package com.warehouse.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Service;
 
 import com.warehouse.common.BaseMapper;
@@ -208,6 +211,78 @@ public class StockService extends BaseService<Stock>
 		}
 		item.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
 		itemMapper.updateByPrimaryKeySelective(si);
+	}
+
+	public List<StockItem> readItemFromSheet(HSSFSheet sheet) throws Exception
+	{
+		List<StockItem> items = new ArrayList<StockItem>(0);
+		int index = 1; // 时间行
+		try
+		{
+			if (sheet != null){
+				String timeStr = sheet.getRow(index).getCell(0).getStringCellValue(); // 时间行
+				if (timeStr == null || "".equals(timeStr)){
+					return items;
+				}
+				String yearAndMonth = timeStr.substring(0, timeStr.indexOf("月")).replace("年", "-"); // 变成格式：yyyy-MM
+				
+				index = 3; // 数据内容从第4行(索引为3)开始
+				while(sheet.getRow(index) != null){
+					Row row = sheet.getRow(index);
+					StockItem item = new StockItem();
+					int cellnum = 0;
+					
+					String dayStr = row.getCell(cellnum++).getStringCellValue();
+					if (dayStr == null || "".equals(dayStr)){  // 第一个cell没有内容，认为到此结束
+						break;
+					}
+					item.setStockDate(yearAndMonth + "-" + dayStr.replaceAll("号", ""));  // 变成格式：yyyy-MM-dd
+					item.setStockNo(row.getCell(cellnum++).getStringCellValue()); // 单号
+					
+					String nameStr = row.getCell(cellnum++).getStringCellValue();
+					if (nameStr.lastIndexOf(" ") == -1){
+						item.setMaterialName(nameStr);  // 物料名
+					}else{
+						nameStr = nameStr.replaceFirst(" ", "\\|");
+						item.setMaterialName(nameStr.split("\\|")[0]);  // 物料名
+						item.setRemark(nameStr.split("\\|")[1]);  // 物料名后面以空格隔开的备注
+					}
+					
+					item.setUnitName(row.getCell(cellnum++).getStringCellValue());  //单位
+					
+					double quantity = row.getCell(cellnum++).getNumericCellValue(); // 数量
+					item.setQuantity(new BigDecimal(quantity));
+					
+					double price = row.getCell(cellnum++).getNumericCellValue(); // 单价
+					item.setUnitPrice(new BigDecimal(price));
+					
+					cellnum++; // 路过金额列
+					item.setStockRemark(row.getCell(cellnum++).getStringCellValue()); // 备注列
+					
+					items.add(item);
+					index++;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			throw new Exception("分析表单 \""+ sheet.getSheetName() + "\"的第" + (++index) + "行时出错！");
+		}
+		
+		return items;
+	}
+
+	/**
+	 * 保存从excel导入的数据
+	 * @param list
+	 */
+	public void saveImportItems(List<StockItem> list)
+	{
+		// TODO 
+		for(StockItem item : list){
+			
+		}
 	}
 	
 }

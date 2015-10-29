@@ -2,6 +2,8 @@ package com.warehouse.util;
 
 public class AjaxResult
 {
+	private Object obj;  // 数据对象
+	
 	private Boolean isError = false;  // 是否错误
 	
 	private String code; // 状态码
@@ -37,6 +39,15 @@ public class AjaxResult
 	{
 		this.code = code;
 	}
-	
+
+	public Object getObj()
+	{
+		return obj;
+	}
+
+	public void setObj(Object obj)
+	{
+		this.obj = obj;
+	}
 	
 }
