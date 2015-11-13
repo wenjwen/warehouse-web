@@ -9,7 +9,7 @@
 		toolbar="#toolbar" idField="id" autoSave="false"
 		rownumbers="true" fitColumns="true" singleSelect="true">
 </table>
-<div id="toolbar">
+<div id="toolbar" style="padding: 5px;">
 	<span>物料名</span>
 	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="line-height:26px;border:1px solid #ccc"/>
 	<span>编号</span>

@@ -12,7 +12,7 @@
 		rownumbers="true" fitColumns="true" singleSelect="true">
 	
 </table>
-<div id="toolbar">
+<div id="toolbar" style="padding: 5px;">
 	<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#stocktake_dg').edatagrid('addRow',{index:0})">新增</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#stocktake_dg').edatagrid('destroyRow')">删除</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#stocktake_dg').edatagrid('saveRow')">保存</a>

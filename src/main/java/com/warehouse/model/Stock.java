@@ -155,6 +155,10 @@ public class Stock {
 	{
 		this.items = items;
 	}
+	
+	public void addItem(StockItem item){
+		this.items.add(item);
+	}
     
     
 }

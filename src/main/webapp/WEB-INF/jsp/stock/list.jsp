@@ -13,7 +13,9 @@
 	
 </table>
 <div id="toolbar" style="padding:5px 5px 5px 5px;">
-	<label style="padding:5px 5px 5px 5px;">导入出库记录：</label><input type="file" id="excel" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload();"/><br/>
+	<div style="padding:5px 5px 5px 5px;">
+		<label style="color:red;">导入出库记录：</label><input type="file" id="excel" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload();"/><br/>
+	</div>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#stock_dg').edatagrid('addRow',{index:0})">新增</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#stock_dg').edatagrid('destroyRow')">删除</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#stock_dg').edatagrid('saveRow')">保存</a>

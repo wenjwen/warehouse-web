@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,14 +17,17 @@ import org.springframework.stereotype.Service;
 
 import com.warehouse.common.BaseMapper;
 import com.warehouse.common.BaseService;
+import com.warehouse.mapper.DictMapper;
 import com.warehouse.mapper.MaterialMapper;
 import com.warehouse.mapper.StockItemMapper;
 import com.warehouse.mapper.StockMapper;
+import com.warehouse.model.Dict;
 import com.warehouse.model.Material;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
 import com.warehouse.model.StockSearch;
 import com.warehouse.util.Constant;
+import com.warehouse.util.Entry;
 
 @Service
 public class StockService extends BaseService<Stock>
@@ -37,7 +41,8 @@ public class StockService extends BaseService<Stock>
 	private StockItemMapper itemMapper;
 	@Resource
 	private MaterialMapper materialMapper;
-	
+	@Resource
+	private DictMapper dictMapper;
 	@Override
 	public BaseMapper<Stock> getMapper()
 	{
@@ -46,7 +51,16 @@ public class StockService extends BaseService<Stock>
 
 	public void save(Stock stock) throws Exception
 	{
-		stockMapper.insert(stock);
+		try
+		{
+			stockMapper.insert(stock);
+		}
+		catch (Exception e)
+		{
+			if (e.getMessage().contains("UNIQUE constraint failed: stock.stock_no")){
+				throw new Exception("单号冲突，系统中已存在单号'"+stock.getStockNo()+"'！");
+			}
+		}
 		logger.debug("---stock id=" + stock.getId());
 		// 设置item的stock id
 		if (stock.getItems() != null && stock.getItems().size() > 0){
@@ -213,14 +227,18 @@ public class StockService extends BaseService<Stock>
 		itemMapper.updateByPrimaryKeySelective(si);
 	}
 
-	public List<StockItem> readItemFromSheet(HSSFSheet sheet) throws Exception
+	public List<StockItem> readItemFromSheet(HSSFSheet sheet, Map<String, Entry> mMap, Map<String, Dict> uMap) throws Exception
 	{
 		List<StockItem> items = new ArrayList<StockItem>(0);
 		int index = 1; // 时间行
 		try
 		{
 			if (sheet != null){
-				String timeStr = sheet.getRow(index).getCell(0).getStringCellValue(); // 时间行
+				Row row = sheet.getRow(index);
+				if (row == null){
+					return items;
+				}
+				String timeStr = row.getCell(0).getStringCellValue(); // 时间行
 				if (timeStr == null || "".equals(timeStr)){
 					return items;
 				}
@@ -228,7 +246,7 @@ public class StockService extends BaseService<Stock>
 				
 				index = 3; // 数据内容从第4行(索引为3)开始
 				while(sheet.getRow(index) != null){
-					Row row = sheet.getRow(index);
+					row = sheet.getRow(index);
 					StockItem item = new StockItem();
 					int cellnum = 0;
 					
@@ -250,6 +268,22 @@ public class StockService extends BaseService<Stock>
 					
 					item.setUnitName(row.getCell(cellnum++).getStringCellValue());  //单位
 					
+					// 检查物料名、单位名是否正确
+					if (mMap.get(item.getMaterialName()) == null){ // 没找到
+						throw new Exception("系统中找不到物料'"+item.getMaterialName()+"'");
+					}else{
+						item.setMaterialId(mMap.get(item.getMaterialName()).getId());
+						item.setUnitId((Integer)mMap.get(item.getMaterialName()).getExtraValue1());
+					}
+					
+					if (uMap.get(item.getUnitName()) == null){// 没找到
+						throw new Exception("系统中找不到单位'"+item.getUnitName()+"'");
+					}
+					if(!item.getUnitId().equals(uMap.get(item.getUnitName()).getId())){
+						throw new Exception("物料'"+ item.getMaterialName() + "'" + "的单位应为'"+ mMap.get(item.getMaterialName()).getExtraValue2()+"'");
+					}
+					
+					
 					double quantity = row.getCell(cellnum++).getNumericCellValue(); // 数量
 					item.setQuantity(new BigDecimal(quantity));
 					
@@ -267,7 +301,7 @@ public class StockService extends BaseService<Stock>
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			throw new Exception("分析表单 \""+ sheet.getSheetName() + "\"的第" + (++index) + "行时出错！");
+			throw new Exception("分析工作表 \""+ sheet.getSheetName() + "\"的第" + (++index) + "行时出错！" + e.getMessage());
 		}
 		
 		return items;
@@ -277,11 +311,40 @@ public class StockService extends BaseService<Stock>
 	 * 保存从excel导入的数据
 	 * @param list
 	 */
-	public void saveImportItems(List<StockItem> list)
+	public void saveImportItems(List<StockItem> list) throws Exception
 	{
 		// TODO 
+		Date now = new Date();
+		Map<String, Stock> stockMap = new HashMap<String, Stock>();
 		for(StockItem item : list){
-			
+			Stock s = stockMap.get(item.getStockNo());
+			if (s == null){
+				s = new Stock();
+				s.setStockNo(item.getStockNo());
+				s.setStockTime(item.getStockDate() + " 00:00:01");
+				s.setSource("仓库");
+				s.setStockType(6);
+				s.setTypeName("销售出库");
+				s.setTarget(item.getStockRemark());  // 客户、目的地
+				s.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+				s.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+				
+				item.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+				item.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+				s.addItem(item);
+				
+				stockMap.put(s.getStockNo(), s);
+			}
+			else {
+				s.addItem(item);
+			}
+		}
+		
+		// save
+		Iterator<Stock> it = stockMap.values().iterator();
+		while(it.hasNext()){
+			Stock s = it.next();
+			this.save(s);
 		}
 	}
 	

@@ -52,7 +52,7 @@ public class LoginController
 			request.getSession().setAttribute(Constant.USER, user);
 		}
 		
-		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
+		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findByType(1))); // 1 单位
 		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
 		model.addAttribute("materialJson", JSONArray.fromObject(materialService.findAllEntry()));
 		return "/main";
@@ -62,7 +62,7 @@ public class LoginController
 	public String toMainPage(HttpServletRequest request, ModelMap model){
 		// 只查询功能，把session中user清空
 		request.getSession().setAttribute(Constant.USER, null);
-		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findAllEntry()));
+		model.addAttribute("unitJson", JSONArray.fromObject(dictService.findByType(1))); // 1 单位
 		model.addAttribute("categoryJson", JSONArray.fromObject(categoryService.findAllEntry()));
 		model.addAttribute("materialJson", JSONArray.fromObject(materialService.findAllEntry()));
 		return "/main";

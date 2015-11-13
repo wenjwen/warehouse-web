@@ -17,7 +17,7 @@
 		</tr>
 	</thead> -->
 </table>
-<div id="toolbar">
+<div id="toolbar" style="padding: 5px;">
 	<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#category_dg').edatagrid('addRow')">新增</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#category_dg').edatagrid('destroyRow')">删除</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#category_dg').edatagrid('saveRow')">保存</a>

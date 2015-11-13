@@ -30,6 +30,27 @@
 	   <result column="balance" property="extraValue3" jdbcType="DECIMAL" />
   </resultMap>
   
+  <sql id="sql_where">
+ 	  <if test="t.id != null" >
+   	  	 AND m.ID = #{t.id}
+ 	  </if>
+ 		<if test="t.code != null and t.code != ''" >
+  	  	 AND m.CODE = #{t.code}
+ 	  </if>
+ 		<if test="t.name != null and t.name != ''" >
+  	  	 AND m.NAME like '%${t.name}%'
+ 	  </if>
+ 		<if test="t.size != null and t.size != ''" >
+  	  	 AND m.SIZE = #{t.size}
+ 	  </if>
+ 		<if test="t.categoryId != null" >
+  	  	 AND m.CATEGORY_ID = #{t.categoryId}
+ 	  </if>
+ 		<if test="t.disabled != null">
+  	  	 AND m.DISABLED = #{t.disabled}
+ 	  </if>
+  </sql>
+  
   <sql id="Base_Column_List" >
     id, update_user, create_user, create_time, update_time, unit_id, total_quantity, 
     balance, size, last_stock_take, avg_unit_price, unit_price, name, code, shelf, category_id, 
@@ -284,22 +305,22 @@
     <where>
     	<if test="id != null" >
      	  	 AND m.ID = #{id}
-    	  </if>
-    		<if test="code != null and code != ''" >
-     	  	 AND m.CODE = #{code}
-    	  </if>
-    		<if test="name != null and name != ''" >
-     	  	 AND m.NAME like '%${name}%'
-    	  </if>
-    		<if test="size != null and size != ''" >
-     	  	 AND m.SIZE = #{size}
-    	  </if>
-    		<if test="categoryId != null" >
-     	  	 AND m.CATEGORY_ID = #{categoryId}
-    	  </if>
-    		<if test="disabled != null">
-     	  	 AND m.DISABLED = #{disabled}
-    	  </if>
+   	  </if>
+   		<if test="code != null and code != ''" >
+    	  	 AND m.CODE = #{code}
+   	  </if>
+   		<if test="name != null and name != ''" >
+    	  	 AND m.NAME like '%${name}%'
+   	  </if>
+   		<if test="size != null and size != ''" >
+    	  	 AND m.SIZE = #{size}
+   	  </if>
+   		<if test="categoryId != null" >
+    	  	 AND m.CATEGORY_ID = #{categoryId}
+   	  </if>
+   		<if test="disabled != null">
+    	  	 AND m.DISABLED = #{disabled}
+   	  </if>
     </where>
   </select>
   
@@ -316,5 +337,39 @@
   		last_stock_take=#{createTime,jdbcType=VARCHAR}
   	where id = #{materialId}
   </update>
+  
+  <select id="count" parameterType="com.warehouse.model.Material" resultType="_int">
+  	select count(1) from material m 
+		<where>
+			<include refid="sql_where" />
+		</where>
+  </select>
+  
+  <select id="queryForPage" resultMap="BaseResultMap">
+  	select m.*, d.name as unit_name from material m 
+  	left join dict d on(m.unit_id = d.id) 
+    <where>
+    	<if test="t.id != null" >
+     	  	 AND m.ID = #{t.id}
+   	  </if>
+   		<if test="t.code != null and t.code != ''" >
+    	  	 AND m.CODE = #{t.code}
+   	  </if>
+   		<if test="t.name != null and t.name != ''" >
+    	  	 AND m.NAME like '%${t.name}%'
+   	  </if>
+   		<if test="t.size != null and t.size != ''" >
+    	  	 AND m.SIZE = #{t.size}
+   	  </if>
+   		<if test="t.categoryId != null" >
+    	  	 AND m.CATEGORY_ID = #{t.categoryId}
+   	  </if>
+   		<if test="t.disabled != null">
+    	  	 AND m.DISABLED = #{t.disabled}
+   	  </if>
+    </where>
+		order by id ASC 
+		limit #{size} offset #{start}
+  </select>
   
 </mapper>

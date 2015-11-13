@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.warehouse.common.PageParamModel;
 import com.warehouse.model.Material;
 import com.warehouse.service.CategoryService;
 import com.warehouse.service.DictService;
@@ -45,11 +46,18 @@ public class MaterialController
 	}
 	
 	
-	@RequestMapping(value="material.json")
+	@RequestMapping(value="searchMaterial.json")
 	@ResponseBody
 	public Object categorySetting(ModelMap model, Material material){
 		// material.setDisabled(0); // 只查有效的
 		return materialService.findSelective(material);
+	}
+	
+	// 物料信息分页查询
+	@RequestMapping(value="material.json")
+	@ResponseBody
+	public Object categorySetting(PageParamModel<Material> ppm, Material m){
+		return materialService.paginQuery(m, ppm.getPage(), ppm.getRows());
 	}
 	
 	@RequestMapping(value="saveMaterial")

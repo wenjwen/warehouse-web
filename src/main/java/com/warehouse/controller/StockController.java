@@ -3,7 +3,9 @@ package com.warehouse.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -20,12 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.warehouse.common.PageParamModel;
+import com.warehouse.model.Dict;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
 import com.warehouse.service.DictService;
+import com.warehouse.service.MaterialService;
 import com.warehouse.service.StockService;
 import com.warehouse.util.AjaxResult;
 import com.warehouse.util.Constant;
+import com.warehouse.util.Entry;
 
 @Controller
 public class StockController
@@ -34,7 +39,8 @@ public class StockController
 	
 	@Resource
 	private StockService stockService;
-	
+	@Resource
+	private MaterialService materialService;
 	@Resource
 	private DictService dictService;
 	
@@ -270,6 +276,7 @@ public class StockController
 		catch (Exception e)
 		{
 			result.setIsError(true);
+			result.setMsg(e.getMessage());
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -290,9 +297,25 @@ public class StockController
 				HSSFWorkbook wb = new HSSFWorkbook(excel.getInputStream());
 				int sheetNum = wb.getNumberOfSheets();
 				if (sheetNum > 0){
+					List<Entry> mList = materialService.findAllEntry();
+					List<Dict> uList = dictService.findByType(1);
+					Map<String, Entry> mMap = new HashMap<String, Entry>(0);
+					Map<String, Dict> uMap = new HashMap<String, Dict>(0);
+				
+					if (mList != null && mList.size() > 0){
+						for(Entry m : mList){
+							mMap.put(m.getName(), m);
+						}
+					}
+					if (uList != null && uList.size() > 0){
+						for(Dict u : uList){
+							uMap.put(u.getName(), u);
+						}
+					}
+					
 					List<StockItem> items = new ArrayList<StockItem>(0);
-					for (int i = 0; i < sheetNum-1; i++){
-						items.addAll(stockService.readItemFromSheet(wb.getSheetAt(i)));
+					for (int i = 0; i < sheetNum; i++){
+						items.addAll(stockService.readItemFromSheet(wb.getSheetAt(i), mMap, uMap));
 					}
 					result.setObj(items);
 				}
@@ -310,7 +333,7 @@ public class StockController
 		catch (Exception e)
 		{
 			result.setIsError(true);
-			result.setMsg("处理文件时出错，请检查文件格式是否正确！" + e.getMessage());
+			result.setMsg(e.getMessage());
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}

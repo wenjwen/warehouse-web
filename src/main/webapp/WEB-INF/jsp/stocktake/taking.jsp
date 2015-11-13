@@ -12,7 +12,7 @@
 		toolbar="#toolbar" idField="id" autoSave="false"
 		rownumbers="true" fitColumns="true" singleSelect="true">
 </table>
-<div id="toolbar">
+<div id="toolbar" style="padding: 5px;">
 	<!-- <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#stocktakeItem_dg').edatagrid('destroyRow')">删除</a> -->
 	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#stocktakeItem_dg').edatagrid('saveRow')">保存</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#stocktakeItem_dg').edatagrid('cancelRow')">取消</a> | 

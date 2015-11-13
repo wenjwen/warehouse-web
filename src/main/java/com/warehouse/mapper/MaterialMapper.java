@@ -2,24 +2,19 @@ package com.warehouse.mapper;
 
 import java.util.List;
 
+import com.warehouse.common.BaseMapper;
 import com.warehouse.model.Material;
 import com.warehouse.model.StockItem;
 import com.warehouse.model.StocktakeItem;
 import com.warehouse.util.Entry;
 
-public interface MaterialMapper {
+public interface MaterialMapper extends BaseMapper<Material>{
     
 	int deleteByPrimaryKey(Integer id);
-
-    int insert(Material record);
 
     int insertSelective(Material record);
 
     Material selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKeySelective(Material record);
-
-    int updateByPrimaryKey(Material record);
 
 	List<Entry> findAllEntry();
 
