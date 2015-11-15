@@ -20,6 +20,14 @@ function parseToJson(){
 	}
 	if (typeof(materialJson) != "undefined" && materialJson != null && materialJson != ''){
 		materialEntry = JSON.parse(materialJson);
+		if (materialEntry.length > 0){
+			for(var i=0;i<materialEntry.length;i++){
+				if (materialEntry[i].extraValue4 != null && materialEntry[i].extraValue4 != ''){
+					// 物料名-规格
+					materialEntry[i].name = materialEntry[i].name + '-' + materialEntry[i].extraValue4;
+				}
+			}
+		}
 	}
 }
 
@@ -287,7 +295,7 @@ function initStocktakeItem_DG(){
 		},
 		columns:[[
 		          //{field:'ck', checkbox:true},
-		          {field:'materialId',title:'物料名',width:80,
+		          {field:'materialId',title:'物料名',width:160,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<materialEntry.length; i++){
 		        			  if (materialEntry[i].id == value) return materialEntry[i].name;
@@ -295,7 +303,7 @@ function initStocktakeItem_DG(){
 		        		  return value;
 		        	  }
 		          },
-		          {field:'unitId',title:'单位',width:60,
+		          {field:'unitId',title:'单位',width:40,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<unitEntry.length; i++){
 		        			  if (unitEntry[i].id == value) 
@@ -313,9 +321,9 @@ function initStocktakeItem_DG(){
 		        		  }
 		        	  }*/
 		          },
-		          {field:'balance',title:'账面数量',width:60/*, editor:{type:'numberbox',options:{precision:2}}*/},
-		          {field:'quantity',title:'盘点数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
-		          {field:'differQuantity',title:'相差数量',width:60/*, editor:{type:'numberbox',options:{precision:2}}*/},
+		          {field:'balance',title:'账面数量',width:40/*, editor:{type:'numberbox',options:{precision:2}}*/},
+		          {field:'quantity',title:'盘点数量',width:40, editor:{type:'numberbox',options:{precision:2}}},
+		          {field:'differQuantity',title:'相差数量',width:40/*, editor:{type:'numberbox',options:{precision:2}}*/},
 		          {field:'result',title:'盘点结果',width:60, 
 		        	  formatter:function(value){
 		        		  switch(value){  // -1-盘亏 0-正常 1-盘盈

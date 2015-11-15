@@ -17,7 +17,7 @@
 	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#stocktakeItem_dg').edatagrid('saveRow')">保存</a>
 	<a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#stocktakeItem_dg').edatagrid('cancelRow')">取消</a> | 
 	<span>物料名</span>
-	<input id="materialId" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="line-height:26px;border:1px solid #ccc"/>
+	<input id="materialId" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="width:280px;line-height:26px;border:1px solid #ccc"/>
 	<a href="#" class="easyui-linkbutton" plain="true" onclick="doSearchStocktakeItem();">搜索</a>
 </div>
 </body>

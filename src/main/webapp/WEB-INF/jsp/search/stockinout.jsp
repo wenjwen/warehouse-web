@@ -20,11 +20,11 @@
 	<td>
 	<span>出入库类型</span>
 	</td><td>
-	<input id="stockType" class="easyui-combobox" data-options="valueField:'id',textField:'name',data:stockTypeEntry" style="width:171px;line-height:26px;border:1px solid #ccc"/>
+	<input id="stockType" class="easyui-combobox" data-options="valueField:'id',textField:'name',data:stockTypeEntry" style="width:121px;line-height:26px;border:1px solid #ccc"/>
 	</td><td>
 	<span>物料名</span>
 	</td><td>
-	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="width:171px;line-height:26px;border:1px solid #ccc"/>
+	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="width:250px;line-height:26px;border:1px solid #ccc"/>
 	</td>
 	<td>
 	<span>日期</span>
@@ -43,12 +43,12 @@
 	<td>
 		<span>车牌</span>
 	</td><td>
-		<input id="trunkNo" class="easyui-textbox" style="width:171px;line-height:26px;border:1px solid #ccc"/>
+		<input id="trunkNo" class="easyui-textbox" style="width:121px;line-height:26px;border:1px solid #ccc"/>
 	</td>
 	<td>
 		<span id="targetName">目标</span>
 		</td><td>
-		<input id="target" class="easyui-textbox" style="width:171px;line-height:26px;border:1px solid #ccc"/>
+		<input id="target" class="easyui-textbox" style="width:250px;line-height:26px;border:1px solid #ccc"/>
 		</td><td>
 		<span id="sourceName">来源</span>
 		</td><td>

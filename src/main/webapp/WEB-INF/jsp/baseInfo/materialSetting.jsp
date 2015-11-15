@@ -11,7 +11,7 @@
 </table>
 <div id="toolbar" style="padding: 5px;">
 	<span>物料名</span>
-	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name',url:'/warehouse/materialEntry.json'" style="line-height:26px;border:1px solid #ccc"/>
+	<input id="id" class="easyui-combobox" data-options="valueField:'id',textField:'name'" style="width:280px;line-height:26px;border:1px solid #ccc"/>
 	<span>编号</span>
 	<input id="code" class="easyui-textbox"  style="line-height:26px;border:1px solid #ccc"/>
 	<span>规格</span>

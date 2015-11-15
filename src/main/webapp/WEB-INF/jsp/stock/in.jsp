@@ -82,7 +82,7 @@
 	  	<table cellpadding="5">
 				<tr>
 		 			<td>物料:</td>
-		 			<td><input id="materialComboBox" class="easyui-combobox" name="materialId"  style="width:171px;"
+		 			<td><input id="materialComboBox" class="easyui-combobox" name="materialId"  style="width:280px;"
 		 								data-options="required:true,
 		 								valueField:'id',
 		 								textField:'name',
@@ -91,7 +91,7 @@
     									$('#unitComboBox').combobox('setText', rec.extraValue2);
     								}"/>
 		 			<td>单位:</td>
-		 			<td><input id="unitComboBox" class="easyui-combobox" name="materialId" style="width:171px;"
+		 			<td><input id="unitComboBox" class="easyui-combobox" name="materialId" style="width:121px;"
 		 								data-options="readonly:true, valueField:'id',textField:'name'"/></td>
 <!-- 		 			<td><input id="unitComboBox" class="easyui-combobox" name="materialId" style="width:171px;"
 		 								data-options="required:true,valueField:'id',textField:'name',url:'/warehouse/unitList.json'"/></td> -->

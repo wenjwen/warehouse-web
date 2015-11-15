@@ -91,6 +91,10 @@ public class MaterialController
 		AjaxResult result = new AjaxResult();
 		try
 		{
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date now = new Date();
+			material.setUpdateTime(df.format(now));
+			
 			materialService.update(material);
 			result.setIsError(false);
 		}
