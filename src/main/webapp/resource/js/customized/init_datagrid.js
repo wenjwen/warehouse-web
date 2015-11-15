@@ -24,7 +24,7 @@ function parseToJson(){
 			for(var i=0;i<materialEntry.length;i++){
 				if (materialEntry[i].extraValue4 != null && materialEntry[i].extraValue4 != ''){
 					// 物料名-规格
-					materialEntry[i].name = materialEntry[i].name + '-' + materialEntry[i].extraValue4;
+					materialEntry[i].name = materialEntry[i].name + ' 规格：' + materialEntry[i].extraValue4;
 				}
 			}
 		}
@@ -168,7 +168,7 @@ function initMaterialDG(){
 		onSave: function(index, row){  // 保存后
 			if(!row.isError){
 				$.messager.alert("提示","保存成功", "info");
-				//$('#p').panel('refresh');
+				$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","保存失败！", "info");
 			}
@@ -186,16 +186,17 @@ function initMaterialDG(){
 		onDestroy:function(index, row){  // 删除后
 			if(!row.isError){
 				$.messager.alert("提示","删除成功", "info");
-				//$('#p').panel('refresh');
+				$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","删除失败！", "info");
 			}
 		},
 		columns:[[
 		          {field:'ck', checkbox:true},
-		          {field:'name',title:'物料名',width:80, editor:{type:'textbox', required:true}},
-		          {field:'code',title:'编码',width:80, editor:{type:'textbox'}},
-		          {field:'categoryId',title:'所属分类',width:80,
+		          {field:'name',title:'物料名',width:100, editor:{type:'textbox', required:true}},
+		          {field:'size',title:'规格',width:100, editor:{type:'textbox'}},
+		          {field:'code',title:'编码',width:60, editor:{type:'textbox'}},
+		          {field:'categoryId',title:'所属分类',width:40,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<categoryEntry.length; i++){
 		        			  if (categoryEntry[i].id == value) return categoryEntry[i].name;
@@ -212,7 +213,7 @@ function initMaterialDG(){
 		        		  }
 		        	  }
 		          },
-		          {field:'unitId',title:'单位',width:60,
+		          {field:'unitId',title:'单位',width:40,
 		        	  formatter:function(value){
 		        		  for(var i=0; i<unitEntry.length; i++){
 		        			  if (unitEntry[i].id == value) return unitEntry[i].name;
@@ -229,10 +230,9 @@ function initMaterialDG(){
 		        		  }
 		        	  }
 		          },
-		          {field:'size',title:'规格',width:60, editor:{type:'textbox'}},
-		          {field:'totalQuantity',title:'总数量',width:60, editor:{type:'numberbox', options:{precision:2}}},
-		          {field:'balance',title:'库存数量',width:60, editor:{type:'numberbox',options:{precision:2}}},
-		          {field:'remark',title:'备注',width:100, editor:{type:'textbox'}}
+		          {field:'totalQuantity',title:'总数量',width:40, editor:{type:'numberbox', options:{precision:2}}},
+		          {field:'balance',title:'库存数量',width:40, editor:{type:'numberbox',options:{precision:2}}},
+		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}}
 		          ]],
 	});
 	
