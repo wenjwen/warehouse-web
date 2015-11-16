@@ -41,8 +41,13 @@ function initUnitDG(){
 		autoSave: false,
 		checkOnSelect: false,
 		onError: function(index,row){
-			if (row.code == '19'){
-				$.messager.alert("提示","此单位正在使用，不能删除！", "error");
+			switch (row.code){
+				case '19':
+					$.messager.alert("提示","该单位正在使用，不能删除！", "error"); break;
+				case '102':
+					$.messager.alert("提示","该单位已存在，无法保存！", "error"); break;
+				default : 
+					$.messager.alert("提示","未知错误！", "error"); break;
 			}
 		},
 		onAdd: function(index,row){  // 添加新行时
@@ -53,7 +58,7 @@ function initUnitDG(){
 				$.messager.alert("提示","保存成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","保存失败！", "info");
+				$.messager.alert("提示","未知错误！", "error");
 			}
 		},
 		destroyMsg:{
@@ -71,7 +76,7 @@ function initUnitDG(){
 				$.messager.alert("提示","删除成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","删除失败！", "info");
+				$.messager.alert("提示","未知错误！", "error");
 			}
 		}
 	});
@@ -87,8 +92,14 @@ function initCategoryDG(){
 		autoSave: false,
 		checkOnSelect: false,
 		onError: function(index,row){
-			// alert(index + ', ' + row.msg);
-			$.messager.alert("提示","保存失败！请检查分类名是否已存在", "error");
+			switch (row.code){
+				case '19':
+					$.messager.alert("提示","该分类下还有物料，不能删除！", "error"); break;
+				case '102':
+					$.messager.alert("提示","该分类已存在，无法保存！", "error"); break;
+				default : 
+					$.messager.alert("提示","未知错误！", "error"); break;
+			}
 		},
 		onAdd: function(index,row){  // 添加新行时
 			
@@ -98,7 +109,7 @@ function initCategoryDG(){
 				$.messager.alert("提示","保存成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","保存失败！", "info");
+				$.messager.alert("提示","保存失败！", "error");
 			}
 		},
 		destroyMsg:{
@@ -115,8 +126,8 @@ function initCategoryDG(){
 			if(!row.isError){
 				$.messager.alert("提示","删除成功", "info");
 				$('#p').panel('refresh');
-			} else if(row.isError){
-				$.messager.alert("提示","删除失败！", "info");
+			} else {
+				$.messager.alert("提示","未知错误！", "error");
 			}
 		},
 		columns:[[
@@ -149,7 +160,7 @@ function initCategoryDG(){
 // 物料管理
 function initMaterialDG(){
 	$('#material_dg').edatagrid({
-		url: rootUri + 'material.json',
+		url: rootUri + 'material.json?disabled=0',
 		saveUrl: rootUri + 'saveMaterial',
 		updateUrl: rootUri + 'updateMaterial',
 		destroyUrl: rootUri + 'deleteMaterial',
@@ -159,8 +170,14 @@ function initMaterialDG(){
 		pageSize:20,
 		pageList:[15,20,25,30,35,40,50],
 		onError: function(index,row){
-			// alert(index + ', ' + row.msg);
-			$.messager.alert("提示","操作失败！", "error");
+			switch (row.code){
+				case '19':
+					$.messager.alert("提示","物料已在出库单、入库单或盘点单中使用，不能删除！", "error"); break;
+				case '102':
+					$.messager.alert("提示","该规格的物料已存在，无法保存！", "error"); break;
+				default : 
+					$.messager.alert("提示","未知错误！", "error"); break;
+			}
 		},
 		onAdd: function(index,row){  // 添加新行时
 			
@@ -170,7 +187,7 @@ function initMaterialDG(){
 				$.messager.alert("提示","保存成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","保存失败！", "info");
+				$.messager.alert("提示","保存失败！", "error");
 			}
 		},
 		destroyMsg:{
@@ -187,8 +204,8 @@ function initMaterialDG(){
 			if(!row.isError){
 				$.messager.alert("提示","删除成功", "info");
 				$('#p').panel('refresh');
-			} else if(row.isError){
-				$.messager.alert("提示","删除失败！", "info");
+			} else {
+				$.messager.alert("提示","未知错误", "error");
 			}
 		},
 		columns:[[
@@ -888,9 +905,6 @@ function initStockItemDG_win(){
 }
 
 function initStockItemImportDG_win(){
-	//var stockId = $('#stockIdForImport').val();
-	//var stockType = $('#stockTypeForImport').val();
-	
 	var isHidden = false;
 	var unitPriceOptions = {precision:2,required:true};
 	if (stockType == 4 || stockType == 5){ // stock out 销售出库时不隐藏
@@ -899,10 +913,6 @@ function initStockItemImportDG_win(){
 	}
 	
 	$('#stockItem_import_dg_win').edatagrid({
-		/*url: rootUri + 'stock/items.json?stockId=' + stockId,
-		saveUrl: rootUri + 'saveStockItem?stockId=' + stockId + '&stockType=' + stockType,
-		updateUrl: rootUri + 'saveStockItem?stockId=' + stockId + '&stockType=' + stockType,
-		destroyUrl: rootUri + 'deleteStockItem?stockType=' + stockType,*/
 		autoSave: false,
 		onError: function(index,row){
 			alert(index + ', ' + row.msg);
@@ -1136,7 +1146,7 @@ function doSearchStocktakeItem(){
 
 // 异步上传Excel文件到后台处理
 var dataFromExcel;
-function excelUpload(){
+function excelUpload(type){
 	var options = {
 			title:'',  //显示在头部面板上的标题文本
 			msg:'', //消息框的主体文本
@@ -1152,12 +1162,12 @@ function excelUpload(){
             fileElementId: 'excel', //文件上传域的ID
             secureuri: false, //是否需要安全协议，一般设置为false
             dataType: 'json', //返回值类型 一般设置为json
-			// data:param,  // 表单数据,或者：data:{id: xxx, name: yyyy}
+			data:{stockType: type},  // 表单数据,或者：data:{id: xxx, name: yyyy}
             success: function (data, status)  //服务器成功响应处理函数
             {
             	if (!data.isError){
             		dataFromExcel = data.obj;
-            		importExcel("销售出库-" + data.msg);
+            		importExcel(data.msg, type); // data.msg是后台传回的文件名
             	}
             	else{
             		if (data.msg){
@@ -1181,13 +1191,23 @@ function excelUpload(){
     return false;
 }
 
-function importExcel(title){
+function importExcel(fileName, type){
+	var title = '';
+	switch(type){
+		case 1: title = "新购入库-" + fileName; break;
+		case 2: title = "归还入库-" + fileName; break;
+		case 3: title = "退货入库-" + fileName; break;
+		case 4: title = "生产出库-" + fileName; break;
+		case 5: title = "借用出库-" + fileName; break;
+		case 6: title = "销售出库-" + fileName; break;
+	}
+	
 	$('#win').window({
 		title:title,
 	    width:1000,
 	    height:'100%',
 	    modal:true,
-	    href: rootUri + 'stock/itemsImport',
+	    href: rootUri + 'stock/itemsImport?stockType=' + type,
 	    onLoad:initStockItemImportDG_win    // 页面加载完后执行的函数
 	});
 }
@@ -1195,6 +1215,7 @@ function importExcel(title){
 // TODO 提交从excel导入的stock item
 function submitImportStockItem(){
 	// $('#stockItem_import_dg_win').edatagrid();
+	var importStockType = $('#stockItem_import_dg_win')val();
 	if ($('#stockItem_import_dg_win').datagrid('getRows').length > 0){
 		// 取数据
 		var item;
@@ -1218,7 +1239,7 @@ function submitImportStockItem(){
 			url:'/warehouse/stock/saveImportItems',
 			dataType:'json',
 			type:'POST',
-			data : {itemsStr:JSON.stringify(itemArr)},
+			data : {itemsStr:JSON.stringify(itemArr), stockType:importStockType},
 			success:function(data){
 				if(!data.isError){
 					$.messager.alert('提示','保存成功','info');
@@ -1232,3 +1253,35 @@ function submitImportStockItem(){
 		});
 	}
 }
+
+/* sqlite beginning-of-error-codes */ 
+// define SQLITE_ERROR 1/* SQL 错误或丢失的数据库*/ 
+// define SQLITE_INTERNAL 2/* 内部逻辑错误在SQLite */ 
+// define SQLITE_PERM 3/* 存取权限被拒绝*/ 
+// define SQLITE_ABORT 4/* 回调例程请求的一个终止*/ 
+// define SQLITE_BUSY 5/* 解锁*/ 数据库文件
+// define SQLITE_LOCKED 6/* 数据库中的一个表被锁定*/ 
+// define SQLITE_NOMEM 7/* malloc( )失败*/ 
+// define SQLITE_READONLY 8/* 试图写入数据库*/ 只读
+// define SQLITE_INTERRUPT 9/* 操作由sqlite3_interrupt()*/ 终止
+// define SQLITE_IOERR 10 /* 磁盘I/O 某种错误*/ 
+// define SQLITE_CORRUPT 11 /* 数据库磁盘映像格式不正确*/ 
+// define 在sqlite3_file_control( )*/ SQLITE_NOTFOUND 12 /* 未知操作码
+// define SQLITE_FULL 13 /* 插入失败, 因为数据库已满*/ 
+// define SQLITE_CANTOPEN 14 /* 无法打开数据库文件*/ 
+// define SQLITE_PROTOCOL 15 /* 数据库锁协议错误*/ 
+// define SQLITE_EMPTY 16 /* 数据库是空的*/ 
+// define SQLITE_SCHEMA 17 /* 此数据库模式更改*/ 
+// define SQLITE_TOOBIG 18 */ /* 字符串或BLOB 超出大小限制
+// define SQLITE_CONSTRAINT 19 /* 终止由于*/ 约束冲突
+// define SQLITE_MISMATCH 20 /* 数据类型不匹配*/ 
+// define SQLITE_MISUSE 21 /* 库不正确*/ 
+// define SQLITE_NOLFS 22 /* 使用OS 功能在主机上不支持*/ 
+// define SQLITE_AUTH 23 /* 授权拒绝*/ 
+// define SQLITE_FORMAT 24 /* 辅助错误*/ 数据库格式
+// define SQLITE_RANGE 25 /* 第二个参数, 以sqlite3_bind 超出范围*/ 
+// define SQLITE_NOTADB 26 /* 不是数据库文件*/ 打开的文件
+// define SQLITE_ROW 100 /* sqlite3_step( )还有另一个行就绪*/ 
+// define SQLITE_DONE 101 /* sqlite3_step( )具有完成执行*/ 
+// 自定义 102 违反唯一约束
+/* sqlite end-of-error-codes */ 

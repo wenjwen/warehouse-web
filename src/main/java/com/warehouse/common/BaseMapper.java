@@ -53,15 +53,6 @@ public interface BaseMapper<T> {
 	 * @author lisb@createw.com  2015年7月28日 上午10:02:37
 	 */
 	public int queryByCount(@Param(value="t")T t);
-
-	/**
-	 * <p>Title: queryById</p>
-	 * <p>Description: 根据ID查询对象</p>
-	 * @param id
-	 * @return
-	 * @author lisb@createw.com  2015年7月28日 上午10:03:46
-	 */
-	public T queryById(Object id);
  
 	  /**
      * <p>Title: findAll</p>

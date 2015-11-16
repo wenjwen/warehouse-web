@@ -8,11 +8,7 @@ import com.warehouse.model.StockSearch;
 
 public interface StockMapper extends BaseMapper<Stock>{
     
-	int deleteByPrimaryKey(Integer id);
-
     int insertSelective(Stock record);
-
-    Stock selectByPrimaryKey(Integer id);
 
 	List<StockSearch> stockinoutSearch(StockSearch stockSearch);
 }

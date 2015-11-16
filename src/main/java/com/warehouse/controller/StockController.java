@@ -72,9 +72,8 @@ public class StockController
 	 * @return
 	 */
 	@RequestMapping(value="stock/itemsImport")
-	public Object toStockItemsImportPage(ModelMap model, Integer stockId, Integer stockType){
-		model.addAttribute("stockId", stockId);
-		model.addAttribute("stockType", stockType);
+	public Object toStockItemsImportPage(ModelMap model, Integer stockType){
+		model.addAttribute("importStockType", stockType);
 		return "/stock/itemsImport";
 	}
 	
@@ -262,7 +261,7 @@ public class StockController
 	 */
 	@RequestMapping(value="stock/saveImportItems")
 	@ResponseBody
-	public Object saveImportItems(ModelMap model, HttpServletRequest request){
+	public Object saveImportItems(HttpServletRequest request, Integer stockType){
 		AjaxResult result = new AjaxResult();
 		try
 		{
@@ -271,7 +270,7 @@ public class StockController
 			List<StockItem> list = (List<StockItem>)JSONArray.toCollection(
 					JSONArray.fromObject(items), StockItem.class);
 			
-			stockService.saveImportItems(list);
+			stockService.saveImportItems(list, stockType);
 		}
 		catch (Exception e)
 		{

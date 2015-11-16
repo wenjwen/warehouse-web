@@ -13,20 +13,26 @@
 	
 </table>
 <div id="toolbar" style="padding:5px 5px 5px 5px;">
-	<div style="padding:5px 5px 5px 5px;">
-		<label style="color:red;">导入出库记录：</label><input type="file" id="excel" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload();"/><br/>
+	<div style="padding:5px 5px 5px 5px;border-bottom: 1px solid #95B8E7">
+		<label style="color:red;">导入出仓记录：</label>
+		<input type="file" id="excel" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload(1);"/>
+		<label style="color:red; margin-left:100px;">导入进仓记录：</label>
+		<input type="file" id="excel" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload(6);"/>&nbsp;&nbsp;&nbsp;
+		<br/>
 	</div>
-	<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#stock_dg').edatagrid('addRow',{index:0})">新增</a>
-	<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#stock_dg').edatagrid('destroyRow')">删除</a>
-	<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#stock_dg').edatagrid('saveRow')">保存</a>
-	<a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#stock_dg').edatagrid('cancelRow')">取消</a> | 
-	<span>单号</span>
-	<input id="stockNo" class="easyui-textbox" data-options="" style="line-height:26px;border:1px solid #ccc">
-	<span>出入库类型</span>
-	<input id="stockType" class="easyui-combobox" data-options="valueField:'id',textField:'name',data:stockTypeEntry" style="line-height:26px;border:1px solid #ccc">
-	<!-- <span>日期</span>
-	<input id="stockTime" class="easyui-datetimebox" style="line-height:26px;border:1px solid #ccc"/> -->
-	<a href="#" class="easyui-linkbutton" plain="true" onclick="doSearchStock()">搜索</a><br/>
+	<div style="padding-top:10px;">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#stock_dg').edatagrid('addRow',{index:0})">新增</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#stock_dg').edatagrid('destroyRow')">删除</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#stock_dg').edatagrid('saveRow')">保存</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#stock_dg').edatagrid('cancelRow')">取消</a> | 
+		<span>单号</span>
+		<input id="stockNo" class="easyui-textbox" data-options="" style="line-height:26px;border:1px solid #ccc">
+		<span>出入库类型</span>
+		<input id="stockType" class="easyui-combobox" data-options="valueField:'id',textField:'name',data:stockTypeEntry" style="line-height:26px;border:1px solid #ccc">
+		<!-- <span>日期</span>
+		<input id="stockTime" class="easyui-datetimebox" style="line-height:26px;border:1px solid #ccc"/> -->
+		<a href="#" class="easyui-linkbutton" plain="true" onclick="doSearchStock()">搜索</a><br/>
+	</div>
 </div>
 
 <div id="win"></div>

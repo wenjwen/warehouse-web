@@ -340,7 +340,7 @@
   </update>
   
   <select id="count" parameterType="com.warehouse.model.Material" resultType="_int">
-  	select count(1) from material m 
+  	select count(1) from material m
 		<where>
 			<include refid="sql_where" />
 		</where>

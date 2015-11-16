@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
-			
+			<input id="importStockType" type="text" value="${importStockType}" style="display:none;">
 			<table id="stockItem_import_dg_win"  style="width:100%;height:93%;"
 					idField="id" rownumbers="true" fitColumns="true" singleSelect="false">
 			</table>

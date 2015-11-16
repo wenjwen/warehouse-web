@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import net.sf.json.JSONArray;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -105,14 +106,19 @@ public class CategoryController
 		AjaxResult result = new AjaxResult();
 		try
 		{
-			category.setDisabled(1); // disable
-			categoryService.updateByIdSelective(category);
+			//category.setDisabled(1); // disable
+			//categoryService.updateByIdSelective(category);
+			categoryService.deleteById(category.getId());
 			result.setIsError(false);
+		}
+		catch (UncategorizedSQLException ue){
+			result.setIsError(true);
+			result.setCode(ue.getSQLException().getErrorCode() + "");
+			logger.error(ue.getMessage());
 		}
 		catch (Exception e)
 		{
 			result.setIsError(true);
-			result.setMsg(e.getMessage());
 			logger.error(e.getMessage());
 		}
 		return result;

@@ -119,13 +119,14 @@ public class StockService extends BaseService<Stock>
 	public int deleteById(Object id)
 	{
 		// TODO 更新数量
-		Stock s = stockMapper.queryById(id);
+		Stock s = stockMapper.selectByPrimaryKey(id);
 		List<StockItem> items = itemMapper.findItemsByStockIdForDeleteStock((Integer)id);
 		if (items != null && !items.isEmpty()){
 			for(StockItem i : items){
 				this.updateMaterialForDeleteItem(s.getStockType(), i);
 			}
 		}
+		itemMapper.deleteByStockId(id);
 		return super.deleteById(id);
 	}
 
@@ -151,13 +152,14 @@ public class StockService extends BaseService<Stock>
 		if (item.getTotalQuantity() != null && item.getBalance() != null && item.getQuantity() != null){
 			Material m = new Material();
 			m.setId(item.getMaterialId());
+			
 			switch(stockType){  // 1,2,3 入库: 删除已入库的物料，要减去入库数量，恢复到入库前的状态
 			case 1: case 2: case 3:
 				m.setTotalQuantity(item.getTotalQuantity().subtract(item.getQuantity())); // 恢复物料总数量
 				m.setBalance(item.getBalance().subtract(item.getQuantity()));// 恢复物料库存数量
 				break;
 			case 4: case 5: case 6: //  4,5,6 出库: 删除已出库的物料，要加上出库数量，恢复到出库前的状态
-				m.setTotalQuantity(item.getTotalQuantity().add(item.getQuantity())); // 恢复物料总数量
+				//m.setTotalQuantity(item.getTotalQuantity().add(item.getQuantity())); // 不需要增加物料总数量，因为出库时总数量没有减少
 				m.setBalance(item.getBalance().add(item.getQuantity()));// 恢复物料库存数量
 				break;
 			}
@@ -311,7 +313,7 @@ public class StockService extends BaseService<Stock>
 	 * 保存从excel导入的数据
 	 * @param list
 	 */
-	public void saveImportItems(List<StockItem> list) throws Exception
+	public void saveImportItems(List<StockItem> list, Integer stockType) throws Exception
 	{
 		// TODO 
 		Date now = new Date();
@@ -322,10 +324,35 @@ public class StockService extends BaseService<Stock>
 				s = new Stock();
 				s.setStockNo(item.getStockNo());
 				s.setStockTime(item.getStockDate() + " 00:00:01");
-				s.setSource("仓库");
-				s.setStockType(6);
-				s.setTypeName("销售出库");
-				s.setTarget(item.getStockRemark());  // 客户、目的地
+				s.setStockType(stockType);
+				
+				switch(stockType){
+					case 1: s.setTypeName("新购入库");
+							s.setSource(item.getStockRemark());
+							s.setTarget("仓库");  // 客户、目的地
+							break;
+					case 2: s.setTypeName("归还入库");
+							s.setSource(item.getStockRemark());
+							s.setTarget("仓库");  // 客户、目的地
+							break;
+					case 3: s.setTypeName("退货入库");
+							s.setSource(item.getStockRemark());
+							s.setTarget("仓库");  // 客户、目的地
+							break;
+					case 4: s.setTypeName("生产出库");
+							s.setSource("仓库");
+							s.setTarget(item.getStockRemark());  // 客户、目的地
+							break;
+					case 5: s.setTypeName("借用出库");
+							s.setSource("仓库");
+							s.setTarget(item.getStockRemark());  // 客户、目的地
+							break;
+					case 6: s.setTypeName("销售出库");
+							s.setSource("仓库");
+							s.setTarget(item.getStockRemark());  // 客户、目的地
+							break;
+				}
+				
 				s.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
 				s.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
 				

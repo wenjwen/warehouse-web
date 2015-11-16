@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import net.sf.json.JSONArray;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,10 +77,21 @@ public class MaterialController
 			materialService.save(material);
 			result.setIsError(false);
 		}
+		catch (UncategorizedSQLException ue){
+			if (ue.getSQLException().getErrorCode() == 19 && ue.getMessage().contains("UNIQUE constraint failed")){
+				// 违反唯一约束
+				result.setCode("102");
+			}
+			else{
+				result.setCode(ue.getSQLException().getErrorCode() + "");
+			}
+			
+			result.setIsError(true);
+			logger.error(ue.getMessage());
+		}
 		catch (Exception e)
 		{
 			result.setIsError(true);
-			result.setMsg(e.getMessage());
 			logger.error(e.getMessage());
 		}
 		return result;
@@ -113,14 +125,19 @@ public class MaterialController
 		AjaxResult result = new AjaxResult();
 		try
 		{
-			material.setDisabled(1); // disable
-			materialService.updateByIdSelective(material);
+			//material.setDisabled(1); // disable
+			//materialService.updateByIdSelective(material);
+			materialService.deleteById(material.getId());
 			result.setIsError(false);
+		}
+		catch (UncategorizedSQLException ue){
+			result.setIsError(true);
+			result.setCode(ue.getSQLException().getErrorCode() + "");
+			logger.error(ue.getMessage());
 		}
 		catch (Exception e)
 		{
 			result.setIsError(true);
-			result.setMsg(e.getMessage());
 			logger.error(e.getMessage());
 		}
 		return result;

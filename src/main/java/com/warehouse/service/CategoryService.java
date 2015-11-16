@@ -6,14 +6,22 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.warehouse.common.BaseMapper;
+import com.warehouse.common.BaseService;
 import com.warehouse.mapper.CategoryMapper;
 import com.warehouse.model.Category;
 
 @Service
-public class CategoryService
+public class CategoryService extends BaseService<Category>
 {
 	@Resource
 	private CategoryMapper categoryMapper;
+
+	@Override
+	public BaseMapper<Category> getMapper()
+	{
+		return categoryMapper;
+	}
 	
 	public List<Category> findSelective(Category category)
 	{
@@ -35,9 +43,5 @@ public class CategoryService
 		return categoryMapper.findAllEntry();
 	}
 
-	public void update(Category category)
-	{
-		categoryMapper.updateByPrimaryKey(category);	
-	}
 
 }
