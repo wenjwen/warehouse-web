@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import net.sf.json.JSONArray;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +63,18 @@ public class DictController
 			dictService.save(unit);
 			result.setIsError(false);
 		}
+		catch (UncategorizedSQLException ue){
+			if (ue.getSQLException().getErrorCode() == 19 && ue.getMessage().contains("UNIQUE constraint failed")){
+				// 违反唯一约束
+				result.setCode("102");
+			}
+			else{
+				result.setCode(ue.getSQLException().getErrorCode() + "");
+			}
+			
+			result.setIsError(true);
+			logger.error(ue.getMessage());
+		}
 		catch (Exception e)
 		{
 			result.setIsError(true);
@@ -79,6 +92,12 @@ public class DictController
 		{
 			dictService.updateByIdSelective(unit);
 			result.setIsError(false);
+		}
+		catch (UncategorizedSQLException ue){
+			result.setCode(ue.getSQLException().getErrorCode() + "");
+			
+			result.setIsError(true);
+			logger.error(ue.getMessage());
 		}
 		catch (Exception e)
 		{
@@ -100,13 +119,15 @@ public class DictController
 			dictService.deleteById(unit.getId());
 			result.setIsError(false);
 		}
+		catch (UncategorizedSQLException ue){
+			result.setIsError(true);
+			logger.error(ue.getMessage());
+			result.setCode(ue.getSQLException().getErrorCode() + "");
+		}
 		catch (Exception e)
 		{	
 			result.setIsError(true);
 			logger.error(e.getMessage());
-			if (e.getCause() instanceof SQLException){
-				result.setCode(((SQLException)e.getCause()).getErrorCode()+"");
-			}
 		}
 		
 		return result;

@@ -1,6 +1,7 @@
 package com.warehouse.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.warehouse.common.BaseMapper;
 import com.warehouse.common.BaseService;
@@ -173,14 +175,14 @@ public class StockService extends BaseService<Stock>
 		Material m = materialMapper.selectByPrimaryKey(item.getMaterialId());
 		Date now = new Date();
 		if (m.getTotalQuantity() != null && m.getBalance() != null && item.getQuantity() != null){
-			switch(stockType){  // 1,2,3 入库: 删除已入库的物料，要减去入库数量，恢复到入库前的状态
+			switch(stockType){  // 1,2,3 入库: 增加数量
 			case 1: case 2: case 3:
-				m.setTotalQuantity(m.getTotalQuantity().subtract(item.getQuantity())); // 恢复物料总数量
-				m.setBalance(m.getBalance().subtract(item.getQuantity()));// 恢复物料库存数量
+				m.setTotalQuantity(m.getTotalQuantity().add(item.getQuantity())); // 总数量
+				m.setBalance(m.getBalance().add(item.getQuantity()));// 库存数量
 				break;
 			case 4: case 5: case 6: //  4,5,6 出库: 删除已出库的物料，要加上出库数量，恢复到出库前的状态
-				m.setTotalQuantity(m.getTotalQuantity().add(item.getQuantity())); // 恢复物料总数量
-				m.setBalance(m.getBalance().add(item.getQuantity()));// 恢复物料库存数量
+				// m.setTotalQuantity(m.getTotalQuantity().subaddtract(item.getQuantity())); // 总数量不变
+				m.setBalance(m.getBalance().subtract(item.getQuantity()));// 库存数量
 				break;
 			}
 			Material newM = new Material();
@@ -210,12 +212,12 @@ public class StockService extends BaseService<Stock>
 			
 			switch(stockType){  // 1,2,3 入库
 			case 1: case 2: case 3:
-				m.setTotalQuantity(m.getTotalQuantity().add(diffQuantity)); // 物料总数量=原总数+相关数量
-				m.setBalance(m.getBalance().add(diffQuantity));// 物料库存数量=原库存+相关数量
+				m.setTotalQuantity(item.getTotalQuantity().add(diffQuantity)); // 物料总数量=原总数+相关数量
+				m.setBalance(item.getBalance().add(diffQuantity));// 物料库存数量=原库存+相关数量
 				break;
 			case 4: case 5: case 6: //  4,5,6 出库
-				m.setTotalQuantity(m.getTotalQuantity().subtract(diffQuantity)); // 重算物料总数量
-				m.setBalance(m.getBalance().subtract(diffQuantity));// 重算物料库存数量
+				m.setTotalQuantity(item.getTotalQuantity().subtract(diffQuantity)); // 重算物料总数量
+				m.setBalance(item.getBalance().subtract(diffQuantity));// 重算物料库存数量
 				break;
 			}
 			Material newM = new Material();
@@ -229,14 +231,16 @@ public class StockService extends BaseService<Stock>
 		itemMapper.updateByPrimaryKeySelective(si);
 	}
 
-	public List<StockItem> readItemFromSheet(HSSFSheet sheet, Map<String, Entry> mMap, Map<String, Dict> uMap) throws Exception
+	public List<StockItem> readItemFromSheet(HSSFSheet sheet, Map<String, Material> mMap, Map<String, Dict> uMap) throws Exception
 	{
 		List<StockItem> items = new ArrayList<StockItem>(0);
-		int index = 1; // 时间行
+		Date now = new Date();
+		int rowIndex = 1; // 时间行
+		
 		try
 		{
 			if (sheet != null){
-				Row row = sheet.getRow(index);
+				Row row = sheet.getRow(rowIndex);
 				if (row == null){
 					return items;
 				}
@@ -246,64 +250,89 @@ public class StockService extends BaseService<Stock>
 				}
 				String yearAndMonth = timeStr.substring(0, timeStr.indexOf("月")).replace("年", "-"); // 变成格式：yyyy-MM
 				
-				index = 3; // 数据内容从第4行(索引为3)开始
-				while(sheet.getRow(index) != null){
-					row = sheet.getRow(index);
+				rowIndex = 3; // 数据内容从第4行(索引为3)开始
+				while(sheet.getRow(rowIndex) != null){
+					row = sheet.getRow(rowIndex);
 					StockItem item = new StockItem();
-					int cellnum = 0;
+					int cellIndex = 0;
 					
-					String dayStr = row.getCell(cellnum++).getStringCellValue();
+					String dayStr = row.getCell(cellIndex++).getStringCellValue();
 					if (dayStr == null || "".equals(dayStr)){  // 第一个cell没有内容，认为到此结束
+						//throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有日期！");
 						break;
 					}
+					
 					item.setStockDate(yearAndMonth + "-" + dayStr.replaceAll("号", ""));  // 变成格式：yyyy-MM-dd
-					item.setStockNo(row.getCell(cellnum++).getStringCellValue()); // 单号
 					
-					String nameStr = row.getCell(cellnum++).getStringCellValue();
-					if (nameStr.lastIndexOf(" ") == -1){
-						item.setMaterialName(nameStr);  // 物料名
-					}else{
-						nameStr = nameStr.replaceFirst(" ", "\\|");
-						item.setMaterialName(nameStr.split("\\|")[0]);  // 物料名
-						item.setRemark(nameStr.split("\\|")[1]);  // 物料名后面以空格隔开的备注
+					item.setStockNo(row.getCell(cellIndex++).getStringCellValue()); // 单号
+					/*if (item.getStockNo() == null || "".equals(item.getStockNo())){
+						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有单号！");
+					}*/
+					
+					item.setMaterialName(row.getCell(cellIndex++).getStringCellValue());  // 物料名
+					if (item.getMaterialName() == null || "".equals(item.getMaterialName())){
+						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有物料名！");
+					}
+					item.setSize(row.getCell(cellIndex++).getStringCellValue()); // 规格
+					item.setRemark(row.getCell(cellIndex++).getStringCellValue()); // 物料说明
+					
+					item.setUnitName(row.getCell(cellIndex++).getStringCellValue());  //单位
+					if (item.getUnitName() == null || "".equals(item.getUnitName())){
+						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有单位！");
 					}
 					
-					item.setUnitName(row.getCell(cellnum++).getStringCellValue());  //单位
-					
-					// 检查物料名、单位名是否正确
-					if (mMap.get(item.getMaterialName()) == null){ // 没找到
-						throw new Exception("系统中找不到物料'"+item.getMaterialName()+"'");
-					}else{
-						item.setMaterialId(mMap.get(item.getMaterialName()).getId());
-						item.setUnitId((Integer)mMap.get(item.getMaterialName()).getExtraValue1());
-					}
-					
-					if (uMap.get(item.getUnitName()) == null){// 没找到
-						throw new Exception("系统中找不到单位'"+item.getUnitName()+"'");
-					}
-					if(!item.getUnitId().equals(uMap.get(item.getUnitName()).getId())){
-						throw new Exception("物料'"+ item.getMaterialName() + "'" + "的单位应为'"+ mMap.get(item.getMaterialName()).getExtraValue2()+"'");
-					}
-					
-					
-					double quantity = row.getCell(cellnum++).getNumericCellValue(); // 数量
+					double quantity = row.getCell(cellIndex++).getNumericCellValue(); // 数量
 					item.setQuantity(new BigDecimal(quantity));
 					
-					double price = row.getCell(cellnum++).getNumericCellValue(); // 单价
+					double price = row.getCell(cellIndex++).getNumericCellValue(); // 单价
 					item.setUnitPrice(new BigDecimal(price));
 					
-					cellnum++; // 路过金额列
-					item.setStockRemark(row.getCell(cellnum++).getStringCellValue()); // 备注列
+					cellIndex++; // 跳过金额列
+					item.setStockRemark(row.getCell(cellIndex++).getStringCellValue()); // 备注列
+					
+					if (uMap.get(item.getUnitName()) == null){// 不存在
+						// insert new unit
+						Dict d = new Dict();
+						d.setDisabled(0);
+						d.setName(item.getUnitName());
+						d.setType(Constant.DICT_TYPE_UNIT);
+						d.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+						d.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+						dictMapper.insert(d);
+						
+						item.setUnitId(d.getId());
+						uMap.put(d.getName(), d);
+					}
+					
+					// 检查物料是否存在
+					String name_size = StringUtils.isEmpty(item.getRemark()) ? item.getMaterialName():(item.getMaterialName() + "-" + item.getSize());
+					Material m = mMap.get(name_size);
+					if (m == null){ // 不存在
+						// insert new material
+						Material newM = new Material();
+						newM.setName(item.getMaterialName());
+						newM.setUnitId(uMap.get(item.getUnitName()).getId());
+						newM.setDisabled(0);
+						newM.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+						newM.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+					}else{
+						item.setMaterialId(m.getId());
+						item.setUnitId((Integer)m.getUnitId());
+						
+						if(!item.getUnitId().equals(uMap.get(item.getUnitName()).getId())){
+							throw new Exception("物料'"+ item.getMaterialName() + "'" + "的单位应为'"+ mMap.get(item.getMaterialName()).getUnitName()+"'");
+						}
+					}
 					
 					items.add(item);
-					index++;
+					rowIndex++;
 				}
 			}
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			throw new Exception("分析工作表 \""+ sheet.getSheetName() + "\"的第" + (++index) + "行时出错！" + e.getMessage());
+			throw new Exception("分析工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行时出错！" + e.getMessage());
 		}
 		
 		return items;
@@ -317,13 +346,20 @@ public class StockService extends BaseService<Stock>
 	{
 		// TODO 
 		Date now = new Date();
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 		Map<String, Stock> stockMap = new HashMap<String, Stock>();
 		for(StockItem item : list){
 			Stock s = stockMap.get(item.getStockNo());
 			if (s == null){
 				s = new Stock();
-				s.setStockNo(item.getStockNo());
-				s.setStockTime(item.getStockDate() + " 00:00:01");
+				
+				// 如果stock No. 为空，则用日期作为单号
+				if(StringUtils.isEmpty(item.getStockNo())){
+					item.setStockNo(item.getStockDate().replaceAll("-","") + timeFormat.format(now).replaceAll(":", ""));
+				}
+				s.setStockNo(StringUtils.isEmpty(item.getStockNo()) ? item.getStockDate() : item.getStockNo());
+				// 月份为1位数的转为两位数
+				s.setStockTime(Constant.DATE_FORMATTER.format(Constant.DATE_FORMATTER.parse(item.getStockDate())) + " " + timeFormat.format(now));
 				s.setStockType(stockType);
 				
 				switch(stockType){

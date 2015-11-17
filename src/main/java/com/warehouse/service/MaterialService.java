@@ -31,6 +31,11 @@ public class MaterialService extends BaseService<Material>
 	{
 		return materialMapper.findAll();
 	}
+	
+	public List<Material> findFroImport()
+	{
+		return materialMapper.findFroImport();
+	}
 
 	public List<Material> findSelective(Material m)
 	{

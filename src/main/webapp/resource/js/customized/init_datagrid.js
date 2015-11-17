@@ -1,3 +1,4 @@
+
 var rootUri = '/warehouse/';
 var unitEntry; // 单位
 var categoryEntry; // 分类
@@ -43,11 +44,11 @@ function initUnitDG(){
 		onError: function(index,row){
 			switch (row.code){
 				case '19':
-					$.messager.alert("提示","该单位正在使用，不能删除！", "error"); break;
+					$.messager.alert("错误","该单位正在使用，不能删除！", "error"); break;
 				case '102':
-					$.messager.alert("提示","该单位已存在，无法保存！", "error"); break;
+					$.messager.alert("错误","该单位已存在！", "error"); break;
 				default : 
-					$.messager.alert("提示","未知错误！", "error"); break;
+					$.messager.alert("错误","未知错误！错误代码：" + row.code, "error"); break;
 			}
 		},
 		onAdd: function(index,row){  // 添加新行时
@@ -58,7 +59,7 @@ function initUnitDG(){
 				$.messager.alert("提示","保存成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","未知错误！", "error");
+				$.messager.alert("错误","未知错误！", "error");
 			}
 		},
 		destroyMsg:{
@@ -76,7 +77,7 @@ function initUnitDG(){
 				$.messager.alert("提示","删除成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","未知错误！", "error");
+				$.messager.alert("错误","未知错误！", "error");
 			}
 		}
 	});
@@ -94,11 +95,11 @@ function initCategoryDG(){
 		onError: function(index,row){
 			switch (row.code){
 				case '19':
-					$.messager.alert("提示","该分类下还有物料，不能删除！", "error"); break;
+					$.messager.alert("错误","该分类下还有物料，不能删除！", "error"); break;
 				case '102':
-					$.messager.alert("提示","该分类已存在，无法保存！", "error"); break;
+					$.messager.alert("错误","该分类已存在！", "error"); break;
 				default : 
-					$.messager.alert("提示","未知错误！", "error"); break;
+					$.messager.alert("错误","未知错误！错误代码：" + row.code, "error"); break;
 			}
 		},
 		onAdd: function(index,row){  // 添加新行时
@@ -109,7 +110,7 @@ function initCategoryDG(){
 				$.messager.alert("提示","保存成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","保存失败！", "error");
+				$.messager.alert("错误","保存失败！", "error");
 			}
 		},
 		destroyMsg:{
@@ -127,7 +128,7 @@ function initCategoryDG(){
 				$.messager.alert("提示","删除成功", "info");
 				$('#p').panel('refresh');
 			} else {
-				$.messager.alert("提示","未知错误！", "error");
+				$.messager.alert("错误","未知错误！", "error");
 			}
 		},
 		columns:[[
@@ -172,11 +173,11 @@ function initMaterialDG(){
 		onError: function(index,row){
 			switch (row.code){
 				case '19':
-					$.messager.alert("提示","物料已在出库单、入库单或盘点单中使用，不能删除！", "error"); break;
+					$.messager.alert("错误","物料已在出库单、入库单或盘点单中使用，不能删除！", "error"); break;
 				case '102':
-					$.messager.alert("提示","该规格的物料已存在，无法保存！", "error"); break;
+					$.messager.alert("错误","该规格的物料已存在！", "error"); break;
 				default : 
-					$.messager.alert("提示","未知错误！", "error"); break;
+					$.messager.alert("错误","未知错误！错误代码：" + row.code, "error"); break;
 			}
 		},
 		onAdd: function(index,row){  // 添加新行时
@@ -187,7 +188,7 @@ function initMaterialDG(){
 				$.messager.alert("提示","保存成功", "info");
 				$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","保存失败！", "error");
+				$.messager.alert("错误","保存失败！", "error");
 			}
 		},
 		destroyMsg:{
@@ -205,7 +206,7 @@ function initMaterialDG(){
 				$.messager.alert("提示","删除成功", "info");
 				$('#p').panel('refresh');
 			} else {
-				$.messager.alert("提示","未知错误", "error");
+				$.messager.alert("错误","未知错误", "error");
 			}
 		},
 		columns:[[
@@ -272,7 +273,7 @@ function initStocktakeItem_DG(){
 		},
 		onError: function(index,row){
 			// alert(index + ', ' + row.msg);
-			$.messager.alert("提示","操作失败！", "error");
+			$.messager.alert("错误","操作失败！", "error");
 		},
 		onAdd: function(index,row){  // 添加新行时
 			
@@ -288,7 +289,7 @@ function initStocktakeItem_DG(){
 					$('#stocktakeItem_dg').edatagrid('updateRow',{index: rowdata.index, row:rowdata});
 				}*/
 			} else if(rowdata.isError){
-				$.messager.alert("提示","保存失败！", "info");
+				$.messager.alert("错误","保存失败！", "error");
 				$('#stocktakeItem_dg').edatagrid('cancelRow');
 			}
 		},
@@ -307,7 +308,7 @@ function initStocktakeItem_DG(){
 				$.messager.alert("提示","删除成功", "info");
 				//$('#p').panel('refresh');
 			} else if(row.isError){
-				$.messager.alert("提示","删除失败！", "info");
+				$.messager.alert("错误","删除失败！", "error");
 			}
 		},
 		columns:[[
@@ -374,7 +375,7 @@ function initSearchMaterialDG(){
 		pageList:[15,20,25,30,35,40,50],
 		onError: function(index,row){
 			// alert(index + ', ' + row.msg);
-			$.messager.alert("提示","操作失败！", "error");
+			$.messager.alert("错误","操作失败！", "error");
 		},
 		columns:[[
 		          {field:'name',title:'物料名',width:80},
@@ -407,7 +408,7 @@ function initSearchStockinoutDG(){
 		url: rootUri + 'stockinout.json',  // 在MaterialController.java中
 		onError: function(index,row){
 			// alert(index + ', ' + row.msg);
-			$.messager.alert("提示","操作失败！", "error");
+			$.messager.alert("错误","操作失败！", "error");
 		},
 		columns:[[
 		          {field:'typeName',title:'出入库类型',width:40},
@@ -528,7 +529,7 @@ function doSearchStockinout(){
 	});
 }
 
-// TODO 出入库管理
+// 出入库管理
 function initStockDG(){
 	$('#stock_dg').edatagrid({
 		url: rootUri + 'stock/list.json',
@@ -542,7 +543,7 @@ function initStockDG(){
 		pageList:[15,20,25,30,35,40,50],
 		onError: function(index,row){
 			// alert(index + ', ' + row.msg);
-			$.messager.alert("提示","操作失败！", "error");
+			$.messager.alert("错误","操作失败！", "error");
 		},
 		onAdd: function(index,row){  // 添加新行时
 			
@@ -1159,7 +1160,7 @@ function excelUpload(type){
     (
         {
             url: 'stock/uploadExcel', //用于文件上传的服务器端请求地址
-            fileElementId: 'excel', //文件上传域的ID
+            fileElementId: 'excel'+type, //文件上传域的ID
             secureuri: false, //是否需要安全协议，一般设置为false
             dataType: 'json', //返回值类型 一般设置为json
 			data:{stockType: type},  // 表单数据,或者：data:{id: xxx, name: yyyy}
@@ -1215,7 +1216,7 @@ function importExcel(fileName, type){
 // TODO 提交从excel导入的stock item
 function submitImportStockItem(){
 	// $('#stockItem_import_dg_win').edatagrid();
-	var importStockType = $('#stockItem_import_dg_win')val();
+	var importStockType = $('#importStockType').val();
 	if ($('#stockItem_import_dg_win').datagrid('getRows').length > 0){
 		// 取数据
 		var item;
@@ -1243,7 +1244,7 @@ function submitImportStockItem(){
 			success:function(data){
 				if(!data.isError){
 					$.messager.alert('提示','保存成功','info');
-					$('#stock_dg').datagrid('refresh');
+					$('#stock_dg').datagrid('reload');
 					$('#win').window('close');
 				} 
 				else {

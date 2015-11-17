@@ -15,9 +15,9 @@
 <div id="toolbar" style="padding:5px 5px 5px 5px;">
 	<div style="padding:5px 5px 5px 5px;border-bottom: 1px solid #95B8E7">
 		<label style="color:red;">导入出仓记录：</label>
-		<input type="file" id="excel" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload(1);"/>
+		<input type="file" id="excel6" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload(6);"/>
 		<label style="color:red; margin-left:100px;">导入进仓记录：</label>
-		<input type="file" id="excel" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload(6);"/>&nbsp;&nbsp;&nbsp;
+		<input type="file" id="excel1" name="excel" accept="application/vnd.ms-excel" onchange="excelUpload(1);"/>&nbsp;&nbsp;&nbsp;
 		<br/>
 	</div>
 	<div style="padding-top:10px;">

@@ -110,6 +110,12 @@ public class MaterialController
 			materialService.update(material);
 			result.setIsError(false);
 		}
+		catch (UncategorizedSQLException ue){
+			result.setCode(ue.getSQLException().getErrorCode() + "");
+			
+			result.setIsError(true);
+			logger.error(ue.getMessage());
+		}
 		catch (Exception e)
 		{
 			result.setIsError(true);

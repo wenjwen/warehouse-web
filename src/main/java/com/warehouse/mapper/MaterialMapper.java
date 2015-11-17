@@ -20,6 +20,8 @@ public interface MaterialMapper extends BaseMapper<Material>{
 
 	List<Material> findAll();
 	
+	List<Material> findFroImport();
+	
 	List<Material> findSelective(Material material);
 
 	List<Material> selectBalanceByIds(List<StockItem> items);

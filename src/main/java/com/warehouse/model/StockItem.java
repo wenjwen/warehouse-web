@@ -11,6 +11,8 @@ public class StockItem {
     
     private String materialName;
     
+    private String size;
+    
     private BigDecimal balance;
 
     private Integer unitId;
@@ -191,6 +193,16 @@ public class StockItem {
 	public void setMaterialName(String materialName)
 	{
 		this.materialName = materialName;
+	}
+
+	public String getSize()
+	{
+		return size;
+	}
+
+	public void setSize(String size)
+	{
+		this.size = size;
 	}
 
 	public String getUnitName()

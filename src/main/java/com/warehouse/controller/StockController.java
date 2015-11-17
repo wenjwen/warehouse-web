@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.warehouse.common.PageParamModel;
 import com.warehouse.model.Dict;
+import com.warehouse.model.Material;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
 import com.warehouse.service.DictService;
@@ -296,13 +297,13 @@ public class StockController
 				HSSFWorkbook wb = new HSSFWorkbook(excel.getInputStream());
 				int sheetNum = wb.getNumberOfSheets();
 				if (sheetNum > 0){
-					List<Entry> mList = materialService.findAllEntry();
+					List<Material> mList = materialService.findFroImport();
 					List<Dict> uList = dictService.findByType(1);
-					Map<String, Entry> mMap = new HashMap<String, Entry>(0);
+					Map<String, Material> mMap = new HashMap<String, Material>(0);
 					Map<String, Dict> uMap = new HashMap<String, Dict>(0);
 				
 					if (mList != null && mList.size() > 0){
-						for(Entry m : mList){
+						for(Material m : mList){
 							mMap.put(m.getName(), m);
 						}
 					}

@@ -72,6 +72,18 @@ public class CategoryController
 			categoryService.save(category);
 			result.setIsError(false);
 		}
+		catch (UncategorizedSQLException ue){
+			if (ue.getSQLException().getErrorCode() == 19 && ue.getMessage().contains("UNIQUE constraint failed")){
+				// 违反唯一约束
+				result.setCode("102");
+			}
+			else{
+				result.setCode(ue.getSQLException().getErrorCode() + "");
+			}
+			
+			result.setIsError(true);
+			logger.error(ue.getMessage());
+		}
 		catch (Exception e)
 		{
 			result.setIsError(true);
@@ -91,10 +103,13 @@ public class CategoryController
 			categoryService.update(category);
 			result.setIsError(false);
 		}
+		catch (UncategorizedSQLException ue){
+			result.setCode(ue.getSQLException().getErrorCode() + "");
+			result.setIsError(true);
+		}
 		catch (Exception e)
 		{
 			result.setIsError(true);
-			result.setMsg(e.getMessage());
 			logger.error(e.getMessage());
 		}
 		return result;

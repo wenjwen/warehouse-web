@@ -294,6 +294,11 @@
   	where m.disabled != 1
   </select>
   
+  <select id="findFroImport" resultMap="BaseResultMap">
+  	select m.id, m.name, m.balance, m.size, m.unit_id, d.name as unit_name 
+  	from material m left join dict d on(m.unit_id = d.id)
+  </select>
+  
   <select id="findAll" resultMap="BaseResultMap">
   	select 
     <include refid="Base_Column_List" />
