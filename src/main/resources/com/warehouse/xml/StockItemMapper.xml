@@ -5,9 +5,12 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="stock_id" property="stockId" jdbcType="INTEGER" />
     <result column="material_id" property="materialId" jdbcType="INTEGER" />
+    <result column="material_name" property="materialName" jdbcType="VARCHAR" />
+    <result column="size" property="size" jdbcType="VARCHAR" />
     <result column="balance" property="balance" jdbcType="DECIMAL" />
     <result column="total_quantity" property="totalQuantity" jdbcType="DECIMAL" />
     <result column="unit_id" property="unitId" jdbcType="INTEGER" />
+    <result column="unit_name" property="unitName" jdbcType="VARCHAR" />
     <result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
     <result column="quantity" property="quantity" jdbcType="DECIMAL" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -184,10 +187,11 @@
   </delete>
   
   <select id="findItemsByStockId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-  	 select 
-    <include refid="Base_Column_List" />
-    from stock_item
-    where stock_id = #{stockId,jdbcType=INTEGER}
+  	select i.*, m.name as material_name, m.size as size, d.name as unit_name 
+  	from stock_item i 
+  	left join material m on(m.id = i.material_id) 
+  	left join dict d on(d.id = i.unit_id)
+    where i.stock_id = #{stockId,jdbcType=INTEGER}
   </select>
   
   <select id="selectQuantityAndBalance" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

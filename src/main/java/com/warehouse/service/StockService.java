@@ -29,7 +29,6 @@ import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
 import com.warehouse.model.StockSearch;
 import com.warehouse.util.Constant;
-import com.warehouse.util.Entry;
 
 @Service
 public class StockService extends BaseService<Stock>

@@ -872,15 +872,9 @@ function initStockItemDG_win(){
 			alert(index + ', ' + row.msg);
 		},
 		columns:[[
-		          {field:'materialId',title:'物料名(单位)',width:180,
-		        	  formatter:function(value){
-		        		  if(typeof(value) != 'undefined'){
-		        			  for(var i=0; i<materialEntry.length; i++){
-		        				  if (materialEntry[i].id == value) 
-		        					  return materialEntry[i].name + '('+ materialEntry[i].extraValue2 + ')';  // 物料名(单位)
-		        			  }
-		        		  }
-		        		  return value;
+		          {field:'materialId',title:'物料名',width:130,
+		        	  formatter:function(value, row, index){
+		        		  return row.materialName;
 		        	  },
 		        	  editor:{
 		        		  type:'combobox',
@@ -890,6 +884,12 @@ function initStockItemDG_win(){
 		        			  data:materialEntry,
 		        			  required:true
 		        		  }
+		        	  }
+		          },
+		          {field:'size',title:'规格',width:130,},
+		          {field:'unitId',title:'单位',width:80,
+		        	  formatter:function(value,row, rowIndex){
+		        		  return row.unitName;
 		        	  }
 		          },
 		          {field:'quantity',title:'数量',width:40,editor:{type:'numberbox', options:{precision:2,required:true}}},
@@ -932,17 +932,6 @@ function initStockItemImportDG_win(){
 		          //{field:'materialId',hidden:true,editor:{type:'text',options:{required:true}}},
 		          {field:'materialId',title:'物料名',width:140,
 		        	  formatter:function(value, row, rowIndex){
-		        		  /*if(typeof(value) != 'undefined'){
-		        			  for(var i=0; i<materialEntry.length; i++){
-		        				  // 设置materialId
-		        				  if (materialEntry[i].name == value){
-		        					  var ed = $('#stockItem_import_dg_win').datagrid('getEditor', {index:rowIndex,field:'materialId'});
-		        					  $(ed).textbox('setValue', materialEntry[i].id);
-		        					  return value;  // 物料名
-		        				  } 
-		        			  }
-		        		  }
-		        		  return '<span style="color:red;">未知物料:' + value + '</span>';*/
 		        		  return row.materialName;
 		        	  }/*,
 		        	  editor:{
@@ -955,21 +944,10 @@ function initStockItemImportDG_win(){
 		        		  }
 		        	  }*/
 		          },
-		          {field:'remark',title:'物料说明',width:120,editor:'text'}, //跟物料写在同一个单元格、用空格隔开的备注
-		          //{field:'unitId',hidden:true,editor:{type:'text',options:{required:true}}},
+		          {field:'remark',title:'物料说明',width:120,editor:'text'},
+		          {field:'size',title:'规格',width:80,},
 		          {field:'unitId',title:'单位',width:80,
 		        	  formatter:function(value,row, rowIndex){
-		        		  /*if(typeof(value) != 'undefined'){
-		        			  for(var i=0; i<unitEntry.length; i++){
-		        				  // 设置unitId
-		        				  if (unitEntry[i].name == value) {
-		        					  var ed = $('#stockItem_import_dg_win').datagrid('getEditor', {index:rowIndex,field:'unitId'});
-		        					  $(ed).textbox('setValue', unitEntry[i].id);
-		        					  return value;  // 物料名
-		        				  }
-		        			  }
-		        		  }
-		        		  return '<span style="color:red;">未知单位:' + value + '</span>';*/
 		        		  return row.unitName;
 		        	  }/*,
 		        	  editor:{
