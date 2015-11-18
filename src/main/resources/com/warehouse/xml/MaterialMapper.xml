@@ -90,7 +90,7 @@
     delete from material
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.warehouse.model.Material" >
+  <insert id="insert" parameterType="com.warehouse.model.Material" useGeneratedKeys="true" keyProperty="id">
     insert into material (id, update_user, create_user, 
       create_time, update_time, unit_id, 
       total_quantity, balance, size, 

@@ -234,6 +234,7 @@ public class StockService extends BaseService<Stock>
 	public List<StockItem> readItemFromSheet(HSSFSheet sheet, Map<String, Material> mMap, Map<String, Dict> uMap) throws Exception
 	{
 		List<StockItem> items = new ArrayList<StockItem>(0);
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
 		Date now = new Date();
 		int rowIndex = 1; // 时间行
 		
@@ -265,9 +266,10 @@ public class StockService extends BaseService<Stock>
 					item.setStockDate(yearAndMonth + "-" + dayStr.replaceAll("号", ""));  // 变成格式：yyyy-MM-dd
 					
 					item.setStockNo(row.getCell(cellIndex++).getStringCellValue()); // 单号
-					/*if (item.getStockNo() == null || "".equals(item.getStockNo())){
-						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有单号！");
-					}*/
+					if (item.getStockNo() == null || "".equals(item.getStockNo())){
+						//throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有单号！");
+						item.setStockNo(item.getStockDate().replaceAll("-", "") + timeFormat.format(now));
+					}
 					
 					item.setMaterialName(row.getCell(cellIndex++).getStringCellValue());  // 物料名
 					if (item.getMaterialName() == null || "".equals(item.getMaterialName())){
@@ -302,19 +304,30 @@ public class StockService extends BaseService<Stock>
 						
 						item.setUnitId(d.getId());
 						uMap.put(d.getName(), d);
+					}else{
+						item.setUnitId(uMap.get(item.getUnitName()).getId());
 					}
 					
 					// 检查物料是否存在
-					String name_size = StringUtils.isEmpty(item.getRemark()) ? item.getMaterialName():(item.getMaterialName() + "-" + item.getSize());
+					String name_size = StringUtils.isEmpty(item.getSize()) ? item.getMaterialName():(item.getMaterialName() + "-" + item.getSize());
 					Material m = mMap.get(name_size);
 					if (m == null){ // 不存在
 						// insert new material
 						Material newM = new Material();
 						newM.setName(item.getMaterialName());
+						newM.setSize(StringUtils.isEmpty(item.getSize()) ? null : item.getSize());
 						newM.setUnitId(uMap.get(item.getUnitName()).getId());
 						newM.setDisabled(0);
+						newM.setAvgUnitPrice(new BigDecimal(0));
+						newM.setUnitPrice(new BigDecimal(0));
+						newM.setTotalQuantity(new BigDecimal(0));
+						newM.setBalance(new BigDecimal(0));
 						newM.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
 						newM.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+						
+						materialMapper.insert(newM);
+						item.setMaterialId(newM.getId());
+						mMap.put(newM.getName(), newM);
 					}else{
 						item.setMaterialId(m.getId());
 						item.setUnitId((Integer)m.getUnitId());
@@ -332,7 +345,7 @@ public class StockService extends BaseService<Stock>
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			throw new Exception("分析工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行时出错！" + e.getMessage());
+			throw new Exception("分析工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行时出错！");
 		}
 		
 		return items;
@@ -356,8 +369,10 @@ public class StockService extends BaseService<Stock>
 				// 如果stock No. 为空，则用日期作为单号
 				if(StringUtils.isEmpty(item.getStockNo())){
 					item.setStockNo(item.getStockDate().replaceAll("-","") + timeFormat.format(now).replaceAll(":", ""));
+				}else{
+					s.setStockNo(item.getStockNo());
 				}
-				s.setStockNo(StringUtils.isEmpty(item.getStockNo()) ? item.getStockDate() : item.getStockNo());
+				
 				// 月份为1位数的转为两位数
 				s.setStockTime(Constant.DATE_FORMATTER.format(Constant.DATE_FORMATTER.parse(item.getStockDate())) + " " + timeFormat.format(now));
 				s.setStockType(stockType);

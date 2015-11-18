@@ -641,11 +641,19 @@ function initStocktakeDG(){
 			
 		},
 		onBeforeSave: function(index){  // 添加新行时
-			
+			var options = {
+					title:'',  //显示在头部面板上的标题文本
+					msg:'', //消息框的主体文本
+					text:'正在生成盘点单...', //显示在进度条里的文本
+					interval: 300   //每次进度更新之间以毫秒为单位的时间长度
+			};
+			// 打开进度条
+			$.messager.progress(options); 
 		},
 		onSave: function(index, row){  // 保存后
 			if(!row.isError){
-				//$.messager.alert("提示","保存成功", "info");
+				// 关闭进度条
+				$.messager.progress('close'); 
 				$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","保存失败！", "info");
@@ -849,7 +857,7 @@ function initStockItemDG_win(){
 	
 	var isHidden = false;
 	var unitPriceOptions = {precision:2,required:true};
-	if (stockType == 4 || stockType == 5 || stockType == 6){ // stock out
+	if (stockType == 4 || stockType == 5){ // stock out
 		isHidden = true;   //隐藏单价
 		unitPriceOptions = {precision:2,required:false};//设置为非必填
 	}
@@ -864,7 +872,7 @@ function initStockItemDG_win(){
 			alert(index + ', ' + row.msg);
 		},
 		columns:[[
-		          {field:'materialId',title:'物料名(单位)',width:100,
+		          {field:'materialId',title:'物料名(单位)',width:180,
 		        	  formatter:function(value){
 		        		  if(typeof(value) != 'undefined'){
 		        			  for(var i=0; i<materialEntry.length; i++){
@@ -884,8 +892,8 @@ function initStockItemDG_win(){
 		        		  }
 		        	  }
 		          },
-		          {field:'unitPrice',title:'单价(元)',width:60,hidden:isHidden, editor:{type:'numberbox', options:unitPriceOptions}},
-		          {field:'quantity',title:'数量',width:80,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          {field:'quantity',title:'数量',width:40,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          {field:'unitPrice',title:'单价(元)',width:40,hidden:isHidden, editor:{type:'numberbox', options:unitPriceOptions}},
 		          {field:'remark',title:'备注',width:140,editor:'text'},
 		          {field:'action',title:'操作',width:50,align:'center',
 		        	  formatter:function(value,row,index){
@@ -906,9 +914,10 @@ function initStockItemDG_win(){
 }
 
 function initStockItemImportDG_win(){
+	var importStockType = $('#importStockType').val();
 	var isHidden = false;
 	var unitPriceOptions = {precision:2,required:true};
-	if (stockType == 4 || stockType == 5){ // stock out 销售出库时不隐藏
+	if (importStockType == 4 || importStockType == 5){ // stock out 销售出库时不隐藏
 		isHidden = true;   //隐藏单价
 		unitPriceOptions = {precision:2,required:false};//设置为非必填
 	}
@@ -1215,7 +1224,6 @@ function importExcel(fileName, type){
 	
 // TODO 提交从excel导入的stock item
 function submitImportStockItem(){
-	// $('#stockItem_import_dg_win').edatagrid();
 	var importStockType = $('#importStockType').val();
 	if ($('#stockItem_import_dg_win').datagrid('getRows').length > 0){
 		// 取数据

@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -304,7 +305,7 @@ public class StockController
 				
 					if (mList != null && mList.size() > 0){
 						for(Material m : mList){
-							mMap.put(m.getName(), m);
+							mMap.put(StringUtils.isEmpty(m.getSize()) ? m.getName():(m.getName() + "-" + m.getSize()), m);
 						}
 					}
 					if (uList != null && uList.size() > 0){

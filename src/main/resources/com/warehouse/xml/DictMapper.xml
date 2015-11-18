@@ -30,7 +30,7 @@
     delete from dict
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.warehouse.model.Dict" >
+  <insert id="insert" parameterType="com.warehouse.model.Dict" useGeneratedKeys="true" keyProperty="id">
     insert into dict (id, name, type, 
       disabled, create_time, update_user, 
       create_user, update_time)
