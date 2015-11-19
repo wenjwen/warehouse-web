@@ -869,12 +869,39 @@ function initStockItemDG_win(){
 		destroyUrl: rootUri + 'deleteStockItem?stockType=' + stockType,
 		autoSave: false,
 		onError: function(index,row){
-			alert(index + ', ' + row.msg);
+			$.messager.alert("错误","操作失败！", "error");
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				$.messager.alert("提示","保存成功！", "info");
+			} else if(row.isError){
+				$.messager.alert("错误","保存失败！", "error");
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("错误","删除失败！", "error");
+			}
 		},
 		columns:[[
-		          {field:'materialId',title:'物料名',width:130,
+		          {field:'materialId',title:'物料名及规格(单位)',width:180,
 		        	  formatter:function(value, row, index){
-		        		  return row.materialName;
+		        		  if (typeof(row.materialName) == 'undefined'){ // 新增的行没有 materialName
+		        			  for(var i=0; i<materialEntry.length; i++){
+		        				  if (materialEntry[i].id == value) 
+		        					  return materialEntry[i].name + ' ('+ materialEntry[i].extraValue2 + ')';  // 物料名(单位)
+		        				  }
+		        		  }
+		        		  else{ // 导入时创建了新的matarial,页面中materialEntry还没更新，直接显示查出来的materialName
+			        		  if(typeof(row.size) == 'undefined' || row.size == null || row.size ==''){
+			        			  return row.materialName + '('+ row.unitName +')';
+			        		  }else{
+			        			  return row.materialName + ' 规格：' + row.size + ' ('+ row.unitName +')';
+			        		  }
+		        		  }
 		        	  },
 		        	  editor:{
 		        		  type:'combobox',
@@ -884,12 +911,6 @@ function initStockItemDG_win(){
 		        			  data:materialEntry,
 		        			  required:true
 		        		  }
-		        	  }
-		          },
-		          {field:'size',title:'规格',width:130,},
-		          {field:'unitId',title:'单位',width:80,
-		        	  formatter:function(value,row, rowIndex){
-		        		  return row.unitName;
 		        	  }
 		          },
 		          {field:'quantity',title:'数量',width:40,editor:{type:'numberbox', options:{precision:2,required:true}}},
@@ -929,36 +950,17 @@ function initStockItemImportDG_win(){
 		},
 		columns:[[{field: 'stockDate', title:'日期', width:80/*, editor:{type:'dateBox',options:{required:true}}*/},
 		          {field: 'stockNo', title:'单号', width:80/*, editor:{type:'text',options:{required:true}}*/},
-		          //{field:'materialId',hidden:true,editor:{type:'text',options:{required:true}}},
 		          {field:'materialId',title:'物料名',width:140,
 		        	  formatter:function(value, row, rowIndex){
 		        		  return row.materialName;
-		        	  }/*,
-		        	  editor:{
-		        		  type:'combobox',
-		        		  options:{
-		        			  valueField:'name',
-		        			  textField:'name',
-		        			  data:materialEntry,
-		        			  required:true
-		        		  }
-		        	  }*/
+		        	  }
 		          },
 		          {field:'remark',title:'物料说明',width:120,editor:'text'},
 		          {field:'size',title:'规格',width:80,},
 		          {field:'unitId',title:'单位',width:80,
 		        	  formatter:function(value,row, rowIndex){
 		        		  return row.unitName;
-		        	  }/*,
-		        	  editor:{
-		        		  type:'combobox',
-		        		  options:{
-		        			  valueField:'id',
-		        			  textField:'name',
-		        			  data:unitEntry,
-		        			  required:true
-		        		  }
-		        	  }*/
+		        	  }
 		          },
 		          {field:'quantity',title:'数量',width:40,editor:{type:'numberbox', options:{precision:2,required:true}}},
 		          {field:'unitPrice',title:'单价',width:60,hidden:isHidden, editor:{type:'numberbox', options:unitPriceOptions}},
