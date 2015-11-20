@@ -46,7 +46,7 @@
  			<td>借用人:</td>
  			</c:if>
  			<c:if test="${stockType==6 }">
- 			<td>退货客户:</td>
+ 			<td>客户:</td>
  			</c:if>
  			<td><input class="easyui-textbox" type="text" id="target" style="width:100%;" data-options="required:true"></input></td>
  		</tr>
