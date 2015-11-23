@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+\<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -11,26 +11,7 @@
 <script type="text/javascript" src="http://localhost:8080/warehouse/resource/js/jquery.edatagrid.js"></script>
 <script type="text/javascript" src="http://localhost:8080/warehouse/resource/js/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="http://localhost:8080/warehouse/resource/js/customized/init_datagrid.js"></script>
-<script type="text/javascript">
 
-	$(function(){ 
-		initStockItemDG();		
-	});
-	
-	function appendRow(){
-		$('#stockItem_dg').datagrid('appendRow',{
-			materialId: 1,
-			materialName: 'new name',
-			unitId: 1,
-			materialName: 'new name',
-			quantity: 30,
-			unitPrice: 20,
-			remark: 'some messages'
-		});
-	}
-
-	
-</script>
 </head>
 <body style="width:1360px;height:768px;">
 <!-- 基础信息 -->

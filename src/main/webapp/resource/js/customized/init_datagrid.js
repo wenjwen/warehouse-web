@@ -836,7 +836,7 @@ function initStockItemDG(){
 					{field:'remark',title:'备注',width:140,editor:'text'},
 					{field:'action',title:'操作',width:50,align:'center',
 						formatter:function(value,row,index){
-								var d = "<a href=\"#\" onclick=\"javascript:$('#stockItem_dg').edatagrid('deleteRow','"+index+"')\">删除</a>";
+								var d = "<a href=\"#\" onclick=\"deleteDatagridRow('stockItem_dg','"+index+"');\">删除</a>";
 								return d;
 						}
 					}
@@ -1241,6 +1241,12 @@ function submitImportStockItem(){
 			}
 		});
 	}
+}
+
+function deleteDatagridRow(dg_id, index){
+	$('#'+ dg_id).datagrid('deleteRow',index);
+    var rows = $('#'+ dg_id).datagrid("getRows");    //重新获取数据生成行号
+    $('#'+ dg_id).datagrid("loadData", rows);
 }
 
 /* sqlite beginning-of-error-codes */ 
