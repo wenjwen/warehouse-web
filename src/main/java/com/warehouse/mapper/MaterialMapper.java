@@ -2,6 +2,8 @@ package com.warehouse.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.warehouse.common.BaseMapper;
 import com.warehouse.model.Material;
 import com.warehouse.model.StockItem;
@@ -27,5 +29,11 @@ public interface MaterialMapper extends BaseMapper<Material>{
 	List<Material> selectBalanceByIds(List<StockItem> items);
 
 	void updateForStocktake(StocktakeItem item);
+
+	void updateOrderNo(Integer beginNo);
+	
+	void updateOrderNoUp(@Param("beginNo")Integer beginNo, @Param("endNo")Integer endNo);
     
+	void updateOrderNoDown(@Param("beginNo")Integer beginNo, @Param("endNo")Integer endNo);
+
 }

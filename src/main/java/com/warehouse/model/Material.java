@@ -38,8 +38,20 @@ public class Material {
     private Integer categoryId;
 
     private Integer disabled;
+    
+    private Integer orderNo;
+    
+    public Integer getOrderNo()
+	{
+		return orderNo;
+	}
 
-    public Integer getId() {
+	public void setOrderNo(Integer orderNo)
+	{
+		this.orderNo = orderNo;
+	}
+
+	public Integer getId() {
         return id;
     }
 

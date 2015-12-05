@@ -13,6 +13,18 @@ public class Entry
 	private Object extraValue3;
 	
 	private Object extraValue4;
+	
+	private Object extraValue5;
+	
+	public Object getExtraValue5()
+	{
+		return extraValue5;
+	}
+
+	public void setExtraValue5(Object extraValue5)
+	{
+		this.extraValue5 = extraValue5;
+	}
 
 	public Object getExtraValue1()
 	{

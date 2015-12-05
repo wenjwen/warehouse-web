@@ -20,6 +20,7 @@
     <result column="shelf" property="shelf" jdbcType="VARCHAR" />
     <result column="category_id" property="categoryId" jdbcType="INTEGER" />
     <result column="disabled" property="disabled" jdbcType="INTEGER" />
+    <result column="order_no" property="orderNo" jdbcType="INTEGER" />
   </resultMap>
   
   <resultMap id="EntryMap" type="com.warehouse.util.Entry" >
@@ -29,6 +30,7 @@
 	   <result column="unit_name" property="extraValue2" jdbcType="VARCHAR" />
 	   <result column="balance" property="extraValue3" jdbcType="DECIMAL" />
 	   <result column="size" property="extraValue4" jdbcType="VARCHAR" />
+	   <result column="order_no" property="extraValue5" jdbcType="INTEGER" />
   </resultMap>
   
   <sql id="sql_where">
@@ -55,7 +57,7 @@
   <sql id="Base_Column_List" >
     id, update_user, create_user, create_time, update_time, unit_id, total_quantity, 
     balance, size, last_stock_take, avg_unit_price, unit_price, name, code, shelf, category_id, 
-    disabled
+    disabled, order_no
   </sql>
   
   <sql id="Example_Where_Clause" >
@@ -96,13 +98,13 @@
       total_quantity, balance, size, 
       last_stock_take, avg_unit_price, unit_price, 
       name, code, shelf, 
-      category_id, disabled)
+      category_id, disabled, order_no)
     values (#{id,jdbcType=INTEGER}, #{updateUser,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER}, 
       #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, #{unitId,jdbcType=INTEGER}, 
       #{totalQuantity,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{size,jdbcType=VARCHAR}, 
       #{lastStockTake,jdbcType=VARCHAR}, #{avgUnitPrice,jdbcType=DECIMAL}, #{unitPrice,jdbcType=DECIMAL}, 
       #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{shelf,jdbcType=VARCHAR}, 
-      #{categoryId,jdbcType=INTEGER}, #{disabled,jdbcType=INTEGER})
+      #{categoryId,jdbcType=INTEGER}, #{disabled,jdbcType=INTEGER},#{orderNo,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.warehouse.model.Material" >
     insert into material
@@ -158,6 +160,9 @@
       <if test="disabled != null" >
         disabled,
       </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -210,6 +215,9 @@
       </if>
       <if test="disabled != null" >
         #{disabled,jdbcType=INTEGER},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -264,6 +272,9 @@
       <if test="disabled != null" >
         disabled = #{disabled,jdbcType=INTEGER},
       </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -284,12 +295,13 @@
       code = #{code,jdbcType=VARCHAR},
       shelf = #{shelf,jdbcType=VARCHAR},
       category_id = #{categoryId,jdbcType=INTEGER},
-      disabled = #{disabled,jdbcType=INTEGER}
+      disabled = #{disabled,jdbcType=INTEGER},
+      order_no = #{orderNo,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
   <select id="findAllEntry" resultMap="EntryMap">
-  	select m.id, m.name, m.balance, m.size, m.unit_id, d.name as unit_name 
+  	select m.id, m.name, m.balance, m.size, m.unit_id, m.order_no, d.name as unit_name 
   	from material m left join dict d on(m.unit_id = d.id)
   	where m.disabled != 1
   </select>
@@ -374,8 +386,20 @@
     	  	 AND m.DISABLED = #{t.disabled}
    	  </if>
     </where>
-		order by id ASC 
+		order by m.ORDER_NO ASC, m.NAME ASC
 		limit #{size} offset #{start}
   </select>
+  
+  <update id="updateOrderNo" parameterType="java.lang.Integer">
+  	update material set order_no = (order_no + 1) where order_no &gt;= #{beginNo}
+  </update>
+  
+   <update id="updateOrderNoUp" parameterType="java.lang.Integer">
+  	update material set order_no = (order_no - 1) where order_no between #{beginNo} and #{endNo}
+  </update>
+  
+   <update id="updateOrderNoDown" parameterType="java.lang.Integer">
+  	update material set order_no = (order_no + 1) where order_no between #{beginNo} and #{endNo}
+  </update>
   
 </mapper>

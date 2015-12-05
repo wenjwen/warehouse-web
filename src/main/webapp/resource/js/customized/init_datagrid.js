@@ -160,6 +160,7 @@ function initCategoryDG(){
 }
 // 物料管理
 function initMaterialDG(){
+	var old_orderNo = 'undefined';
 	$('#material_dg').edatagrid({
 		url: rootUri + 'material.json?disabled=0',
 		saveUrl: rootUri + 'saveMaterial',
@@ -209,6 +210,10 @@ function initMaterialDG(){
 				$.messager.alert("错误","未知错误", "error");
 			}
 		},
+		onBeforeEdit:function(index, row){
+			old_orderNo = row.orderNo;
+			console.log(old_orderNo);
+		},
 		columns:[[
 		          {field:'ck', checkbox:true},
 		          {field:'name',title:'物料名',width:100, editor:{type:'textbox', required:true}},
@@ -250,7 +255,8 @@ function initMaterialDG(){
 		          },
 		          {field:'totalQuantity',title:'总数量',width:40, editor:{type:'numberbox', options:{precision:2}}},
 		          {field:'balance',title:'库存数量',width:40, editor:{type:'numberbox',options:{precision:2}}},
-		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}}
+		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}},
+		          {field:'orderNo',title:'排序',width:120,editor:{type:'numberbox'}}
 		          ]],
 	});
 	
