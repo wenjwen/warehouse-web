@@ -43,5 +43,8 @@ public class CategoryService extends BaseService<Category>
 		return categoryMapper.findAllEntry();
 	}
 
+	public List<Category> findAll(){
+		return categoryMapper.findAll();
+	}
 
 }

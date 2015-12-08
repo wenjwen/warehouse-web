@@ -23,16 +23,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.warehouse.common.PageParamModel;
+import com.warehouse.model.Category;
 import com.warehouse.model.Dict;
 import com.warehouse.model.Material;
 import com.warehouse.model.Stock;
 import com.warehouse.model.StockItem;
+import com.warehouse.service.CategoryService;
 import com.warehouse.service.DictService;
 import com.warehouse.service.MaterialService;
 import com.warehouse.service.StockService;
 import com.warehouse.util.AjaxResult;
 import com.warehouse.util.Constant;
-import com.warehouse.util.Entry;
 
 @Controller
 public class StockController
@@ -43,6 +44,8 @@ public class StockController
 	private StockService stockService;
 	@Resource
 	private MaterialService materialService;
+	@Resource
+	private CategoryService categoryService;
 	@Resource
 	private DictService dictService;
 	
@@ -300,12 +303,18 @@ public class StockController
 				if (sheetNum > 0){
 					List<Material> mList = materialService.findFroImport();
 					List<Dict> uList = dictService.findByType(1);
+					List<Category> cList = categoryService.findAll();
 					Map<String, Material> mMap = new HashMap<String, Material>(0);
 					Map<String, Dict> uMap = new HashMap<String, Dict>(0);
+					Map<String, Category> cMap = new HashMap<String, Category>(0);
 				
 					if (mList != null && mList.size() > 0){
 						for(Material m : mList){
-							mMap.put(StringUtils.isEmpty(m.getSize()) ? m.getName():(m.getName() + "-" + m.getSize()), m);
+							// mMap.put(StringUtils.isEmpty(m.getSize()) ? m.getName():(m.getName() + "-" + m.getSize()), m);
+							// name-size-categoryId
+							mMap.put((m.getName() 
+									+ (StringUtils.isEmpty(m.getSize())?"" : ("-" + m.getSize())) 
+									+ (m.getCategoryId()!=null&&m.getCategoryId()>0?("-"+m.getCategoryId()):"")), m);
 						}
 					}
 					if (uList != null && uList.size() > 0){
@@ -313,10 +322,15 @@ public class StockController
 							uMap.put(u.getName(), u);
 						}
 					}
+					if (cList != null && cList.size() > 0){
+						for(Category c : cList){
+							cMap.put(c.getName(), c);
+						}
+					}
 					
 					List<StockItem> items = new ArrayList<StockItem>(0);
 					for (int i = 0; i < sheetNum; i++){
-						items.addAll(stockService.readItemFromSheet(wb.getSheetAt(i), mMap, uMap));
+						items.addAll(stockService.readItemFromSheet(wb.getSheetAt(i), mMap, uMap, cMap));
 					}
 					result.setObj(items);
 				}

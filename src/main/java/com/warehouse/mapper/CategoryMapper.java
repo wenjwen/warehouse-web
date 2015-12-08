@@ -15,4 +15,7 @@ public interface CategoryMapper extends BaseMapper<Category>{
 	List<Category> findSelective(Category category);
 
 	List<Category> findAllEntry();
+	
+	List<Category> findAll();
+	
 }

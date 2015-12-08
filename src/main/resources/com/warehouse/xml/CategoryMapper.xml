@@ -34,7 +34,7 @@
     delete from category
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.warehouse.model.Category" >
+  <insert id="insert" parameterType="com.warehouse.model.Category" useGeneratedKeys="true" keyProperty="id" >
     insert into category (id, name, parent_id, 
       depth, disabled, remark, 
       update_time, create_time, create_user, 
@@ -44,7 +44,7 @@
       #{updateTime,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{createUser,jdbcType=INTEGER}, 
       #{updateUser,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.warehouse.model.Category" >
+  <insert id="insertSelective" parameterType="com.warehouse.model.Category"  useGeneratedKeys="true" keyProperty="id" >
     insert into category
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -174,5 +174,9 @@
     		<if test="name != null and name != ''" >
      	  	 AND c.NAME like '%${name}%'
     	  </if>
+  </select>
+  
+  <select id="findAll" resultMap="BaseResultMap">
+  	select c.*, p.name as parent_name from category c left join category p on(c.parent_id = p.id) where c.disabled = 0
   </select>
 </mapper>

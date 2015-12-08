@@ -256,7 +256,7 @@ function initMaterialDG(){
 		          {field:'totalQuantity',title:'总数量',width:40, editor:{type:'numberbox', options:{precision:2}}},
 		          {field:'balance',title:'库存数量',width:40, editor:{type:'numberbox',options:{precision:2}}},
 		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}},
-		          {field:'orderNo',title:'排序',width:120,editor:{type:'numberbox'}}
+		          {field:'orderNo',title:'排序',width:30,editor:{type:'numberbox'}}
 		          ]],
 	});
 	
@@ -1212,6 +1212,15 @@ function importExcel(fileName, type){
 function submitImportStockItem(){
 	var importStockType = $('#importStockType').val();
 	if ($('#stockItem_import_dg_win').datagrid('getRows').length > 0){
+		// 打开进度条
+		var options = {
+				title:'',  //显示在头部面板上的标题文本
+				msg:'', //消息框的主体文本
+				text:'正在保存...', //显示在进度条里的文本
+				interval: 300   //每次进度更新之间以毫秒为单位的时间长度
+		};
+		$.messager.progress(options);
+		
 		// 取数据
 		var item;
 		var itemArr = [];
@@ -1236,6 +1245,9 @@ function submitImportStockItem(){
 			type:'POST',
 			data : {itemsStr:JSON.stringify(itemArr), stockType:importStockType},
 			success:function(data){
+				// 关闭进度条
+				$.messager.progress('close');
+				
 				if(!data.isError){
 					$.messager.alert('提示','保存成功','info');
 					$('#stock_dg').datagrid('reload');

@@ -13,16 +13,19 @@ import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.warehouse.common.BaseMapper;
 import com.warehouse.common.BaseService;
+import com.warehouse.mapper.CategoryMapper;
 import com.warehouse.mapper.DictMapper;
 import com.warehouse.mapper.MaterialMapper;
 import com.warehouse.mapper.StockItemMapper;
 import com.warehouse.mapper.StockMapper;
+import com.warehouse.model.Category;
 import com.warehouse.model.Dict;
 import com.warehouse.model.Material;
 import com.warehouse.model.Stock;
@@ -44,6 +47,9 @@ public class StockService extends BaseService<Stock>
 	private MaterialMapper materialMapper;
 	@Resource
 	private DictMapper dictMapper;
+	@Resource
+	private CategoryMapper categoryMapper;
+	
 	@Override
 	public BaseMapper<Stock> getMapper()
 	{
@@ -230,7 +236,7 @@ public class StockService extends BaseService<Stock>
 		itemMapper.updateByPrimaryKeySelective(si);
 	}
 
-	public List<StockItem> readItemFromSheet(HSSFSheet sheet, Map<String, Material> mMap, Map<String, Dict> uMap) throws Exception
+	public List<StockItem> readItemFromSheet(HSSFSheet sheet, Map<String, Material> mMap, Map<String, Dict> uMap, Map<String, Category> cMap) throws Exception
 	{
 		List<StockItem> items = new ArrayList<StockItem>(0);
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
@@ -240,9 +246,29 @@ public class StockService extends BaseService<Stock>
 		try
 		{
 			if (sheet != null){
+				if (sheet.getSheetName() != null && !"".equals(sheet.getSheetName())){
+					if (cMap.get(sheet.getSheetName()) == null){
+						// 创建分类
+						Category newC = new Category();
+						newC.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+						newC.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+						newC.setCreateUser(1);
+						newC.setUpdateUser(1);
+						newC.setDisabled(0);
+						newC.setName(sheet.getSheetName());
+						newC.setRemark("导入时创建");
+						categoryMapper.insert(newC);
+						cMap.put(newC.getName(), newC);
+					}
+						
+				}
 				Row row = sheet.getRow(rowIndex);
 				if (row == null){
 					return items;
+				}
+				// 设置cell type，以免读取时出错
+				if (row.getCell(0) != null){
+					 row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				}
 				String timeStr = row.getCell(0).getStringCellValue(); // 时间行
 				if (timeStr == null || "".equals(timeStr)){
@@ -252,10 +278,16 @@ public class StockService extends BaseService<Stock>
 				
 				rowIndex = 3; // 数据内容从第4行(索引为3)开始
 				while(sheet.getRow(rowIndex) != null){
+					logger.debug("正在分析工作表 \""+ sheet.getSheetName() + "\"的第" + (rowIndex) + "行");
+					
 					row = sheet.getRow(rowIndex);
 					StockItem item = new StockItem();
 					int cellIndex = 0;
 					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_STRING);
+					}
 					String dayStr = row.getCell(cellIndex++).getStringCellValue();
 					if (dayStr == null || "".equals(dayStr)){  // 第一个cell没有内容，认为到此结束
 						//throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有日期！");
@@ -264,31 +296,70 @@ public class StockService extends BaseService<Stock>
 					
 					item.setStockDate(yearAndMonth + "-" + dayStr.replaceAll("号", ""));  // 变成格式：yyyy-MM-dd
 					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_STRING);
+					}
 					item.setStockNo(row.getCell(cellIndex++).getStringCellValue()); // 单号
 					if (item.getStockNo() == null || "".equals(item.getStockNo())){
 						//throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有单号！");
 						item.setStockNo(item.getStockDate().replaceAll("-", "") + timeFormat.format(now));
 					}
 					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_STRING);
+					}
 					item.setMaterialName(row.getCell(cellIndex++).getStringCellValue());  // 物料名
+					if (item.getMaterialName() != null && item.getMaterialName().trim().contains("运费")){
+						rowIndex++;
+						continue;
+					}
 					if (item.getMaterialName() == null || "".equals(item.getMaterialName())){
-						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有物料名！");
+						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (rowIndex+1) + "行没有物料名！");
+					}
+					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_STRING);
 					}
 					item.setSize(row.getCell(cellIndex++).getStringCellValue()); // 规格
+					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_STRING);
+					}
 					item.setRemark(row.getCell(cellIndex++).getStringCellValue()); // 物料说明
 					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_STRING);
+					}
 					item.setUnitName(row.getCell(cellIndex++).getStringCellValue());  //单位
 					if (item.getUnitName() == null || "".equals(item.getUnitName())){
-						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行没有单位！");
+						throw new Exception("工作表 \""+ sheet.getSheetName() + "\"的第" + (rowIndex+1) + "行没有单位！");
 					}
 					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_NUMERIC);
+					}
 					double quantity = row.getCell(cellIndex++).getNumericCellValue(); // 数量
 					item.setQuantity(new BigDecimal(quantity));
 					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_NUMERIC);
+					}
 					double price = row.getCell(cellIndex++).getNumericCellValue(); // 单价
 					item.setUnitPrice(new BigDecimal(price));
 					
 					cellIndex++; // 跳过金额列
+					
+					// 设置cell type，以免读取时出错
+					if (row.getCell(cellIndex) != null){
+						 row.getCell(cellIndex).setCellType(Cell.CELL_TYPE_STRING);
+					}
 					item.setStockRemark(row.getCell(cellIndex++).getStringCellValue()); // 备注列
 					
 					if (uMap.get(item.getUnitName()) == null){// 不存在
@@ -309,6 +380,9 @@ public class StockService extends BaseService<Stock>
 					
 					// 检查物料是否存在
 					String name_size = StringUtils.isEmpty(item.getSize()) ? item.getMaterialName():(item.getMaterialName() + "-" + item.getSize());
+					/*String name_size_categoryId = item.getMaterialName() 
+									+ (StringUtils.isEmpty(item.getSize())?"":("-" + item.getSize()))
+									+ (cMap.get(sheet.getSheetName())==null?"":("-" + cMap.get(sheet.getSheetName()).getId()));*/
 					Material m = mMap.get(name_size);
 					if (m == null){ // 不存在
 						// insert new material
@@ -323,16 +397,24 @@ public class StockService extends BaseService<Stock>
 						newM.setBalance(new BigDecimal(0));
 						newM.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
 						newM.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+						// 设置分类
+						newM.setCategoryId(cMap.get(sheet.getSheetName()).getId());
 						
 						materialMapper.insert(newM);
+						newM.setOrderNo(newM.getId());
+						materialMapper.updateByPrimaryKeySelective(newM);
 						item.setMaterialId(newM.getId());
-						mMap.put(newM.getName(), newM);
+						mMap.put(StringUtils.isEmpty(newM.getSize()) ? newM.getName():(newM.getName() + "-" + newM.getSize()), newM);
+						/*mMap.put((newM.getName() 
+								+ (StringUtils.isEmpty(newM.getSize())?"" : ("-" + newM.getSize())) 
+								+ (newM.getCategoryId()!=null&&newM.getCategoryId()>0?("-"+newM.getCategoryId()):"")), newM);*/
 					}else{
 						item.setMaterialId(m.getId());
 						item.setUnitId((Integer)m.getUnitId());
 						
+						// 物料名、规格一样，但单位不同
 						if(!item.getUnitId().equals(uMap.get(item.getUnitName()).getId())){
-							throw new Exception("物料'"+ item.getMaterialName() + "'" + "的单位应为'"+ mMap.get(item.getMaterialName()).getUnitName()+"'");
+							throw new Exception("系统中已存在物料'"+ item.getMaterialName() + "'（规格为'"+(m.getSize() == null?"":m.getSize())+"',单位为'"+ m.getUnitName() +"'），请修改该行的物料名或规格再导入！");
 						}
 					}
 					
@@ -344,7 +426,7 @@ public class StockService extends BaseService<Stock>
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			throw new Exception("分析工作表 \""+ sheet.getSheetName() + "\"的第" + (++rowIndex) + "行时出错！");
+			throw new Exception("分析工作表 \""+ sheet.getSheetName() + "\"的第" + (rowIndex+1) + "行时出错！" + e.getMessage());
 		}
 		
 		return items;

@@ -7,7 +7,7 @@
 </head>
 <body>
 			<input id="importStockType" type="text" value="${importStockType}" style="display:none;">
-			<table id="stockItem_import_dg_win"  style="width:100%;height:93%;"
+			<table id="stockItem_import_dg_win"  style="width:100%;height:92%;"
 					idField="id" rownumbers="true" fitColumns="true" singleSelect="false">
 			</table>
 			<!-- <div id="item_toolbar">
@@ -17,7 +17,7 @@
 				<a href="#" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#stockItem_import_dg_win').edatagrid('cancelRow')">取消</a>
 			</div>  -->
 			<!-- 提交 -->
-		<div style="width:100%;height:5%;text-align:center;">
+		<div style="width:100%;height:4%;text-align:center;">
 	    	<a  class="easyui-linkbutton" style="margin:10px;width:50px;" href="javascript:void(0)" onclick="submitImportStockItem();">保存</a>
 	    	<a  class="easyui-linkbutton" style="margin:10px;width:50px;" href="javascript:void(0)" onclick="javascript:$('#win').window('close');">取消</a>
 	  </div>
