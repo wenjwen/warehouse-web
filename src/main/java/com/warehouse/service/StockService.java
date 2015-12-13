@@ -443,9 +443,15 @@ public class StockService extends BaseService<Stock>
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 		Map<String, Stock> stockMap = new HashMap<String, Stock>();
 		for(StockItem item : list){
-			Stock s = stockMap.get(item.getStockNo());
+			Stock s = stockMap.get(item.getStockNo()+(item.getStockRemark()==null?"":item.getStockRemark()));
+			
+			item.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+			item.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
+			
 			if (s == null){
 				s = new Stock();
+				s.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
+				s.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
 				
 				// 如果stock No. 为空，则用日期作为单号
 				if(StringUtils.isEmpty(item.getStockNo())){
@@ -457,42 +463,21 @@ public class StockService extends BaseService<Stock>
 				// 月份为1位数的转为两位数
 				s.setStockTime(Constant.DATE_FORMATTER.format(Constant.DATE_FORMATTER.parse(item.getStockDate())) + " " + timeFormat.format(now));
 				s.setStockType(stockType);
+				s.setTypeName(Constant.getStockTypeName(stockType));
 				
 				switch(stockType){
-					case 1: s.setTypeName("新购入库");
+					case 1: case 2: case 3: 
 							s.setSource(item.getStockRemark());
 							s.setTarget("仓库");  // 客户、目的地
 							break;
-					case 2: s.setTypeName("归还入库");
-							s.setSource(item.getStockRemark());
-							s.setTarget("仓库");  // 客户、目的地
-							break;
-					case 3: s.setTypeName("退货入库");
-							s.setSource(item.getStockRemark());
-							s.setTarget("仓库");  // 客户、目的地
-							break;
-					case 4: s.setTypeName("生产出库");
-							s.setSource("仓库");
-							s.setTarget(item.getStockRemark());  // 客户、目的地
-							break;
-					case 5: s.setTypeName("借用出库");
-							s.setSource("仓库");
-							s.setTarget(item.getStockRemark());  // 客户、目的地
-							break;
-					case 6: s.setTypeName("销售出库");
+					case 4: case 5: case 6:  
 							s.setSource("仓库");
 							s.setTarget(item.getStockRemark());  // 客户、目的地
 							break;
 				}
 				
-				s.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
-				s.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
-				
-				item.setCreateTime(Constant.DATETIME_FORMATTER.format(now));
-				item.setUpdateTime(Constant.DATETIME_FORMATTER.format(now));
 				s.addItem(item);
-				
-				stockMap.put(s.getStockNo(), s);
+				stockMap.put(s.getStockNo()+(item.getStockRemark()==null?"":item.getStockRemark()), s);
 			}
 			else {
 				s.addItem(item);

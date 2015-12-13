@@ -1,5 +1,7 @@
 package com.warehouse.common;
 
+import java.util.ArrayList;
+
 
 
 public abstract class BaseService<T>
@@ -65,6 +67,9 @@ public abstract class BaseService<T>
 			pqr.setTotal(count);
 			pqr.setPage(pageNum);
 			pqr.setPageCount(pageCount);
+		}else{
+			// 设置为空的list，否则rows为null时，前端easyui不会清除查询前的数据
+			pqr.setRows(new ArrayList<T>(0));
 		}
 		
 		return pqr;

@@ -44,7 +44,7 @@
   	  	 AND m.NAME like '%${t.name}%'
  	  </if>
  		<if test="t.size != null and t.size != ''" >
-  	  	 AND m.SIZE = #{t.size}
+  	  	 AND m.SIZE like '%${t.size}%'
  	  </if>
  		<if test="t.categoryId != null" >
   	  	 AND m.CATEGORY_ID = #{t.categoryId}
@@ -72,7 +72,7 @@
      	  	 AND NAME like '%${name}%'
     	  </if>
     		<if test="size != null and size != ''" >
-     	  	 AND SIZE = #{size}
+     	  	 AND SIZE like '%${size}%'
     	  </if>
     		<if test="categoryId != null" >
      	  	 AND CATEGORY_ID = #{categoryId}
@@ -331,7 +331,7 @@
     	  	 AND m.NAME like '%${name}%'
    	  </if>
    		<if test="size != null and size != ''" >
-    	  	 AND m.SIZE = #{size}
+    	  	 AND m.SIZE like '%${size}%'
    	  </if>
    		<if test="categoryId != null" >
     	  	 AND m.CATEGORY_ID = #{categoryId}
@@ -367,7 +367,7 @@
   	select m.*, d.name as unit_name from material m 
   	left join dict d on(m.unit_id = d.id) 
     <where>
-    	<if test="t.id != null" >
+    	<!-- <if test="t.id != null" >
      	  	 AND m.ID = #{t.id}
    	  </if>
    		<if test="t.code != null and t.code != ''" >
@@ -377,14 +377,15 @@
     	  	 AND m.NAME like '%${t.name}%'
    	  </if>
    		<if test="t.size != null and t.size != ''" >
-    	  	 AND m.SIZE = #{t.size}
+    	  	 AND m.SIZE like '%${t.size}%'
    	  </if>
    		<if test="t.categoryId != null" >
     	  	 AND m.CATEGORY_ID = #{t.categoryId}
    	  </if>
    		<if test="t.disabled != null">
     	  	 AND m.DISABLED = #{t.disabled}
-   	  </if>
+   	  </if> -->
+   	  <include refid="sql_where" />
     </where>
 		order by m.ORDER_NO ASC, m.NAME ASC
 		limit #{size} offset #{start}

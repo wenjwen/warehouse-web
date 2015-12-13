@@ -626,6 +626,89 @@ function initStockDG(){
 		          ]],
 	});
 }
+// 新出入库管理
+function initStockDG(){
+	$('#stock_detail_dg').edatagrid({
+		url: rootUri + 'stockDetail/list.json',
+		saveUrl: rootUri + 'stockDetail/saveStock',
+		updateUrl: rootUri + 'stockDetail/saveStock',
+		destroyUrl: rootUri + 'stockDetail/deleteStock',
+		autoSave: false,
+		checkOnSelect: false,
+		pagination:true,//分页控件
+		pageSize:20,
+		pageList:[15,20,25,30,35,40,50],
+		onError: function(index,row){
+			// alert(index + ', ' + row.msg);
+			$.messager.alert("错误","操作失败！", "error");
+		},
+		onAdd: function(index,row){  // 添加新行时
+			
+		},
+		onEdit: function(index,row){  // 编辑行时
+			
+		},
+		onBeforeSave: function(index){  // 添加新行时
+			
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				//$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("提示","保存失败！", "info");
+				$('#stock_dg').edatagrid('cancelRow');
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'删除后无法恢复，请三思！'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("错误","删除失败！", "error");
+			}
+		},
+		columns:[[
+		          //{field:'ck', checkbox:true},
+		          {field:'stockNo',title:'单号',width:75, editor:{type:'textbox'}},
+		          {field:'stockType',title:'出入库类型',width:55, 
+		        	  formatter:function(value,row,index){
+		        		  for(var i=0; i<stockTypeEntry.length;i++){
+		        			  if (stockTypeEntry[i].id == value)
+		        				  return stockTypeEntry[i].name;
+		        		  }
+		        		  return value;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox', 
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:stockTypeEntry,
+		        			  required:true
+		        		  }
+		        	  }
+		          },
+		          {field:'stockTime',title:'日期时间',width:100, editor:{type:'datetimebox', options:{required:true}}},
+		          {field:'driverName',title:'司机',width:60, editor:{type:'textbox'}},
+		          {field:'trunkNo',title:'车牌',width:60, editor:{type:'textbox'}},
+		          {field:'source',title:'供货商/来源',width:100, editor:{type:'textbox', options:{required:true}}},
+		          {field:'target',title:'客户/目的地',width:100, editor:{type:'textbox', options:{required:true}}},
+		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}},
+		          
+		          ]],
+	});
+}
 
 //月度盘点
 function initStocktakeDG(){

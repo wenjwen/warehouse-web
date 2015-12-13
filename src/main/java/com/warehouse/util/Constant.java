@@ -16,4 +16,18 @@ public class Constant
 	public static int STOCK_OUT_PRODUCE = 4;
 	public static int STOCK_OUT_BORROW = 5;
 	public static int STOCK_OUT_SALES = 6;
+	
+	
+	public static String getStockTypeName(Integer stockType)
+	{
+		switch(stockType){
+			case 1: return "新购入库";
+			case 2: return "归还入库";
+			case 3: return "退货入库";
+			case 4: return "生产出库";
+			case 5: return "借用出库";
+			case 6: return "销售出库";
+			default: return null ;
+		}
+	}
 }
