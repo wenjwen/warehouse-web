@@ -16,6 +16,8 @@ public class Entry
 	
 	private Object extraValue5;
 	
+	private Object extraValue6;
+	
 	public Object getExtraValue5()
 	{
 		return extraValue5;
@@ -85,5 +87,16 @@ public class Entry
 	{
 		this.name = name;
 	}
+
+	public Object getExtraValue6()
+	{
+		return extraValue6;
+	}
+
+	public void setExtraValue6(Object extraValue6)
+	{
+		this.extraValue6 = extraValue6;
+	}
+	
 	
 }

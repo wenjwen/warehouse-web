@@ -197,7 +197,15 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <select id="findByName" parameterType="com.warehouse.model.User" resultMap="BaseResultMap" >
+  <select id="findByName" parameterType="String" resultMap="BaseResultMap" >
+  	select * from user where name = #{userName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="findByLoginName" parameterType="String" resultMap="BaseResultMap" >
   	select * from user where login_name = #{loginName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="findAll" resultMap="BaseResultMap" >
+  	select * from user
   </select>
 </mapper>

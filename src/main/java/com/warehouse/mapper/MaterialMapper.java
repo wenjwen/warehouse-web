@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Param;
 
 import com.warehouse.common.BaseMapper;
 import com.warehouse.model.Material;
-import com.warehouse.model.StockItem;
 import com.warehouse.model.StocktakeItem;
 import com.warehouse.util.Entry;
 
@@ -26,7 +25,7 @@ public interface MaterialMapper extends BaseMapper<Material>{
 	
 	List<Material> findSelective(Material material);
 
-	List<Material> selectBalanceByIds(List<StockItem> items);
+	List<Material> selectBalanceByIds(List items);
 
 	void updateForStocktake(StocktakeItem item);
 

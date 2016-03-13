@@ -71,8 +71,17 @@
 		if ($('#stocktakeItem_dg').length > 0){ // 盘点单
 			initStocktakeItem_DG(); 
 		}
-		if ($('#stock_dg').length > 0){ // 出入库
+		/* if ($('#stock_dg').length > 0){ // 出入库
 			initStockDG(); 
+		} */
+		if ($('#stock_detail_in_out_dg').length > 0){ // 新出入库
+			initStockDetailInOutDG(); 
+		}
+		if ($('#stock_detail_dg').length > 0){ // 新出入库管理
+			initStockDetailDG(); 
+		}
+		if ($('#userList_dg').length > 0){ // 用户信息
+			initUserListDG(); 
 		}
 		
 	}

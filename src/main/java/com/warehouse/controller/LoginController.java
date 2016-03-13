@@ -39,7 +39,7 @@ public class LoginController
 	@RequestMapping(value="/main")
 	public String toMainPage(HttpServletRequest request, ModelMap model, String userName, String password){
 		if (request.getSession().getAttribute(Constant.USER) == null){
-			User user = userService.findByName(userName);
+			User user = userService.findByLoginName(userName);
 			if (user == null || user.getId() == null){
 				model.addAttribute("code", -1); // 用户名不存在
 				return "/login";

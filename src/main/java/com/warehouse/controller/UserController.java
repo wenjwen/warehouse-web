@@ -23,7 +23,8 @@ public class UserController
 	private UserService userService;
 	
 	@RequestMapping("/passwordModifyPage")
-	public String toPasswordModifyPage(){
+	public String toPasswordModifyPage(HttpServletRequest request,ModelMap model){
+		model.addAttribute("userId", request.getAttribute("userId"));
 		return "/user/passwordModify";
 	}
 	
@@ -31,7 +32,8 @@ public class UserController
 	@ResponseBody
 	public Object passwordModify(HttpServletRequest request, ModelMap model, String oldPassword, String newPassword){
 		AjaxResult result = new AjaxResult();
-		User user = (User)request.getSession().getAttribute(Constant.USER);
+		// User user = (User)request.getSession().getAttribute(Constant.USER);
+		User user = userService.findById(request.getAttribute("userId"));
 		if(!user.getPassword().equals(PwdUtil.md5Encryption(oldPassword))){
 			result.setCode("-1"); // 旧密码不正确
 		} else {
@@ -42,5 +44,44 @@ public class UserController
 		}
 		
 		return result;
+	}
+	
+	@RequestMapping("/permissionPage")
+	public Object permissionPage(HttpServletRequest request, ModelMap model){
+		model.addAttribute("userId", request.getAttribute("userId"));
+		return "/user/permission";
+	}
+	
+	@RequestMapping("/userListPage")
+	public String userListPage(){
+		return "/user/list"; 
+	}
+	
+	@RequestMapping("/userList.json")
+	@ResponseBody
+	public Object userListJson(){
+		return userService.findAll();
+	}
+	
+	@RequestMapping("/saveUser")
+	@ResponseBody
+	public Object saveUser(){
+		
+		
+		return null;
+	}
+	
+	@RequestMapping("/updateUser")
+	@ResponseBody
+	public Object updateUser(){
+		
+		return null;
+	}
+	
+	@RequestMapping("/deleteUser")
+	@ResponseBody
+	public Object deleteUser(){
+		
+		return null;
 	}
 }

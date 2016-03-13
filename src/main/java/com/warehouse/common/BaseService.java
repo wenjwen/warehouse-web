@@ -13,7 +13,7 @@ public abstract class BaseService<T>
 		return getMapper().insert(t);
 	}
 
-	public T findById(Object id) throws Exception
+	public T findById(Object id)
 	{
 		return getMapper().selectByPrimaryKey(id);
 	}

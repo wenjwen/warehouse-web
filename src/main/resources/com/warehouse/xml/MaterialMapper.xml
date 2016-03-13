@@ -31,6 +31,7 @@
 	   <result column="balance" property="extraValue3" jdbcType="DECIMAL" />
 	   <result column="size" property="extraValue4" jdbcType="VARCHAR" />
 	   <result column="order_no" property="extraValue5" jdbcType="INTEGER" />
+	   <result column="category_name" property="extraValue6" jdbcType="VARCHAR" />
   </resultMap>
   
   <sql id="sql_where">
@@ -301,8 +302,9 @@
   </update>
   
   <select id="findAllEntry" resultMap="EntryMap">
-  	select m.id, m.name, m.balance, m.size, m.unit_id, m.order_no, d.name as unit_name 
-  	from material m left join dict d on(m.unit_id = d.id)
+  	select m.id, m.name, m.balance, m.size, m.unit_id, m.order_no, d.name as unit_name, c.name as category_name 
+  	from material m left join dict d on(m.unit_id = d.id) 
+  	left join category c on(m.category_id = c.id) 
   	where m.disabled != 1
   </select>
   

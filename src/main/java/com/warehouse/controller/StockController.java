@@ -60,6 +60,40 @@ public class StockController
 	}
 	
 	/**
+	 * // 新出入库页面
+	 * @param model
+	 * @param type
+	 * @return
+	 */
+	@RequestMapping(value={"stockin","stockout"})
+	public String toStockinPage(ModelMap model, @RequestParam(value="type")Integer type){
+		model.addAttribute("stockType", type);
+		model.addAttribute("stockTypeName", this.getStockTypeName(type));
+		
+		return "/stockDetail/in-out";
+	}
+	
+
+	/*@RequestMapping(value="stockin")
+	public String toStockinPage(ModelMap model, @RequestParam(value="type")Integer type){
+		// generate stock No.
+		model.addAttribute("stockNo", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+		model.addAttribute("stockType", type);
+
+		return "/stock/in";
+	}
+	
+	@RequestMapping(value="stockout")
+	public String toStockoutPage(ModelMap model, @RequestParam(value="type")Integer type){
+		// generate stock No.
+		model.addAttribute("stockNo", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+		model.addAttribute("stockType", type);
+
+		return "/stock/out";
+	}*/
+	
+	
+	/**
 	 * 打开出入库详细页面
 	 * @param model
 	 * @return
@@ -208,24 +242,6 @@ public class StockController
 	}
 	
 
-	@RequestMapping(value="stockin")
-	public String toStockinPage(ModelMap model, @RequestParam(value="type")Integer type){
-		// generate stock No.
-		model.addAttribute("stockNo", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-		model.addAttribute("stockType", type);
-
-		return "/stock/in";
-	}
-	
-	@RequestMapping(value="stockout")
-	public String toStockoutPage(ModelMap model, @RequestParam(value="type")Integer type){
-		// generate stock No.
-		model.addAttribute("stockNo", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-		model.addAttribute("stockType", type);
-
-		return "/stock/out";
-	}
-	
 	/**
 	 * 旧的保存入口
 	 * @param model

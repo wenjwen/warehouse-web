@@ -165,14 +165,28 @@
   <select id="findAll" resultMap="BaseResultMap" >
     select 
     <include refid="Base_Column_List" />
-    from menu
+    from menu where disabled != 1
     order by code
   </select>
   
   <select id="findByCode" parameterType="java.lang.String" resultMap="BaseResultMap" >
   	select 
     <include refid="Base_Column_List" /> 
-    from menu where code like '${value}%' 
+    from menu where code like '${value}%' and disabled != 1
     order by code
+  </select>
+  
+  <!-- 查出分配给该用户的所有菜单(包括其父菜单) -->
+  <select id="findByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select * from menu 
+  		where id in(select menu_id from user_menu_rel where user_id = #{userId})  
+			or id in(
+							select distinct(parent_id) from menu 
+								where id in(
+														select menu_id from user_menu_rel 
+															where user_id = #{userId}
+														) 
+						 	) 
+			and disabled != 1
   </select>
 </mapper>

@@ -626,10 +626,11 @@ function initStockDG(){
 		          ]],
 	});
 }
-// 新出入库管理
-function initStockDG(){
-	$('#stock_detail_dg').edatagrid({
-		url: rootUri + 'stockDetail/list.json',
+
+//TODO 新出入库
+function initStockDetailInOutDG(){
+	$('#stock_detail_in_out_dg').edatagrid({
+		//url: rootUri + 'stockDetail/list.json',
 		saveUrl: rootUri + 'stockDetail/saveStock',
 		updateUrl: rootUri + 'stockDetail/saveStock',
 		destroyUrl: rootUri + 'stockDetail/deleteStock',
@@ -637,7 +638,7 @@ function initStockDG(){
 		checkOnSelect: false,
 		pagination:true,//分页控件
 		pageSize:20,
-		pageList:[15,20,25,30,35,40,50],
+		pageList:[15,20,30,40,50,100],
 		onError: function(index,row){
 			// alert(index + ', ' + row.msg);
 			$.messager.alert("错误","操作失败！", "error");
@@ -653,41 +654,22 @@ function initStockDG(){
 		},
 		onSave: function(index, row){  // 保存后
 			if(!row.isError){
-				//$.messager.alert("提示","保存成功", "info");
-				$('#p').panel('refresh');
+				$.messager.alert("提示","保存成功", "info");
+				//$('#p').panel('refresh');
 			} else if(row.isError){
 				$.messager.alert("提示","保存失败！", "info");
-				$('#stock_dg').edatagrid('cancelRow');
-			}
-		},
-		destroyMsg:{
-			norecord:{	// when no record is selected
-				title:'警告',
-				msg:'未选择任何条目.'
-			},
-			confirm:{	// when select a row
-				title:'确认',
-				msg:'删除后无法恢复，请三思！'
-			}
-		},
-		onDestroy:function(index, row){  // 删除后
-			if(!row.isError){
-				$.messager.alert("提示","删除成功", "info");
-				$('#p').panel('refresh');
-			} else if(row.isError){
-				$.messager.alert("错误","删除失败！", "error");
+				$('#stock_detail_in_out_dg').edatagrid('cancelRow');
 			}
 		},
 		columns:[[
 		          //{field:'ck', checkbox:true},
-		          {field:'stockNo',title:'单号',width:75, editor:{type:'textbox'}},
-		          {field:'stockType',title:'出入库类型',width:55, 
+		          /*{field:'stockType',title:'出入库类型', width:65, 
 		        	  formatter:function(value,row,index){
 		        		  for(var i=0; i<stockTypeEntry.length;i++){
 		        			  if (stockTypeEntry[i].id == value)
 		        				  return stockTypeEntry[i].name;
 		        		  }
-		        		  return value;
+		        		  return "";
 		        	  },
 		        	  editor:{
 		        		  type:'combobox', 
@@ -698,14 +680,58 @@ function initStockDG(){
 		        			  required:true
 		        		  }
 		        	  }
+		          },*/
+		          {field:'stockTime',title:'日期',width:80, editor:{type:'datebox', options:{required:true}}},
+		          {field:'stockNo',title:'单号',width:75, editor:{type:'textbox'}},
+		          {field:'materialId',title:'物料名及规格',width:200,
+		        	  formatter:function(value, row, index){
+		        		  var name = '';
+		        		  if (row.materialName != null && row.materialName != 'undefined'){
+		        			 var size = (row.size == null || row.size == '' || row.size == 'undefined') ? '': (' 规格：' + row.size);
+		        			 name = row.materialName + size; 
+		        		  }
+		        		  else {
+			        		  /*for(var i=0; i<materialEntry.length; i++){
+			        			  if (materialEntry[i].id == value) {
+			        				  name = materialEntry[i].name;
+			        				  // 设置单位、分类
+			        				  row.unitName = materialEntry[i].extraValue2;
+			        				  row.categoryName = materialEntry[i].extraValue6;
+			        			  }
+			        		  }*/
+		        		  }
+		        		  
+		        		  return name;
+		        	  },
+		        	  editor:{
+		        		  type:'combobox',
+		        		  options:{
+		        			  valueField:'id',
+		        			  textField:'name',
+		        			  data:materialEntry,
+		        			  required:true,
+		        			  onSelect:function(data){
+		        				  var row = $('#stock_detail_in_out_dg').datagrid('getSelected');
+		        				  var rowIndex = $('#stock_detail_in_out_dg').datagrid('getRowIndex',row);//获取行号
+		        				  var target = $('#stock_detail_in_out_dg').datagrid('getEditor', {'index':rowIndex,'field':'unitName'}).target;
+		        				  //target.combobox('clear'); //清除原来的数据								
+		        				  //var url = '获取数据的action带上当前参数'+data.value;
+		        				  target.textbox('setText', data.extraValue2);//联动下拉列表重载
+		        			  }
+		        		  }
+		        	  }
 		          },
-		          {field:'stockTime',title:'日期时间',width:100, editor:{type:'datetimebox', options:{required:true}}},
-		          {field:'driverName',title:'司机',width:60, editor:{type:'textbox'}},
+		          {field:'materialRemark',title:'物料说明',width:100, editor:{type:'textbox'}},
+		          {field:'unitName',title:'单位',width:40, editor:{type:'textbox', options:{readonly:true}}
+		          },
+		          {field:'quantity',title:'数量',width:40,editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          {field:'unitPrice',title:'单价(元)',width:40, editor:{type:'numberbox', options:{precision:2,required:true}}},
+		          /*{field:'driverName',title:'司机',width:60, editor:{type:'textbox'}},
 		          {field:'trunkNo',title:'车牌',width:60, editor:{type:'textbox'}},
 		          {field:'source',title:'供货商/来源',width:100, editor:{type:'textbox', options:{required:true}}},
-		          {field:'target',title:'客户/目的地',width:100, editor:{type:'textbox', options:{required:true}}},
-		          {field:'remark',title:'备注',width:120, editor:{type:'textbox'}},
-		          
+		          {field:'target',title:'客户/目的地',width:100, editor:{type:'textbox', options:{required:true}}}*/
+		          {field:'remark',title:'备注',width:100, editor:{type:'textbox', options:{required:true}}},
+		          {field:'categoryName',title:'分类',width:85}
 		          ]],
 	});
 }
@@ -903,6 +929,14 @@ function doSearchStocktake(){
 //出入库单查询
 function doSearchStock(){
 	$('#stock_dg').datagrid('load',{
+		stockNo: $('#stockNo').textbox('getValue'),
+		stockType: $('#stockType').combo('getValue')
+	});
+}
+
+//新出入库单查询
+function doSearchStockDetail(){
+	$('#stock_detail_dg').datagrid('load',{
 		stockNo: $('#stockNo').textbox('getValue'),
 		stockType: $('#stockType').combo('getValue')
 	});
@@ -1270,6 +1304,58 @@ function excelUpload(type){
     return false;
 }
 
+
+//新出入库记录
+// 异步上传Excel文件到后台处理
+function sdExcelUpload(type){
+	var options = {
+			title:'',  //显示在头部面板上的标题文本
+			msg:'', //消息框的主体文本
+			text:'读取数据中，请稍候', //显示在进度条里的文本
+			interval: 300   //每次进度更新之间以毫秒为单位的时间长度
+	};
+	// 打开进度条
+	$.messager.progress(options); 
+	$.ajaxFileUpload
+	(
+			{
+				url: 'stockDetail/uploadExcel', //用于文件上传的服务器端请求地址
+				fileElementId: 'excel', //文件上传域的ID
+				secureuri: false, //是否需要安全协议，一般设置为false
+				dataType: 'json', //返回值类型 一般设置为json
+				data:{stockType: type},  // 表单数据,或者：data:{id: xxx, name: yyyy}
+				success: function (data, status)  //服务器成功响应处理函数
+				{
+					if (!data.isError){
+						// 更新所有信息
+						materialEntry =  data.obj.materialEntry;
+						unitEntry = data.obj.unitEntry;
+						categoryEntry = data.obj.categoryEntry;
+						//excel数据显示到datagrid上
+						$('#stock_detail_in_out_dg').edatagrid('loadData', data.obj.items);
+					}
+					else{
+						if (data.msg){
+							$.messager.alert("错误", data.msg , "error");
+						}
+						else{
+							$.messager.alert("错误", "读取数据时出错，请检查文件格式及内容是否正确！", "error");
+						}
+					}
+					// 关闭进度条
+					$.messager.progress('close');
+				},
+				error: function (data, status, e) //服务器响应失败处理函数
+				{
+					$.messager.progress('close');
+					$.messager.alert("错误", "服务器响应失败" , "error");
+				}
+			}
+	);
+	
+	return false;
+}
+
 function importExcel(fileName, type){
 	var title = '';
 	switch(type){
@@ -1348,6 +1434,134 @@ function deleteDatagridRow(dg_id, index){
 	$('#'+ dg_id).datagrid('deleteRow',index);
     var rows = $('#'+ dg_id).datagrid("getRows");    //重新获取数据生成行号
     $('#'+ dg_id).datagrid("loadData", rows);
+}
+
+function getStockTypeName(){
+	var name ='未知';
+	switch(type){
+		case 1: name = "新购入库"; break;
+		case 2: name = "归还入库"; break;
+		case 3: name = "退货入库"; break;
+		case 4: name = "生产出库"; break;
+		case 5: name = "借用出库"; break;
+		case 6: name = "销售出库"; break;
+	}
+	return name;
+}
+
+function initUserListDG(){
+	$('#userList_dg').datagrid({
+		url: rootUri + 'userList.json',
+		saveUrl: rootUri + 'saveUser',
+		updateUrl: rootUri + 'updateUser',
+		destroyUrl: rootUri + 'deleteUser',
+		autoSave: false,
+		checkOnSelect: false,
+		pagination:true,//分页控件
+		pageSize:20,
+		pageList:[15,20,25,30,35,40,50],
+		onError: function(index,row){
+			switch (row.code){
+				//case '19':
+					//$.messager.alert("错误","物料已在出库单、入库单或盘点单中使用，不能删除！", "error"); break;
+				case '102':
+					$.messager.alert("错误","该账号已存在！", "error"); break;
+				default : 
+					$.messager.alert("错误","未知错误！错误代码：" + row.code, "error"); break;
+			}
+		},
+		onAdd: function(index,row){  // 添加新行时
+			
+		},
+		onSave: function(index, row){  // 保存后
+			if(!row.isError){
+				$.messager.alert("提示","保存成功", "info");
+				$('#p').panel('refresh');
+			} else if(row.isError){
+				$.messager.alert("错误","保存失败！", "error");
+			}
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'警告',
+				msg:'未选择任何条目.'
+			},
+			confirm:{	// when select a row
+				title:'确认',
+				msg:'确定要删除?'
+			}
+		},
+		onDestroy:function(index, row){  // 删除后
+			if(!row.isError){
+				$.messager.alert("提示","删除成功", "info");
+				$('#p').panel('refresh');
+			} else {
+				$.messager.alert("错误","未知错误", "error");
+			}
+		},
+		onBeforeEdit:function(index, row){
+		},
+		columns:[[
+		          {field:'ck', checkbox:true},
+		          {field:'name',title:'用户名',width:60, editor:{type:'textbox', required:true}},
+		          {field:'loginName',title:'账号',width:60, editor:{type:'textbox', required:true}},
+		          {field:'mobile',title:'手机号',width:60, editor:{type:'textbox'}},
+		          {field:'qq',title:'QQ',width:60, editor:{type:'textbox'}},
+		          {field:'email',title:'Email',width:120, editor:{type:'textbox'}},
+		          {field:'wechat',title:'微信',width:60, editor:{type:'textbox'}},
+		          {field:'action',title:'操作',width:120,align:'center',
+		        	  formatter:function(value,row,index){
+		        		  var content = '';
+		        		  if (row.id != 'undefined' && row.id != null){
+	        				  content = '<a style="color:blue;" href="#" onclick="modifyInfo('+index+')">修改信息</a>&nbsp;'
+	        				  		  + '<a style="color:blue;" href="#" onclick="modifyPwd('+row.id+','+row.loginName+')">修改密码</a>&nbsp;'	
+	        				  		  + '<a style="color:blue;" href="#" onclick="permission('+row.id+','+row.loginName+')">分配权限</a>';
+		        		  }
+							return content;
+		        	  }}
+		          ]]
+	});
+	
+}
+
+// 打开创建用户的对话框
+function createUser(){
+	$('#create').dialog('open').dialog('setTitle','创建新用户');
+	$('#createfm').form('clear');
+	url = 'save_user.php';
+}
+
+// 打开修改用户信息对话框
+function modifyInfo(index){
+	$('#userList_dg').datagrid('selectRow', index);
+	var row = $('#userList_dg').datagrid('getSelected');
+	if (row){
+		$('#create').dialog('open').dialog('setTitle','修改' + row.loginName + '的基本信息');
+		$('#createfm').form('load',row);
+		url = 'update_user.php?id='+row.id;
+	}
+}
+
+// 弹出修改密码窗口
+function modifyPwd(userId, loginName){
+	$('#win').window({
+		title:'修改' + loginName+ '的密码',
+	    width:1000,
+	    height:'100%',
+	    modal:true,
+	    href: rootUri + '/passwordModifyPage?userId=' + userId,
+	});
+}
+
+// 弹出分配权限窗口
+function permission(userId, loginName){
+	$('#win').window({
+		title:'分配权限给' + loginName,
+	    width:1000,
+	    height:'100%',
+	    modal:true,
+	    href: rootUri + '/permissionPage?userId=' + userId,
+	});
 }
 
 /* sqlite beginning-of-error-codes */ 

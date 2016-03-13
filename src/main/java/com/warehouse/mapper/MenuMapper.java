@@ -21,4 +21,6 @@ public interface MenuMapper {
 	
 	List<Menu> findByCode(String value);
 
+	List<Menu> findByUserId(Integer userId);
+
 }
